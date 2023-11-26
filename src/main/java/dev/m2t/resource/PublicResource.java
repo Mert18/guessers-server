@@ -1,25 +1,36 @@
 package dev.m2t.resource;
 
-import dev.m2t.dto.BaseResponse;
-import dev.m2t.service.UserService;
-import io.smallrye.mutiny.Uni;
+import dev.m2t.dto.request.GenerateUserRequest;
+import dev.m2t.model.User;
+import dev.m2t.service.KeycloakService;
+import io.quarkus.panache.common.Sort;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import org.jboss.resteasy.reactive.RestResponse;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
+import java.util.List;
+
+
+@ApplicationScoped
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @Path("/api/public")
 public class PublicResource {
-
     @Inject
-    UserService userService;
+    KeycloakService keycloakService;
 
     @GET
-    @Path("/generate-user")
-    public RestResponse<BaseResponse> generateUser() {
-        return RestResponse.ResponseBuilder
-                .ok(userService.generateUser())
-                .status(RestResponse.Status.CREATED)
-                .build();
+    @Path("/users")
+    public List<User> getAllUsers() {
+        return User.listAll(Sort.by("username"));
+    }
+
+    @POST
+    @Path("/users")
+    public Response createUser(GenerateUserRequest user) {
+        User savedUser = keycloakService.generateUser(user);
+        return Response.ok(savedUser).build();
     }
 }
