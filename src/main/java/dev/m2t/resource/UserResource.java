@@ -1,32 +1,30 @@
 package dev.m2t.resource;
 
-import dev.m2t.dto.BaseResponse;
 import dev.m2t.model.User;
-import dev.m2t.service.UserService;
+import io.quarkus.panache.common.Sort;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.mutiny.Uni;
-import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import org.jboss.resteasy.reactive.NoCache;
-import org.jboss.resteasy.reactive.RestResponse;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
-import java.util.Set;
+import java.util.List;
 
+@ApplicationScoped
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @Path("/api/users")
 public class UserResource {
-
     @Inject
     SecurityIdentity identity;
-
-    @Inject
-    UserService userService;
-
     @GET
     @Path("/me")
-    @NoCache
     public User me() {
-        return new User(identity);
+        return User.of(identity.getPrincipal().getName());
     }
+
 }

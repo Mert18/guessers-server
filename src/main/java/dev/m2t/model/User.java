@@ -1,30 +1,23 @@
 package dev.m2t.model;
 
-import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.persistence.*;
 
-import java.util.Set;
 
 @Entity
+@Cacheable
 @Table(name = "users")
-public class User extends PanacheEntityBase {
+public class User extends PanacheEntity {
 
-    @Id
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles;
+    @Column(nullable = false)
+    private Double balance;
 
-    // No-arg constructor required by JPA
-    public User() {
-    }
-
-    // Constructor used for creating an instance from SecurityIdentity
-    public User(SecurityIdentity identity) {
-        this.username = identity.getPrincipal().getName();
-        this.roles = identity.getRoles();
-    }
+    @Column(nullable = false)
+    private Double luckPercentage;
 
     public String getUsername() {
         return username;
@@ -34,11 +27,25 @@ public class User extends PanacheEntityBase {
         this.username = username;
     }
 
-    public Set<String> getRoles() {
-        return roles;
+    public Double getBalance() {
+        return balance;
     }
 
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
+
+    public Double getLuckPercentage() {
+        return luckPercentage;
+    }
+
+    public void setLuckPercentage(Double luckPercentage) {
+        this.luckPercentage = luckPercentage;
+    }
+
+    public static User of(String username) {
+        User user = new User();
+        user.setUsername(username);
+        return user;
     }
 }
