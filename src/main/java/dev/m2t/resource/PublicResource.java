@@ -4,6 +4,7 @@ import dev.m2t.dto.request.GenerateUserRequest;
 import dev.m2t.model.User;
 import dev.m2t.service.KeycloakService;
 import io.quarkus.panache.common.Sort;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -23,12 +24,12 @@ public class PublicResource {
 
     @GET
     @Path("/users")
-    public List<User> getAllUsers() {
-        return User.listAll(Sort.by("username"));
+    public Response getAllUsers() {
+        return Response.ok(User.listAll(Sort.by("username"))).build();
     }
 
     @POST
-    @Path("/users")
+    @Path("/create-user")
     public Response createUser(GenerateUserRequest user) {
         User savedUser = keycloakService.generateUser(user);
         return Response.ok(savedUser).build();
