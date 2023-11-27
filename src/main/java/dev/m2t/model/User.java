@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 
 
 @Entity
-@Cacheable
 @Table(name = "users")
 public class User extends PanacheEntity {
 
@@ -41,11 +40,5 @@ public class User extends PanacheEntity {
 
     public void setLuckPercentage(Double luckPercentage) {
         this.luckPercentage = luckPercentage;
-    }
-
-    public static User of(String username) {
-        User user = new User();
-        user.setUsername(username);
-        return user;
     }
 }

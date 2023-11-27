@@ -5,8 +5,8 @@
   "defaultSignatureAlgorithm" : "RS256",
   "revokeRefreshToken" : false,
   "refreshTokenMaxReuse" : 0,
-  "accessTokenLifespan" : 300,
-  "accessTokenLifespanForImplicitFlow" : 900,
+  "accessTokenLifespan" : 1800,
+  "accessTokenLifespanForImplicitFlow" : 3600,
   "ssoSessionIdleTimeout" : 1800,
   "ssoSessionMaxLifespan" : 36000,
   "ssoSessionIdleTimeoutRememberMe" : 0,
@@ -611,6 +611,15 @@
           "uris": [
             "/api/admin/*"
           ]
+        },
+        {
+          "name": "Item Resource",
+          "ownerManagedAccess": false,
+          "attributes": {},
+          "_id": "812462f2-e6dc-44b4-87ab-24b010090b97",
+          "uris": [
+            "/api/item/*"
+          ]
         }
       ],
       "policies": [
@@ -655,6 +664,17 @@
           "decisionStrategy": "UNANIMOUS",
           "config": {
             "resources": "[\"Administration Resource\"]",
+            "applyPolicies": "[\"Only Administrators\"]"
+          }
+        },
+        {
+          "id": "80158292-d55b-4066-b231-6a7c56ff7cc5",
+          "name": "Item Resource Permission",
+          "type": "resource",
+          "logic": "POSITIVE",
+          "decisionStrategy": "UNANIMOUS",
+          "config": {
+            "resources": "[\"Item Resource\"]",
             "applyPolicies": "[\"Only Administrators\"]"
           }
         }
