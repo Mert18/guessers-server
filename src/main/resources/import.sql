@@ -17,5 +17,3 @@ INSERT INTO items(id, name, startingPrice, photoUrl, sold) VALUES(14, 'Item N', 
 INSERT INTO items(id, name, startingPrice, photoUrl, sold) VALUES(15, 'Item O', 150.00, 'https://picsum.photos/300/300', false);
 INSERT INTO items(id, name, startingPrice, photoUrl, sold) VALUES(16, 'Item P', 160.00, 'https://picsum.photos/300/300', false);
 INSERT INTO items(id, name, startingPrice, photoUrl, sold) VALUES(17, 'Item Q', 170.00, 'https://picsum.photos/300/300', false);
-
-ALTER SEQUENCE items_seq RESTART WITH 18;

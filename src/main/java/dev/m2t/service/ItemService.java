@@ -1,10 +1,8 @@
 package dev.m2t.service;
 
-import dev.m2t.dto.request.DeleteItemRequest;
 import dev.m2t.dto.request.GenerateItemRequest;
 import dev.m2t.dto.request.UpdateItemRequest;
 import dev.m2t.model.Item;
-import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
@@ -21,8 +19,6 @@ public class ItemService {
         item.setName(generateItemRequest.getName());
         item.setStartingPrice(generateItemRequest.getStartingPrice());
         item.setPhotoUrl(generateItemRequest.getPhotoUrl());
-        item.setDescription(generateItemRequest.getDescription());
-        item.setCategory(generateItemRequest.getCategory());
         item.setSold(false);
 
         item.persist();

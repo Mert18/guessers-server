@@ -1,6 +1,9 @@
 package dev.m2t;
 
+import dev.m2t.model.Bid;
+import dev.m2t.service.AuctionService;
 import io.quarkus.logging.Log;
+import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.websocket.OnClose;
@@ -16,14 +19,10 @@ import java.util.Set;
 
 @ServerEndpoint("/auction")
 public class AuctionWebSocket {
+    @Inject
+    AuctionService auctionService;
     private static Set<Session> sessions = Collections.synchronizedSet(new HashSet<>());
     private Jsonb jsonb = JsonbBuilder.create();
-
-    public static class BidMessage {
-        public Long auctionId;
-        public Double bid;
-        public String bidderId;
-    }
 
     @OnOpen
     public void onOpen(Session session) {
@@ -41,15 +40,8 @@ public class AuctionWebSocket {
     public void onMessage(String message, Session session) {
         Log.info("Message received: " + message);
         try {
-            BidMessage bidMessage = jsonb.fromJson(message, BidMessage.class);
-
-            // Validate the bid
-            if (!isValidBid(bidMessage)) {
-                // Handle invalid bid scenario
-                // E.g., send an error message back to the bidder
-                session.getBasicRemote().sendText("Invalid bid");
-                return;
-            }
+            Bid bidMessage = jsonb.fromJson(message, Bid.class);
+            Bid.validator(bidMessage, session); // This will throw an exception if the bid is invalid
 
             // Update auction state and database
             updateAuctionState(bidMessage);
@@ -62,16 +54,8 @@ public class AuctionWebSocket {
         }
     }
 
-    private boolean isValidBid(BidMessage bidMessage) {
-        // Implement validation logic
-        // E.g., check if the bid is higher than the current bid, auction is still open, etc.
-        return true; // Placeholder for actual validation logic
-    }
-
-    private void updateAuctionState(BidMessage bidMessage) {
-        // Implement auction state update logic
-        // This would involve interacting with your database/entities to update the current bid
-        // Remember to handle concurrency issues if multiple bids arrive closely together
+    private void updateAuctionState(Bid bidMessage) {
+        auctionService.handleReceivedBid(bidMessage);
     }
 
     private void broadcastToAll(String message) throws IOException {
