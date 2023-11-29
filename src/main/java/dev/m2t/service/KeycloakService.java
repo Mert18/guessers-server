@@ -14,6 +14,7 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.List;
+import java.util.Random;
 
 @ApplicationScoped
 public class KeycloakService {
@@ -44,9 +45,15 @@ public class KeycloakService {
 
         Log.info("roles: " + keycloak.realm(realm).roles().list());
         UsersResource users = keycloak.realm(realm).users();
-        if(!users.searchByUsername(user.getUsername(), true).isEmpty()) {
-            Log.error("Username " + user.getUsername() + " already exists");
+
+        if(!users.searchByUsername(user.getWantedUsername(), true).isEmpty()) {
+            Log.error("Username " + user.getWantedUsername() + " already exists");
             throw new UsernameAlreadyExistsException("Username already exists");
+        }
+
+        String generatedUsername = usernameGenerator();
+        while(!users.searchByUsername(generatedUsername, true).isEmpty()) {
+            generatedUsername = usernameGenerator();
         }
 
         // Calculate Luck
@@ -55,15 +62,17 @@ public class KeycloakService {
 
         // Save user to db.
         User dbUser = new User();
-        dbUser.setUsername(user.getUsername());
+        dbUser.setUsername(generatedUsername);
         dbUser.setLuckPercentage(luck);
+        dbUser.setWantedUsername(user.getWantedUsername());
+        dbUser.setWantedDollars(user.getWantedDollars());
         dbUser.setBalance(balance);
         dbUser.persist();
 
         // Save user to keycloak
         users.create(newUser);
 
-        Log.info("User " + user.getUsername() + " created successfully. Password: " + password);
+        Log.info("User " + generatedUsername + " created successfully. Password: " + password);
 
         return dbUser;
     }
@@ -72,10 +81,22 @@ public class KeycloakService {
         return Math.random() * 100;
     }
 
+    public static String usernameGenerator() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder result = new StringBuilder(3);
+        Random rnd = new Random();
+
+        for (int i = 0; i < 3; i++) {
+            result.append(characters.charAt(rnd.nextInt(characters.length())));
+        }
+
+        return result.toString();
+    }
+
     private UserRepresentation fillInUserDetails(GenerateUserRequest user, String password) {
         UserRepresentation newUser = new UserRepresentation();
-        newUser.setUsername(user.getUsername());
-        newUser.setId(user.getUsername());
+        newUser.setUsername(user.getWantedUsername());
+        newUser.setId(user.getWantedUsername());
         newUser.setRealmRoles(List.of("user"));
         newUser.setEnabled(true);
         newUser.setCredentials(List.of(
@@ -88,6 +109,6 @@ public class KeycloakService {
     }
 
     private String generatePassword() {
-        return "password";
+        return usernameGenerator();
     }
 }

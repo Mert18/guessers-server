@@ -18,6 +18,12 @@ public class User extends PanacheEntity {
     @Column(nullable = false)
     private Double luckPercentage;
 
+    @Column(nullable = false)
+    private Double wantedDollars;
+
+    @Column(nullable = false)
+    private String wantedUsername;
+
     public String getUsername() {
         return username;
     }
@@ -40,5 +46,21 @@ public class User extends PanacheEntity {
 
     public void setLuckPercentage(Double luckPercentage) {
         this.luckPercentage = luckPercentage;
+    }
+
+    public Double getWantedDollars() {
+        return wantedDollars;
+    }
+
+    public void setWantedDollars(Double wantedDollars) {
+        this.wantedDollars = wantedDollars;
+    }
+
+    public String getWantedUsername() {
+        return wantedUsername;
+    }
+
+    public void setWantedUsername(String wantedUsername) {
+        this.wantedUsername = wantedUsername;
     }
 }

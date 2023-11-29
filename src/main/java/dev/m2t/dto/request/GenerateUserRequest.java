@@ -1,13 +1,22 @@
 package dev.m2t.dto.request;
 
 public class GenerateUserRequest {
-    private String username;
+    private String wantedUsername;
+    private Double wantedDollars;
 
-    public String getUsername() {
-        return username;
+    public String getWantedUsername() {
+        return wantedUsername;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setWantedUsername(String wantedUsername) {
+        this.wantedUsername = wantedUsername;
+    }
+
+    public Double getWantedDollars() {
+        return wantedDollars;
+    }
+
+    public void setWantedDollars(Double wantedDollars) {
+        this.wantedDollars = wantedDollars;
     }
 }
