@@ -1,6 +1,7 @@
 # auction-quarkus
 
-![Application Banner](https://imgur.com/a/5RqvzRM)
+
+![Quarkus Banner](https://github.com/Mert18/auction-quarkus/assets/40024436/800613d4-e4c4-48b8-8011-591330b6122f)
 
 Quarkus 'auction' application.
 
