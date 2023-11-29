@@ -2,10 +2,11 @@ package dev.m2t.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
-import jakarta.websocket.Session;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-import java.io.IOException;
-
+@Entity
+@Table(name = "bids")
 public class Bid extends PanacheEntity {
     @Column(name = "auction_id", nullable = false)
     private Long auctionId;
@@ -15,14 +16,6 @@ public class Bid extends PanacheEntity {
     private String bidder;
     @Column(name = "bid", nullable = false, precision = 2)
     private Double bid;
-
-    public static void validator(Bid bid, Session session) throws IOException {
-        Bid highestBid = find("auctionId = ?1 and itemId = ?2 order by bid desc", bid.auctionId, bid.itemId).firstResult();
-        if (highestBid != null && bid.bid <= highestBid.bid) {
-            session.getBasicRemote().sendText("Invalid bid");
-            throw new RuntimeException("Bid must be higher than the current highest bid");
-        }
-    }
 
     public Long getAuctionId() {
         return auctionId;

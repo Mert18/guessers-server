@@ -14,13 +14,12 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 @ApplicationScoped
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/api/item")
-@RolesAllowed("admin")
+//@RolesAllowed("admin")
 public class ItemResource {
     @Inject
     ItemService itemService;

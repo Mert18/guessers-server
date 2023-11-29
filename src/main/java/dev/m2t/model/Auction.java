@@ -81,4 +81,15 @@ public class Auction extends PanacheEntity {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    @Override
+    public String toString() {
+        return "Auction{" +
+                "itemId=" + itemId +
+                ", currentBid=" + currentBid +
+                ", currentBidder='" + currentBidder + '\'' +
+                ", auctionEnd=" + auctionEnd +
+                ", active=" + active +
+                '}';
+    }
 }
