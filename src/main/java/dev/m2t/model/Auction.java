@@ -1,9 +1,13 @@
 package dev.m2t.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import java.time.Duration;
 
+@Entity
+@Table(name = "auctions")
 public class Auction extends PanacheEntity {
     private Long itemId;
     private Double currentBid;
@@ -12,6 +16,7 @@ public class Auction extends PanacheEntity {
     private Long auctionEnd;
     private Duration auctionDuration;
     private String soldTo;
+    private Boolean active;
 
     public Long getItemId() {
         return itemId;
@@ -67,5 +72,24 @@ public class Auction extends PanacheEntity {
 
     public void setSoldTo(String soldTo) {
         this.soldTo = soldTo;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public String toString() {
+        return "Auction{" +
+                "itemId=" + itemId +
+                ", currentBid=" + currentBid +
+                ", currentBidder='" + currentBidder + '\'' +
+                ", auctionEnd=" + auctionEnd +
+                ", active=" + active +
+                '}';
     }
 }
