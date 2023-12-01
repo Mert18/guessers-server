@@ -42,4 +42,13 @@ public class AuctionService {
         Log.info("Incoming bid updated the auction: " + auction);
         return auction;
     }
+
+    @Transactional
+    public Auction handleAuctionEnd(Auction auction) {
+        auction.setActive(false);
+        auction.persist();
+
+        Log.info("Auction ended: " + auction);
+        return auction;
+    }
 }

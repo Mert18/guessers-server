@@ -37,23 +37,25 @@ public class KeycloakService {
     @Inject
     Keycloak keycloak;
 
+
+
     @Transactional
     public User generateUser(GenerateUserRequest user) {
         // Fill in user details
         String password = generatePassword();
         UserRepresentation newUser = fillInUserDetails(user, password);
 
-        Log.info("roles: " + keycloak.realm(realm).roles().list());
         UsersResource users = keycloak.realm(realm).users();
 
-        if(!users.searchByUsername(user.getWantedUsername(), true).isEmpty()) {
-            Log.error("Username " + user.getWantedUsername() + " already exists");
+        if(!users.searchByUsername(user.getWantedName(), true).isEmpty()) {
+            Log.info(users.list());
+            Log.error("Name " + user.getWantedName() + " already exists");
             throw new UsernameAlreadyExistsException("Username already exists");
         }
 
-        String generatedUsername = usernameGenerator();
-        while(!users.searchByUsername(generatedUsername, true).isEmpty()) {
-            generatedUsername = usernameGenerator();
+        String generatedName = nameGenerator();
+        while(!users.searchByUsername(generatedName, true).isEmpty()) {
+            generatedName = nameGenerator();
         }
 
         // Calculate Luck
@@ -62,9 +64,9 @@ public class KeycloakService {
 
         // Save user to db.
         User dbUser = new User();
-        dbUser.setUsername(generatedUsername);
+        dbUser.setName(generatedName);
         dbUser.setLuckPercentage(luck);
-        dbUser.setWantedUsername(user.getWantedUsername());
+        dbUser.setWantedName(user.getWantedName());
         dbUser.setWantedDollars(user.getWantedDollars());
         dbUser.setBalance(balance);
         dbUser.persist();
@@ -72,7 +74,7 @@ public class KeycloakService {
         // Save user to keycloak
         users.create(newUser);
 
-        Log.info("User " + generatedUsername + " created successfully. Password: " + password);
+        Log.info("User " + generatedName + " created successfully. Password: " + password);
 
         return dbUser;
     }
@@ -81,7 +83,7 @@ public class KeycloakService {
         return Math.random() * 100;
     }
 
-    public static String usernameGenerator() {
+    public static String nameGenerator() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder result = new StringBuilder(3);
         Random rnd = new Random();
@@ -95,8 +97,8 @@ public class KeycloakService {
 
     private UserRepresentation fillInUserDetails(GenerateUserRequest user, String password) {
         UserRepresentation newUser = new UserRepresentation();
-        newUser.setUsername(user.getWantedUsername());
-        newUser.setId(user.getWantedUsername());
+        newUser.setUsername(user.getWantedName());
+        newUser.setId(user.getWantedName());
         newUser.setRealmRoles(List.of("user"));
         newUser.setEnabled(true);
         newUser.setCredentials(List.of(
@@ -109,6 +111,6 @@ public class KeycloakService {
     }
 
     private String generatePassword() {
-        return usernameGenerator();
+        return nameGenerator();
     }
 }

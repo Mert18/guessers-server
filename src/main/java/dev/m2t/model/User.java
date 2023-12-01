@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 public class User extends PanacheEntity {
 
     @Column(unique = true, nullable = false)
-    private String username;
+    private String name;
 
     @Column(nullable = false)
     private Double balance;
@@ -22,14 +22,14 @@ public class User extends PanacheEntity {
     private Double wantedDollars;
 
     @Column(nullable = false)
-    private String wantedUsername;
+    private String wantedName;
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String username) {
+        this.name = username;
     }
 
     public Double getBalance() {
@@ -56,11 +56,11 @@ public class User extends PanacheEntity {
         this.wantedDollars = wantedDollars;
     }
 
-    public String getWantedUsername() {
-        return wantedUsername;
+    public String getWantedName() {
+        return wantedName;
     }
 
-    public void setWantedUsername(String wantedUsername) {
-        this.wantedUsername = wantedUsername;
+    public void setWantedName(String wantedName) {
+        this.wantedName = wantedName;
     }
 }
