@@ -1,40 +1,15 @@
 package dev.m2t.dto.response;
 
+import dev.m2t.dto.UserDto;
+
 public class GenerateUserResponse {
-    private String username;
-    private String password;
-    private Double luckPercentage;
-    private Double balance;
+    private UserDto user;
 
-    public String getUsername() {
-        return username;
+    public UserDto getUser() {
+        return user;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Double getLuckPercentage() {
-        return luckPercentage;
-    }
-
-    public void setLuckPercentage(Double luckPercentage) {
-        this.luckPercentage = luckPercentage;
-    }
-
-    public Double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Double balance) {
-        this.balance = balance;
+    public void setUser(UserDto user) {
+        this.user = user;
     }
 }

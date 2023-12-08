@@ -1,36 +1,17 @@
-package dev.m2t.model;
+package dev.m2t.dto;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.security.identity.SecurityIdentity;
-import jakarta.persistence.*;
-
-
-@Entity
-@Table(name = "users")
-public class User extends PanacheEntity {
-
-    @Column(unique = true, nullable = false)
+public class UserDto {
     private String name;
-
-    @Column(unique = true, nullable = false)
     private String identityNumber;
-
-    @Column(nullable = false)
-    private Double balance;
-
-    @Column(nullable = false)
     private Double luckPercentage;
-
-    @Column(nullable = false)
+    private Double balance;
     private Double wantedDollars;
-
-    @Column(nullable = false)
     private String wantedName;
 
-    public User() {
+    public UserDto() {
     }
 
-    public User(String name, String identityNumber, Double balance, Double luckPercentage, Double wantedDollars, String wantedName) {
+    public UserDto(String name, String identityNumber, Double balance, Double luckPercentage, Double wantedDollars, String wantedName) {
         this.name = name;
         this.identityNumber = identityNumber;
         this.balance = balance;
@@ -43,8 +24,8 @@ public class User extends PanacheEntity {
         return name;
     }
 
-    public void setName(String username) {
-        this.name = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getIdentityNumber() {
@@ -55,20 +36,20 @@ public class User extends PanacheEntity {
         this.identityNumber = identityNumber;
     }
 
-    public Double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
-
     public Double getLuckPercentage() {
         return luckPercentage;
     }
 
     public void setLuckPercentage(Double luckPercentage) {
         this.luckPercentage = luckPercentage;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 
     public Double getWantedDollars() {
