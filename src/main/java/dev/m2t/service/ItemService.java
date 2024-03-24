@@ -3,8 +3,8 @@ package dev.m2t.service;
 import dev.m2t.dto.request.GenerateItemRequest;
 import dev.m2t.dto.request.UpdateItemRequest;
 import dev.m2t.model.Item;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +13,6 @@ import java.lang.reflect.Method;
 @ApplicationScoped
 public class ItemService {
 
-    @Transactional
     public Item createItem(GenerateItemRequest generateItemRequest) {
         Item item = new Item();
         item.setName(generateItemRequest.getName());
@@ -25,7 +24,6 @@ public class ItemService {
         return item;
     }
 
-    @Transactional
     public Item updateItem(UpdateItemRequest updateItemRequest) throws IllegalAccessException, InvocationTargetException {
         Item item = Item.findById(updateItemRequest.getId());
 
@@ -45,20 +43,13 @@ public class ItemService {
                         Method method = Item.class.getMethod(methodName, field.getType());
                         method.invoke(item, value);
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
+                        Log.error("Error updating item field: " + fieldName, e);
                     }
                 }
             }
         }
 
         item.persist();
-        return item;
-    }
-
-    @Transactional
-    public Item deleteItem(Long id) {
-        Item item = Item.findById(id);
-        item.delete();
         return item;
     }
 }

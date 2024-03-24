@@ -1,30 +1,22 @@
 package dev.m2t.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 
-@Entity
-@Table(name = "items")
-public class Item extends PanacheEntityBase {
-    @Id
-    private Long id;
-
-    @Column(unique = true, nullable = false)
+@MongoEntity(collection="items")
+public class Item extends PanacheMongoEntity {
+    private Long itemId;
     private String name;
     private Double startingPrice;
     private String photoUrl;
     private boolean sold;
 
-    public Long getId() {
-        return id;
+    public Long getItemId() {
+        return itemId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 
     public String getName() {

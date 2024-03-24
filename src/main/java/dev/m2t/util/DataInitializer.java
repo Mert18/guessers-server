@@ -5,41 +5,43 @@ import dev.m2t.model.Item;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
-import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Random;
 
 @ApplicationScoped
-public class FirstAuctionStarter {
-    @Inject
-    EntityManager entityManager;
+public class DataInitializer {
 
     void onStart(@Observes StartupEvent ev) throws InterruptedException {
         insertAdditionalData();
     }
 
-    @Transactional
+    // TODO: Remove this method in production
     void insertAdditionalData() throws InterruptedException {
-        // TODO: Remove this method in production
         Auction.deleteAll();
-        List<Item> items = Item.list("sold = false");
-        Random random = new Random();
-        int randomIndex = random.nextInt(items.size());
-        Item item = items.get(randomIndex);
+
+        Item item = new Item();
+        item.setItemId(1L);
+        item.setName("Item 1");
+        item.setStartingPrice(100.0);
+        item.setPhotoUrl("https://picsum.photos/300/300");
+        item.setSold(false);
+        Item.persist(item);
+
         Auction auction = new Auction();
-        auction.setItemId(item.getId());
         auction.setActive(true);
+        auction.setItemId(item.getItemId());
+        auction.setAuctionId(1L);
+        auction.setItemPhotoUrl(item.getPhotoUrl());
         auction.setCurrentBid(item.getStartingPrice());
+        auction.setItemName(item.getName());
         auction.setCurrentBidder("N/A");
-        auction.setAuctionEnd(System.currentTimeMillis() + 60000 * 30);
+        auction.setAuctionEnd(System.currentTimeMillis() + 60000 * 180);
         auction.setSold(false);
         Auction.persist(auction);
 
         System.out.println("-------------------------------------------------");
-        System.out.println("Inserting additional data...");
+        System.out.println("Data inserted...");
         System.out.println("-------------------------------------------------");
     }
 }

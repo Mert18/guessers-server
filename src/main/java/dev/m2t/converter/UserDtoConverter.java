@@ -1,4 +1,4 @@
-package dev.m2t.model.converter;
+package dev.m2t.converter;
 
 import dev.m2t.dto.UserDto;
 import dev.m2t.model.User;

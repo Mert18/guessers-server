@@ -1,14 +1,12 @@
 package dev.m2t.service;
 
+import dev.m2t.converter.UserDtoConverter;
 import dev.m2t.dto.UserDto;
 import dev.m2t.dto.request.GenerateUserRequest;
-import dev.m2t.exception.UsernameAlreadyExistsException;
 import dev.m2t.model.User;
-import dev.m2t.model.converter.UserDtoConverter;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -16,7 +14,6 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 @ApplicationScoped
@@ -43,7 +40,6 @@ public class KeycloakService {
     @Inject
     UserDtoConverter userDtoConverter;
 
-    @Transactional
     public UserDto generateUser(GenerateUserRequest user) {
         // Fill in user details
         String identityNumber = randomStringGenerator(true, 3);

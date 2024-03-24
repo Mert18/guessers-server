@@ -1,20 +1,13 @@
 package dev.m2t.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 
-@Entity
-@Table(name = "bids")
-public class Bid extends PanacheEntity {
-    @Column(name = "auction_id", nullable = false)
+@MongoEntity(collection="bids")
+public class Bid extends PanacheMongoEntity {
     private Long auctionId;
-    @Column(name = "item_id", nullable = false)
     private Long itemId;
-    @Column(name = "bidder", nullable = false)
     private String bidder;
-    @Column(name = "bid", nullable = false, precision = 2)
     private Double bid;
 
     public Long getAuctionId() {

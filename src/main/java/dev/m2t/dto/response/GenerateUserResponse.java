@@ -13,3 +13,4 @@ public class GenerateUserResponse {
         this.user = user;
     }
 }
+

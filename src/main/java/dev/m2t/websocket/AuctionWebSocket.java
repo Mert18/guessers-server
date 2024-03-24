@@ -1,13 +1,12 @@
-package dev.m2t;
+package dev.m2t.websocket;
 
 import dev.m2t.model.Bid;
 import dev.m2t.service.AuctionService;
 import io.quarkus.logging.Log;
-import io.smallrye.common.annotation.Blocking;
+import io.quarkus.panache.common.Sort;
 import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.transaction.Transactional;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
@@ -17,7 +16,6 @@ import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
-import java.util.logging.Logger;
 
 @ServerEndpoint("/auction")
 public class AuctionWebSocket {
@@ -76,9 +74,9 @@ public class AuctionWebSocket {
         }
     }
 
-    @Transactional
     public void bidValidator(Bid bid, Session session) throws IOException {
-        List<Bid> bids = Bid.list("SELECT b FROM Bid b WHERE b.auctionId = ?1 and b.itemId = ?2 ORDER BY b.bid DESC", bid.getAuctionId(), bid.getItemId());
+        List<Bid> bids = Bid.find("auctionId = ?1 and itemId = ?2", bid.getAuctionId(), bid.getItemId(), Sort.by("bid")).list();
+
         Log.info("There are " + bids.size() + " bids");
         Optional<Bid> highestBid = bids.stream().findFirst();
 

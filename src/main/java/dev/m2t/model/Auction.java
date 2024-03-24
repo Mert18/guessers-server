@@ -1,15 +1,14 @@
 package dev.m2t.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 
 import java.time.Duration;
 
-@Entity
-@Table(name = "auctions")
-public class Auction extends PanacheEntity {
+@MongoEntity(collection="auctions")
+public class Auction extends PanacheMongoEntity {
     private Long itemId;
+    private Long auctionId;
     private Double currentBid;
     private String currentBidder;
     private Boolean sold;
@@ -17,6 +16,8 @@ public class Auction extends PanacheEntity {
     private Duration auctionDuration;
     private String soldTo;
     private Boolean active;
+    private String itemPhotoUrl;
+    private String itemName;
 
     public Long getItemId() {
         return itemId;
@@ -24,6 +25,14 @@ public class Auction extends PanacheEntity {
 
     public void setItemId(Long itemId) {
         this.itemId = itemId;
+    }
+
+    public Long getAuctionId() {
+        return auctionId;
+    }
+
+    public void setAuctionId(Long auctionId) {
+        this.auctionId = auctionId;
     }
 
     public Double getCurrentBid() {
@@ -80,6 +89,22 @@ public class Auction extends PanacheEntity {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getItemPhotoUrl() {
+        return itemPhotoUrl;
+    }
+
+    public void setItemPhotoUrl(String itemPhotoUrl) {
+        this.itemPhotoUrl = itemPhotoUrl;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     @Override

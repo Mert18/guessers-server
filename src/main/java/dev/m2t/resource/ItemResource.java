@@ -1,12 +1,10 @@
 package dev.m2t.resource;
 
-import dev.m2t.dto.request.DeleteItemRequest;
 import dev.m2t.dto.request.GenerateItemRequest;
 import dev.m2t.dto.request.UpdateItemRequest;
 import dev.m2t.model.Item;
 import dev.m2t.service.ItemService;
 import io.quarkus.panache.common.Sort;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -36,15 +34,10 @@ public class ItemResource {
         return Response.ok(itemService.createItem(generateItemRequest)).build();
     }
 
+
     @PUT
     @Path("/update")
     public Response updateItem(UpdateItemRequest updateItemRequest) throws InvocationTargetException, IllegalAccessException {
         return Response.ok(itemService.updateItem(updateItemRequest)).build();
-    }
-
-    @DELETE
-    @Path("/delete/{id}")
-    public Response deleteItem(@PathParam("id") Long id) {
-        return Response.ok(itemService.deleteItem(id)).build();
     }
 }

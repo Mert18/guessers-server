@@ -1,30 +1,15 @@
 package dev.m2t.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.security.identity.SecurityIdentity;
-import jakarta.persistence.*;
+import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 
-
-@Entity
-@Table(name = "users")
-public class User extends PanacheEntity {
-
-    @Column(unique = true, nullable = false)
+@MongoEntity(collection="users")
+public class User extends PanacheMongoEntity {
     private String name;
-
-    @Column(unique = true, nullable = false)
     private String identityNumber;
-
-    @Column(nullable = false)
     private Double balance;
-
-    @Column(nullable = false)
     private Double luckPercentage;
-
-    @Column(nullable = false)
     private Double wantedDollars;
-
-    @Column(nullable = false)
     private String wantedName;
 
     public User() {
