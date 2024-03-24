@@ -5,24 +5,24 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 
 @MongoEntity(collection="bids")
 public class Bid extends PanacheMongoEntity {
-    private Long auctionId;
-    private Long itemId;
+    private String auctionId;
+    private String itemId;
     private String bidder;
     private Double bid;
 
-    public Long getAuctionId() {
+    public String getAuctionId() {
         return auctionId;
     }
 
-    public void setAuctionId(Long auctionId) {
+    public void setAuctionId(String auctionId) {
         this.auctionId = auctionId;
     }
 
-    public Long getItemId() {
+    public String getItemId() {
         return itemId;
     }
 
-    public void setItemId(Long itemId) {
+    public void setItemId(String itemId) {
         this.itemId = itemId;
     }
 

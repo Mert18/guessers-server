@@ -4,34 +4,36 @@ import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 
 @MongoEntity(collection="auctions")
 public class Auction extends PanacheMongoEntity {
-    private Long itemId;
-    private Long auctionId;
+    private String itemId;
+    private String auctionId;
     private Double currentBid;
     private String currentBidder;
     private Boolean sold;
-    private Long auctionEnd;
+    private LocalDateTime auctionEnd;
     private Duration auctionDuration;
     private String soldTo;
     private Boolean active;
     private String itemPhotoUrl;
     private String itemName;
+    private Boolean completed;
 
-    public Long getItemId() {
+    public String getItemId() {
         return itemId;
     }
 
-    public void setItemId(Long itemId) {
+    public void setItemId(String itemId) {
         this.itemId = itemId;
     }
 
-    public Long getAuctionId() {
+    public String getAuctionId() {
         return auctionId;
     }
 
-    public void setAuctionId(Long auctionId) {
+    public void setAuctionId(String auctionId) {
         this.auctionId = auctionId;
     }
 
@@ -59,11 +61,11 @@ public class Auction extends PanacheMongoEntity {
         this.sold = sold;
     }
 
-    public Long getAuctionEnd() {
+    public LocalDateTime getAuctionEnd() {
         return auctionEnd;
     }
 
-    public void setAuctionEnd(Long auctionEnd) {
+    public void setAuctionEnd(LocalDateTime auctionEnd) {
         this.auctionEnd = auctionEnd;
     }
 
@@ -105,6 +107,14 @@ public class Auction extends PanacheMongoEntity {
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
     }
 
     @Override

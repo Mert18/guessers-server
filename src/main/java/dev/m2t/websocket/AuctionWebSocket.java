@@ -1,5 +1,6 @@
 package dev.m2t.websocket;
 
+import dev.m2t.model.Auction;
 import dev.m2t.model.Bid;
 import dev.m2t.service.AuctionService;
 import io.quarkus.logging.Log;
@@ -42,7 +43,6 @@ public class AuctionWebSocket {
 
     @OnMessage
     public void onMessage(String message, Session session) {
-        Log.info("Message received: " + message);
         try {
             Bid bidMessage = jsonb.fromJson(message, Bid.class);
             Log.info("Bid received: " + bidMessage.getBid());
@@ -76,12 +76,11 @@ public class AuctionWebSocket {
 
     public void bidValidator(Bid bid, Session session) throws IOException {
         List<Bid> bids = Bid.find("auctionId = ?1 and itemId = ?2", bid.getAuctionId(), bid.getItemId(), Sort.by("bid")).list();
-
-        Log.info("There are " + bids.size() + " bids");
         Optional<Bid> highestBid = bids.stream().findFirst();
 
-        if (highestBid.isEmpty()) {
+        if (highestBid.isEmpty() || highestBid.get().getBid() < bid.getBid()) {
             Log.info("No bids received yet, the incoming bid is valid.");
+            bid.persist();
         } else if (bid.getAuctionId() == null || bid.getItemId() == null || bid.getBidder() == null || bid.getBid() == null) {
             Log.info("Invalid bid received, bid is null.");
             session.getBasicRemote().sendText("Invalid bid");

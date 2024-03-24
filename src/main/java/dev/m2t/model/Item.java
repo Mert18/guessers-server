@@ -5,17 +5,17 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 
 @MongoEntity(collection="items")
 public class Item extends PanacheMongoEntity {
-    private Long itemId;
+    private String itemId;
     private String name;
     private Double startingPrice;
     private String photoUrl;
     private boolean sold;
 
-    public Long getItemId() {
+    public String getItemId() {
         return itemId;
     }
 
-    public void setItemId(Long itemId) {
+    public void setItemId(String itemId) {
         this.itemId = itemId;
     }
 
