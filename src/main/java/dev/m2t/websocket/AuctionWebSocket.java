@@ -30,9 +30,11 @@ public class AuctionWebSocket {
     private Jsonb jsonb = JsonbBuilder.create();
 
     @OnOpen
-    public void onOpen(Session session) {
+    public void onOpen(Session session) throws IOException {
         Log.info("New session opened: " + session.getId());
+        Auction activeAuction = auctionService.getActiveAuction();
         sessions.add(session);
+        session.getBasicRemote().sendText("{\"type\": \"auctionUpdate\", \"data\": " + jsonb.toJson(activeAuction) + "}");
     }
 
     @OnClose
@@ -53,7 +55,7 @@ public class AuctionWebSocket {
                     updateAuctionState(bidMessage); // Update auction state and database
 
                     // Broadcast the updated bid to all clients
-                    String updatedBidMessage = jsonb.toJson(bidMessage);
+                    String updatedBidMessage = "{\"type\": \"bidUpdate\", \"data\": " + jsonb.toJson(bidMessage) + "}";
                     broadcastToAll(updatedBidMessage);
                 } catch (Exception e) {
                     Log.error("Manual assigned thread received exception: " + e.getMessage());
@@ -83,11 +85,11 @@ public class AuctionWebSocket {
             bid.persist();
         } else if (bid.getAuctionId() == null || bid.getItemId() == null || bid.getBidder() == null || bid.getBid() == null) {
             Log.info("Invalid bid received, bid is null.");
-            session.getBasicRemote().sendText("Invalid bid");
+            session.getBasicRemote().sendText("{\"type\": \"invalidBid\"}");
             throw new RuntimeException("Bid must contain auctionId, itemId, bidder, and bid");
         } else if (highestBid.isPresent() && bid.getBid() <= highestBid.get().getBid()) {
             Log.info("Invalid bid received, bid is lower than current highest bid.");
-            session.getBasicRemote().sendText("Invalid bid");
+            session.getBasicRemote().sendText("{\"type\": \"invalidBid\"}");
             throw new RuntimeException("Bid must be higher than the current highest bid");
         }
     }
