@@ -86,7 +86,7 @@ public class KeycloakService {
             result.append(characters.charAt(rnd.nextInt(characters.length())));
         }
 
-        return result.toString();
+        return result.toString().toLowerCase();
     }
 
     private UserRepresentation fillInUserDetails(String identityNumber, String generatedName) {

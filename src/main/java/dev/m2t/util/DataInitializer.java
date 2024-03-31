@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -16,7 +17,7 @@ public class DataInitializer {
     @Inject
     AuctionService auctionService;
 
-    void onStart(@Observes StartupEvent ev) throws InterruptedException {
+    void onStart(@Observes StartupEvent ev) throws InterruptedException, IOException {
         auctionService.handleNewAuction();
     }
 }

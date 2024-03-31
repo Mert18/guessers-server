@@ -28,8 +28,8 @@ public class User extends PanacheMongoEntity {
         return name;
     }
 
-    public void setName(String username) {
-        this.name = username;
+    public void setName(String name) {
+        this.name = name.toLowerCase();
     }
 
     public String getIdentityNumber() {
