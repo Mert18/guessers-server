@@ -32,8 +32,9 @@ public class AuctionWebSocket {
     @OnOpen
     public void onOpen(Session session) throws IOException {
         Log.info("New session opened: " + session.getId());
-        Auction activeAuction = auctionService.getActiveAuction();
         sessions.add(session);
+
+        Auction activeAuction = auctionService.getActiveAuction();
         session.getBasicRemote().sendText("{\"type\": \"auctionUpdate\", \"data\": " + jsonb.toJson(activeAuction) + "}");
     }
 
@@ -70,9 +71,9 @@ public class AuctionWebSocket {
         auctionService.handleReceivedBid(bidMessage);
     }
 
-    private void broadcastToAll(String message) throws IOException {
+    public void broadcastToAll(String message) throws IOException {
         for (Session s : sessions) {
-            s.getBasicRemote().sendText(message);
+            s.getBasicRemote(). sendText(message);
         }
     }
 
