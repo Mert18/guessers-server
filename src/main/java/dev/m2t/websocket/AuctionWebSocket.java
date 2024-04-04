@@ -48,7 +48,7 @@ public class AuctionWebSocket {
     public void onMessage(String message, Session session) {
         try {
             Bid bidMessage = jsonb.fromJson(message, Bid.class);
-            Log.info("Bid received: " + bidMessage.getBid());
+            Log.info("Bid received. Amount: " + bidMessage.getBid());
             executorService.execute(() -> {
                 try {
                     bidValidator(bidMessage, session); // This will throw an exception if the bid is invalid
@@ -82,7 +82,7 @@ public class AuctionWebSocket {
         Optional<Bid> highestBid = bids.stream().findFirst();
 
         if (highestBid.isEmpty() || highestBid.get().getBid() < bid.getBid()) {
-            Log.info("No bids received yet, the incoming bid is valid.");
+            Log.info("The incoming bid is valid.");
             bid.persist();
         } else if (bid.getAuctionId() == null || bid.getItemId() == null || bid.getBidder() == null || bid.getBid() == null) {
             Log.info("Invalid bid received, bid is null.");
