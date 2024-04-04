@@ -28,7 +28,7 @@ public class AuctionService {
 
     private Jsonb jsonb = JsonbBuilder.create();
 
-    @Scheduled(cron = "0 */1 * ? * *")
+    @Scheduled(cron = "0 */5 * ? * *")
     public void auctionHandler () throws IOException {
         Log.info("Auction handler run");
         Auction activeAuction = getActiveAuction();
@@ -37,12 +37,10 @@ public class AuctionService {
             handleNewAuction();
             return;
         }
-//        if(activeAuction.getAuctionEnd().isBefore(LocalDateTime.now())) {
             Log.info("Auction should end, ending the auction: " + activeAuction);
             handleAuctionEnd(activeAuction);
             Log.info("Creating a new auction...");
             handleNewAuction();
-//        }
     }
 
     private Item generateNewItem() {
@@ -103,13 +101,8 @@ public class AuctionService {
         }
 
         int currentMinute = current.getMinute();
-//        int remainingMinute = 5 - (currentMinute % 5);
-//        if(remainingMinute == 0) {
-//            return current.plusMinutes(5).withSecond(0);
-//        }
-
-        int remainingSeconds = 60 - current.getSecond();
-        return current.plusSeconds(remainingSeconds);
+        int remainingMinute = 5 - (currentMinute % 5);
+        return current.plusMinutes(remainingMinute).withSecond(0);
     }
 
     public Auction getActiveAuction() {
