@@ -54,7 +54,6 @@ public class AuctionService {
         return item;
     }
     public Auction handleNewAuction() throws IOException {
-        Log.info("Creating a new auction...");
         Auction activeAuction = getActiveAuction();
 
         if(activeAuction != null) {
@@ -150,6 +149,7 @@ public class AuctionService {
             auction.setSold(true);
             auction.setActive(false);
             item.setSold(true);
+            item.setSoldTo(user.getName());
             Log.info("Auction ended. Item is sold to " + user.getName() + " for " + auction.getCurrentBid());
 
         }

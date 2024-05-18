@@ -48,6 +48,7 @@ public class AuctionWebSocket {
     @OnMessage
     public void onMessage(String message, Session session) {
         Bid bidMessage = jsonb.fromJson(message, Bid.class);
+
         Log.info("Bid received:" + bidMessage.getBidder() + " " + bidMessage.getBid() + " " + bidMessage.getItemId() + " " + bidMessage.getAuctionId());
         executorService.execute(() -> {
             try {
@@ -76,7 +77,7 @@ public class AuctionWebSocket {
 
     public void broadcastToAll(String message) throws IOException {
         for (Session s : sessions) {
-            s.getBasicRemote(). sendText(message);
+            s.getBasicRemote().sendText(message);
         }
     }
 
