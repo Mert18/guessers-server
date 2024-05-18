@@ -150,6 +150,7 @@ public class AuctionService {
             auction.setActive(false);
             item.setSold(true);
             item.setSoldTo(user.getName());
+            item.setSoldPrice(auction.getCurrentBid());
             Log.info("Auction ended. Item is sold to " + user.getName() + " for " + auction.getCurrentBid());
 
         }
