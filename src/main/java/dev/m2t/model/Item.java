@@ -11,6 +11,7 @@ public class Item extends PanacheMongoEntity {
     private String photoUrl;
     private boolean sold;
     private String soldTo;
+    private Double soldPrice;
 
     public String getItemId() {
         return itemId;
@@ -58,5 +59,13 @@ public class Item extends PanacheMongoEntity {
 
     public void setSoldTo(String soldTo) {
         this.soldTo = soldTo;
+    }
+
+    public Double getSoldPrice() {
+        return soldPrice;
+    }
+
+    public void setSoldPrice(Double soldPrice) {
+        this.soldPrice = soldPrice;
     }
 }

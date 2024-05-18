@@ -42,6 +42,7 @@ public class AuctionWebSocket {
     @OnClose
     public void onClose(Session session) {
         Log.info("Session closed: " + session.getId());
+        // TODO: send a message to all clients that the session has been closed
         sessions.remove(session);
     }
 
