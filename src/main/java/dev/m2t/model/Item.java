@@ -4,12 +4,13 @@ import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 
 @MongoEntity(collection="items")
-    public class Item extends PanacheMongoEntity {
-        private String itemId;
-        private String name;
-        private Double startingPrice;
-        private String photoUrl;
-        private boolean sold;
+public class Item extends PanacheMongoEntity {
+    private String itemId;
+    private String name;
+    private Double startingPrice;
+    private String photoUrl;
+    private boolean sold;
+    private String soldTo;
 
     public String getItemId() {
         return itemId;
@@ -49,5 +50,13 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 
     public void setSold(boolean sold) {
         this.sold = sold;
+    }
+
+    public String getSoldTo() {
+        return soldTo;
+    }
+
+    public void setSoldTo(String soldTo) {
+        this.soldTo = soldTo;
     }
 }
