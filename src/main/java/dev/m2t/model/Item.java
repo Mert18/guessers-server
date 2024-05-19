@@ -3,6 +3,8 @@ package dev.m2t.model;
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 
+import java.time.LocalDateTime;
+
 @MongoEntity(collection="items")
 public class Item extends PanacheMongoEntity {
     private String itemId;
@@ -12,6 +14,7 @@ public class Item extends PanacheMongoEntity {
     private boolean sold;
     private String soldTo;
     private Double soldPrice;
+    private LocalDateTime soldDate;
 
     public String getItemId() {
         return itemId;
@@ -67,5 +70,13 @@ public class Item extends PanacheMongoEntity {
 
     public void setSoldPrice(Double soldPrice) {
         this.soldPrice = soldPrice;
+    }
+
+    public LocalDateTime getSoldDate() {
+        return soldDate;
+    }
+
+    public void setSoldDate(LocalDateTime soldDate) {
+        this.soldDate = soldDate;
     }
 }
