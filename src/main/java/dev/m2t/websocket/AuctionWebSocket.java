@@ -3,16 +3,14 @@ package dev.m2t.websocket;
 import dev.m2t.exception.InvalidBidException;
 import dev.m2t.model.Auction;
 import dev.m2t.model.Bid;
+import dev.m2t.model.User;
 import dev.m2t.service.AuctionService;
 import io.quarkus.logging.Log;
 import io.quarkus.panache.common.Sort;
 import jakarta.inject.Inject;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.websocket.OnClose;
-import jakarta.websocket.OnMessage;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.Session;
+import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 
 import java.io.IOException;
@@ -40,10 +38,17 @@ public class AuctionWebSocket {
     }
 
     @OnClose
-    public void onClose(Session session) {
+    public void onClose(Session session) throws IOException {
         Log.info("Session closed: " + session.getId());
-        // TODO: send a message to all clients that the session has been closed
         sessions.remove(session);
+        session.getBasicRemote().sendText("{\"type\": \"sessionClosed\"}");
+    }
+
+    @OnError
+    public void onError(Session session, Throwable throwable) throws IOException {
+        session.getBasicRemote().sendText("{\"type\": \"sessionClosed\"}");
+        System.err.println("Channel closed unexpectedly: " + throwable.getMessage());
+        throwable.printStackTrace();
     }
 
     @OnMessage
@@ -84,6 +89,11 @@ public class AuctionWebSocket {
 
     public void bidValidator(Bid bid) throws IOException {
         List<Bid> bids = Bid.find("auctionId = ?1 and itemId = ?2", bid.getAuctionId(), bid.getItemId()).list();
+        User user = User.find("name = ?1", bid.getBidder()).firstResult();
+        if(user.getBalance() < bid.getBid()) {
+            Log.info("Invalid bid received, bidder does not have enough balance.");
+            throw new InvalidBidException("Bidder does not have enough balance.");
+        }
         Log.info("How many bids: " + bids.size());
         if(bids.isEmpty()) {
             Log.info("The incoming bid is valid.");
