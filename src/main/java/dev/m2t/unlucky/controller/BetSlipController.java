@@ -24,12 +24,18 @@ public class BetSlipController {
 
     @PostMapping
     public ResponseEntity<BaseResponse> createBetSlip(@RequestBody CreateBetSlipRequest createBetSlipRequest, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(betSlipService.createBetSlip(createBetSlipRequest, username));
     }
 
-    @GetMapping("/list-public")
+    @PostMapping("/list-public-bet-slips")
     public ResponseEntity<BaseResponse> getPublicBetSlips(@RequestBody Pageable pageable) {
         return ResponseEntity.ok(betSlipService.getPublicBetSlips(pageable));
+    }
+
+    @PostMapping("/list-user-bet-slips")
+    public ResponseEntity<BaseResponse> getUserBetSlips(@RequestBody Pageable pageable, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username");
+        return ResponseEntity.ok(betSlipService.getUserBetSlips(pageable, username));
     }
 }

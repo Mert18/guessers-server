@@ -12,10 +12,10 @@ public class BetSlip {
     @Id
     private String id;
     private List<Bet> bets;
-    private User user;
+    private String username;
     private LocalDateTime date;
     private Double totalOdds;
-    private Double stake;
+    private Double stakes;
     private Boolean won;
     private SlipStatusEnum status;
     private Boolean isPublic;
@@ -24,12 +24,12 @@ public class BetSlip {
 
     }
 
-    public BetSlip(List<Bet> bets, User user, LocalDateTime date, Double totalOdds, Double stake, Boolean won, SlipStatusEnum status, Boolean isPublic) {
+    public BetSlip(List<Bet> bets, String username, LocalDateTime date, Double totalOdds, Double stakes, Boolean won, SlipStatusEnum status, Boolean isPublic) {
         this.bets = bets;
-        this.user = user;
+        this.username = username;
         this.date = date;
         this.totalOdds = totalOdds;
-        this.stake = stake;
+        this.stakes = stakes;
         this.status = status;
         this.won = won;
         this.isPublic = isPublic;
@@ -43,12 +43,12 @@ public class BetSlip {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public LocalDateTime getDate() {
@@ -67,12 +67,12 @@ public class BetSlip {
         this.totalOdds = totalOdds;
     }
 
-    public Double getStake() {
-        return stake;
+    public Double getStakes() {
+        return stakes;
     }
 
-    public void setStake(Double stake) {
-        this.stake = stake;
+    public void setStakes(Double stakes) {
+        this.stakes = stakes;
     }
 
     public Boolean getWon() {

@@ -7,4 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface BetSlipPagingRepository extends PagingAndSortingRepository<BetSlip, String> {
     Page<BetSlip> findAllByIsPublic(boolean isPublic, Pageable pageable);
+
+    Page<BetSlip> findAllByUsername(String username, Pageable pageable);
 }
