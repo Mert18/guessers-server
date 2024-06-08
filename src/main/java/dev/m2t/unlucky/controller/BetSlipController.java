@@ -7,11 +7,14 @@ import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/bet-slips")
+@CrossOrigin("*")
 public class BetSlipController {
     private final BetSlipService betSlipService;
 
@@ -20,9 +23,9 @@ public class BetSlipController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse> createBetSlip(@RequestBody CreateBetSlipRequest createBetSlipRequest) {
-        KeycloakPrincipal<KeycloakSecurityContext> principal = (KeycloakPrincipal<KeycloakSecurityContext>) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(betSlipService.createBetSlip(createBetSlipRequest));
+    public ResponseEntity<BaseResponse> createBetSlip(@RequestBody CreateBetSlipRequest createBetSlipRequest, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        return ResponseEntity.ok(betSlipService.createBetSlip(createBetSlipRequest, username));
     }
 
     @GetMapping("/list-public")

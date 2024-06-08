@@ -37,7 +37,6 @@ public class SecurityConfig {
             .authorizeHttpRequests((authorize) -> authorize
                     .requestMatchers("/public").permitAll()
                     .requestMatchers("/api/authentication/**").permitAll()
-                    .requestMatchers("/api/admin/**").permitAll() // TODO: remove this line
                     .anyRequest().authenticated()
             )
             .oauth2ResourceServer((oauth2) -> oauth2

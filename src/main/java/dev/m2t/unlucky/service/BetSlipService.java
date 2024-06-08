@@ -20,7 +20,7 @@ public class BetSlipService {
         this.betSlipPagingRepository = betSlipPagingRepository;
     }
 
-    public BaseResponse createBetSlip(CreateBetSlipRequest createBetSlipRequest) {
+    public BaseResponse createBetSlip(CreateBetSlipRequest createBetSlipRequest, String username) {
         return null;
     }
 
