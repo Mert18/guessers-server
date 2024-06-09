@@ -26,4 +26,11 @@ public class UserController {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
         return ResponseEntity.ok(userService.getUserBalance(username));
     }
+
+    @GetMapping("/invites")
+    public ResponseEntity<BaseResponse> getUserInvites(@AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        return ResponseEntity.ok(userService.getUserInvites(username));
+    }
+
 }

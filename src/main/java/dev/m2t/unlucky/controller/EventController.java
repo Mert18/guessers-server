@@ -31,4 +31,6 @@ public class EventController {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         return ResponseEntity.ok(eventService.listEvents(roomId, username, pageable));
     }
+
+    // TODO: list betslips for the event
 }

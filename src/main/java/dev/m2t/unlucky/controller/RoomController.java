@@ -26,16 +26,16 @@ public class RoomController {
         return ResponseEntity.ok(roomService.createRoom(createRoomRequest, username));
     }
 
-    @PostMapping("/join")
-    public ResponseEntity<BaseResponse> joinRoom(@RequestBody JoinRoomRequest joinRoomRequest, @AuthenticationPrincipal Jwt jwt) {
+    @GetMapping("/{roomId}/accept")
+    public ResponseEntity<BaseResponse> acceptRoomInvite(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-        return ResponseEntity.ok(roomService.joinRoom(joinRoomRequest, username));
+        return ResponseEntity.ok(roomService.acceptRoomInvite(roomId, username));
     }
 
-    @PostMapping("/reject")
-    public ResponseEntity<BaseResponse> rejectRoom(@RequestBody JoinRoomRequest joinRoomRequest, @AuthenticationPrincipal Jwt jwt) {
+    @GetMapping("/{roomId}/reject")
+    public ResponseEntity<BaseResponse> rejectRoomInvite(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-        return ResponseEntity.ok(roomService.rejectRoom(joinRoomRequest, username));
+        return ResponseEntity.ok(roomService.rejectRoomInvite(roomId, username));
     }
 
     @PostMapping("/leave")

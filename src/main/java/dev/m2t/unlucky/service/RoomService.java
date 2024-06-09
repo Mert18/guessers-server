@@ -42,17 +42,22 @@ public class RoomService {
         return new BaseResponse("Room "+ savedRoom.getName() + " created successfully.", true,  true, savedRoom);
     }
 
-    public BaseResponse joinRoom(JoinRoomRequest joinRoomRequest, String username) {
-        Room room = roomRepository.findById(joinRoomRequest.getRoomId()).orElse(null);
+    public BaseResponse acceptRoomInvite(String roomId, String username) {
+        User user = userRepository.findByUsername(username);
+        Room room = roomRepository.findById(roomId).orElse(null);
         if(room == null) {
-            return new BaseResponse("Room with id "+ joinRoomRequest.getRoomId() + " does not exist.", false, false, null);
+            return new BaseResponse("Room with id "+ roomId + " does not exist.", false, false, null);
         }else if(room.getUsers().contains(username)){
             return new BaseResponse("You are already a member of this room.", false, false);
         }else if(!room.getPendingUserInvites().contains(username)) {
             return new BaseResponse("You are not invited to this room.", false, false);
+        }else if (user == null) {
+            return new BaseResponse("User with username "+ username + " does not exist.", false, false, null);
         }else {
             room.getUsers().add(username);
             room.getPendingUserInvites().remove(username);
+            user.getPendingRoomInvites().remove(roomId);
+            userRepository.save(user);
             Room savedRoom = roomRepository.save(room);
             return new BaseResponse("You have joined the room successfully.", true, false, savedRoom);
         }
@@ -94,7 +99,10 @@ public class RoomService {
             return new BaseResponse("User is already a member of this room.", false, false);
         }else if(room.getPendingUserInvites().contains(inviteUserRequest.getUsername())) {
             return new BaseResponse("User is already invited to this room.", false, false);
-        }else {
+        }else if(user == null) {
+            return new BaseResponse("User with username "+ inviteUserRequest.getUsername() + " does not exist.", false, false, null);
+        }
+        else {
             room.getPendingUserInvites().add(inviteUserRequest.getUsername());
             user.getPendingRoomInvites().add(inviteUserRequest.getRoomId());
             userRepository.save(user);
@@ -103,16 +111,16 @@ public class RoomService {
         }
     }
 
-    public BaseResponse rejectRoom(JoinRoomRequest joinRoomRequest, String username) {
-        Room room = roomRepository.findById(joinRoomRequest.getRoomId()).orElse(null);
+    public BaseResponse rejectRoomInvite(String roomId, String username) {
+        Room room = roomRepository.findById(roomId).orElse(null);
         User user = userRepository.findByUsername(username);
         if(room == null) {
-            return new BaseResponse("Room with id "+ joinRoomRequest.getRoomId() + " does not exist.", false, false, null);
+            return new BaseResponse("Room with id "+ roomId + " does not exist.", false, false, null);
         }else if(!room.getPendingUserInvites().contains(username)){
             return new BaseResponse("You are not invited to this room.", false, false);
         }else {
             room.getPendingUserInvites().remove(username);
-            user.getPendingRoomInvites().remove(joinRoomRequest.getRoomId());
+            user.getPendingRoomInvites().remove(roomId);
             userRepository.save(user);
             Room savedRoom = roomRepository.save(room);
             return new BaseResponse("Room invite rejected successfully.", true, false, savedRoom);
