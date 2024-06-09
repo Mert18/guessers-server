@@ -8,8 +8,10 @@ import dev.m2t.unlucky.dto.response.IsRoomOwnerResponse;
 import dev.m2t.unlucky.dto.response.ListRoomsResponse;
 import dev.m2t.unlucky.model.Room;
 import dev.m2t.unlucky.model.User;
+import dev.m2t.unlucky.repository.BetSlipPagingRepository;
 import dev.m2t.unlucky.repository.RoomRepository;
 import dev.m2t.unlucky.repository.UserRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +20,12 @@ import java.util.List;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final BetSlipPagingRepository betSlipPagingRepository;
 
-    public RoomService(RoomRepository roomRepository, UserRepository userRepository) {
+    public RoomService(RoomRepository roomRepository, UserRepository userRepository, BetSlipPagingRepository betSlipPagingRepository) {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
+        this.betSlipPagingRepository = betSlipPagingRepository;
     }
 
     public BaseResponse createRoom(CreateRoomRequest createRoomRequest, String owner) {
@@ -144,6 +148,17 @@ public class RoomService {
             return new BaseResponse("You are the owner of this room.", true, false, new IsRoomOwnerResponse(true));
         }else {
             return new BaseResponse("You are not the owner of this room.", false, false, new IsRoomOwnerResponse(false));
+        }
+    }
+
+    public BaseResponse listRoomBetSlips(String roomId, String username, Pageable pageable) {
+        Room room = roomRepository.findById(roomId).orElse(null);
+        if(room == null) {
+            return new BaseResponse("Room with id "+ roomId + " does not exist.", false, false, null);
+        }else if(!room.getUsers().contains(username)){
+            return new BaseResponse("You are not a member of this room.", false, false);
+        } else {
+            return new BaseResponse("Bet slips fetched successfully.", true, false, betSlipPagingRepository.findAllByRoomId(roomId, pageable));
         }
     }
 }

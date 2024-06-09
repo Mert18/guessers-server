@@ -10,8 +10,8 @@ import dev.m2t.unlucky.model.enums.EventStatusEnum;
 import dev.m2t.unlucky.repository.EventPagingRepository;
 import dev.m2t.unlucky.repository.EventRepository;
 import dev.m2t.unlucky.repository.RoomRepository;
+import dev.m2t.unlucky.repository.UserRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +22,13 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventPagingRepository eventPagingRepository;
     private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
 
-    public EventService(EventRepository eventRepository, EventPagingRepository eventPagingRepository, RoomRepository roomRepository) {
+    public EventService(EventRepository eventRepository, EventPagingRepository eventPagingRepository, RoomRepository roomRepository, UserRepository userRepository) {
         this.eventRepository = eventRepository;
         this.eventPagingRepository = eventPagingRepository;
         this.roomRepository = roomRepository;
+        this.userRepository = userRepository;
     }
 
     public BaseResponse createEvent(CreateEventRequest createEventRequest, String username) {

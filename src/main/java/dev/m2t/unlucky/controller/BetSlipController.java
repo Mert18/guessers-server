@@ -31,10 +31,4 @@ public class BetSlipController {
         String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(betSlipService.listUserBetSlips(pageable, username));
     }
-
-    @PostMapping("/list/room")
-    public ResponseEntity<BaseResponse> listRoomBetSlips(@RequestBody ListRoomBetSlipsRequest listRoomBetSlipsRequest, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(betSlipService.listRoomBetSlips(listRoomBetSlipsRequest, username));
-    }
 }

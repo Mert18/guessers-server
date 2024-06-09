@@ -5,6 +5,8 @@ import dev.m2t.unlucky.dto.request.CreateRoomRequest;
 import dev.m2t.unlucky.dto.request.InviteUserRequest;
 import dev.m2t.unlucky.dto.request.JoinRoomRequest;
 import dev.m2t.unlucky.service.RoomService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -60,6 +62,13 @@ public class RoomController {
     public ResponseEntity<BaseResponse> listSelfRooms(@AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
         return ResponseEntity.ok(roomService.listSelfRooms(username));
+    }
+
+    @GetMapping("/{roomId}/list/bet-slips")
+    public ResponseEntity<BaseResponse> listBetSlips(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt, @RequestParam int page, @RequestParam int size) {
+        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(roomService.listRoomBetSlips(roomId, username, pageable));
     }
 
     @GetMapping("/{roomId}/owner")

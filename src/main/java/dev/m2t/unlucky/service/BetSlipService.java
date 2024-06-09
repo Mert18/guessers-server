@@ -4,10 +4,12 @@ import dev.m2t.unlucky.dto.BaseResponse;
 import dev.m2t.unlucky.dto.request.CreateBetSlipRequest;
 import dev.m2t.unlucky.dto.request.ListRoomBetSlipsRequest;
 import dev.m2t.unlucky.model.BetSlip;
+import dev.m2t.unlucky.model.Event;
 import dev.m2t.unlucky.model.User;
 import dev.m2t.unlucky.model.enums.SlipStatusEnum;
 import dev.m2t.unlucky.repository.BetSlipPagingRepository;
 import dev.m2t.unlucky.repository.BetSlipRepository;
+import dev.m2t.unlucky.repository.EventRepository;
 import dev.m2t.unlucky.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +51,7 @@ public class BetSlipService {
         betSlip.setRoomId(createBetSlipRequest.getRoomId());
 
         BetSlip savedBetSlip = betSlipRepository.save(betSlip);
+
         user.setBalance(user.getBalance() - createBetSlipRequest.getStakes());
         userRepository.save(user);
         logger.info("Bet slip with id {} created successfully.", savedBetSlip.getId());
@@ -57,10 +60,5 @@ public class BetSlipService {
 
     public BaseResponse listUserBetSlips(Pageable pageable, String username) {
         return new BaseResponse("Bet slips retrieved successfully", true, false, betSlipPagingRepository.findAllByUsername(username, pageable));
-    }
-
-    public BaseResponse listRoomBetSlips(ListRoomBetSlipsRequest listRoomBetSlipsRequest, String username) {
-        Page<BetSlip> roomBetSlips = betSlipPagingRepository.findAllByRoomId(listRoomBetSlipsRequest.getRoomId(), listRoomBetSlipsRequest.getPageable());
-        return new BaseResponse("Bet slips retrieved successfully", true, false, roomBetSlips);
     }
 }
