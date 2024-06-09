@@ -12,17 +12,20 @@ public class Event {
     @Id
     private String id;
     private String name;
-    private LocalDateTime date;
+    private String description;
+    private String roomId;
     private List<EventOption> options;
     private EventStatusEnum status;
+    private LocalDateTime createdOn = LocalDateTime.now();
 
     public Event() {
 
     }
 
-    public Event(String name, LocalDateTime date, List<EventOption> options, EventStatusEnum status) {
+    public Event(String name, String description, String roomId, List<EventOption> options, EventStatusEnum status) {
         this.name = name;
-        this.date = date;
+        this.description = description;
+        this.roomId = roomId;
         this.options = options;
         this.status = status;
     }
@@ -43,14 +46,6 @@ public class Event {
         this.name = name;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
     public List<EventOption> getOptions() {
         return options;
     }
@@ -65,5 +60,21 @@ public class Event {
 
     public void setStatus(EventStatusEnum status) {
         this.status = status;
+    }
+
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

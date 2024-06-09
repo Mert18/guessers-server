@@ -7,17 +7,17 @@ import java.util.List;
 public class CreateBetSlipRequest {
     private List<Bet> bets;
     private Double stakes;
-    private Boolean isPublic;
     private Double totalOdds;
+    private String roomId;
 
     public CreateBetSlipRequest() {
     }
 
-    public CreateBetSlipRequest(List<Bet> bets, Double stakes, Boolean isPublic, Double totalOdds) {
+    public CreateBetSlipRequest(List<Bet> bets, Double stakes,  Double totalOdds, String roomId) {
         this.bets = bets;
         this.stakes = stakes;
-        this.isPublic = isPublic;
         this.totalOdds = totalOdds;
+        this.roomId = roomId;
     }
 
     public List<Bet> getBets() {
@@ -36,19 +36,19 @@ public class CreateBetSlipRequest {
         this.stakes = stakes;
     }
 
-    public Boolean getPublic() {
-        return isPublic;
-    }
-
-    public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
-    }
-
     public Double getTotalOdds() {
         return totalOdds;
     }
 
     public void setTotalOdds(Double totalOdds) {
         this.totalOdds = totalOdds;
+    }
+
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
     }
 }

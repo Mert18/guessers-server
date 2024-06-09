@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface EventPagingRepository extends PagingAndSortingRepository<Event, String> {
-    Page<Event> findByStatus(EventStatusEnum status, Pageable pageable);
+    Page<Event> findByStatusAndRoomId(EventStatusEnum status, String roomId, Pageable pageable);
 }

@@ -18,13 +18,13 @@ public class BetSlip {
     private Double stakes;
     private Boolean won;
     private SlipStatusEnum status;
-    private Boolean isPublic;
+    private String roomId;
 
     public BetSlip() {
 
     }
 
-    public BetSlip(List<Bet> bets, String username, LocalDateTime date, Double totalOdds, Double stakes, Boolean won, SlipStatusEnum status, Boolean isPublic) {
+    public BetSlip(List<Bet> bets, String username, LocalDateTime date, Double totalOdds, Double stakes, Boolean won, SlipStatusEnum status, String roomId) {
         this.bets = bets;
         this.username = username;
         this.date = date;
@@ -32,7 +32,7 @@ public class BetSlip {
         this.stakes = stakes;
         this.status = status;
         this.won = won;
-        this.isPublic = isPublic;
+        this.roomId = roomId;
     }
 
     public String getId() {
@@ -99,11 +99,11 @@ public class BetSlip {
         this.status = status;
     }
 
-    public Boolean getPublic() {
-        return isPublic;
+    public String getRoomId() {
+        return roomId;
     }
 
-    public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
     }
 }
