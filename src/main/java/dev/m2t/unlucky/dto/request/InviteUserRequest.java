@@ -1,23 +1,16 @@
 package dev.m2t.unlucky.dto.request;
 
+import jakarta.validation.constraints.NotNull;
+
 public class InviteUserRequest {
-    private String roomId;
+    @NotNull(message = "Username cannot be null")
     private String username;
 
     public InviteUserRequest() {
     }
 
-    public InviteUserRequest(String roomId, String username) {
-        this.roomId = roomId;
+    public InviteUserRequest(String username) {
         this.username = username;
-    }
-
-    public String getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
     }
 
     public String getUsername() {

@@ -3,6 +3,7 @@ package dev.m2t.unlucky.controller;
 import dev.m2t.unlucky.dto.BaseResponse;
 import dev.m2t.unlucky.dto.request.CreateUserRequest;
 import dev.m2t.unlucky.service.AuthenticationService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<BaseResponse> createUser(@RequestBody CreateUserRequest createUserRequest) {
+    public ResponseEntity<BaseResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
         return ResponseEntity.ok(authenticationService.createUser(createUserRequest));
     }
 }

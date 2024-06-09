@@ -4,6 +4,7 @@ import dev.m2t.unlucky.dto.BaseResponse;
 import dev.m2t.unlucky.dto.request.CreateBetSlipRequest;
 import dev.m2t.unlucky.dto.request.ListRoomBetSlipsRequest;
 import dev.m2t.unlucky.service.BetSlipService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +22,7 @@ public class BetSlipController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<BaseResponse> createBetSlip(@RequestBody CreateBetSlipRequest createBetSlipRequest, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<BaseResponse> createBetSlip(@Valid @RequestBody CreateBetSlipRequest createBetSlipRequest, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(betSlipService.createBetSlip(createBetSlipRequest, username));
     }
