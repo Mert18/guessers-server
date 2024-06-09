@@ -1,13 +1,19 @@
 package dev.m2t.unlucky.dto.request;
 
 import dev.m2t.unlucky.model.Bet;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
 public class CreateBetSlipRequest {
+
+    @NotNull(message = "Bets cannot be null")
     private List<Bet> bets;
+    @NotNull(message = "Stakes cannot be null")
     private Double stakes;
+    @NotNull(message = "Total odds cannot be null")
     private Double totalOdds;
+    @NotNull(message = "Room id cannot be null")
     private String roomId;
 
     public CreateBetSlipRequest() {

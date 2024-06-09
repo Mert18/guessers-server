@@ -3,6 +3,7 @@ package dev.m2t.unlucky.controller;
 import dev.m2t.unlucky.dto.BaseResponse;
 import dev.m2t.unlucky.dto.request.CreateEventRequest;
 import dev.m2t.unlucky.service.EventService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,10 +20,10 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<BaseResponse> createEvent(@RequestBody CreateEventRequest createEventRequest, @AuthenticationPrincipal Jwt jwt) {
+    @PostMapping("/create/{roomId}")
+    public ResponseEntity<BaseResponse> createEvent(@Valid @RequestBody CreateEventRequest createEventRequest, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-        return ResponseEntity.ok(eventService.createEvent(createEventRequest, username));
+        return ResponseEntity.ok(eventService.createEvent(createEventRequest, username, roomId));
     }
 
     @PostMapping("/list/{roomId}")

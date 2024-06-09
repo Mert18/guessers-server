@@ -31,10 +31,10 @@ public class EventService {
         this.userRepository = userRepository;
     }
 
-    public BaseResponse createEvent(CreateEventRequest createEventRequest, String username) {
-        Optional<Room> room = roomRepository.findById(createEventRequest.getRoomId());
+    public BaseResponse createEvent(CreateEventRequest createEventRequest, String username, String roomId) {
+        Optional<Room> room = roomRepository.findById(roomId);
         if(room.isEmpty()) {
-            throw new RoomNotExistsException("Room with id "+ createEventRequest.getRoomId() + " does not exist.");
+            throw new RoomNotExistsException("Room with id "+ roomId + " does not exist.");
         }else if (!room.get().getOwner().equals(username)){
             throw new UnauthorizedException("You are not the owner of this room. Only the owner can create events.");
         }else {
@@ -42,7 +42,7 @@ public class EventService {
             for(int i = 0; i< createEventRequest.getOptions().size(); i++) {
                 createEventRequest.getOptions().get(i).setOptionNumber(i);
             }
-            Event event = new Event(createEventRequest.getName(), createEventRequest.getDescription(), createEventRequest.getRoomId(), createEventRequest.getOptions(), EventStatusEnum.NOT_STARTED);
+            Event event = new Event(createEventRequest.getName(), createEventRequest.getDescription(), roomId, createEventRequest.getOptions(), EventStatusEnum.NOT_STARTED);
             Event savedEvent = eventRepository.save(event);
             return new BaseResponse("Event created successfully.", true, true, savedEvent);
         }

@@ -92,11 +92,11 @@ public class RoomService {
         }
     }
 
-    public BaseResponse inviteUser(InviteUserRequest inviteUserRequest, String username) {
-        Room room = roomRepository.findById(inviteUserRequest.getRoomId()).orElse(null);
+    public BaseResponse inviteUser(InviteUserRequest inviteUserRequest, String username, String roomId) {
+        Room room = roomRepository.findById(roomId).orElse(null);
         User user = userRepository.findByUsername(inviteUserRequest.getUsername());
         if(room == null) {
-            return new BaseResponse("Room with id "+ inviteUserRequest.getRoomId() + " does not exist.", false, false, null);
+            return new BaseResponse("Room with id "+ roomId + " does not exist.", false, false, null);
         }else if(!room.getOwner().equals(username)){
             return new BaseResponse("You are not the owner of this room. Only the owner can invite users.", false, false);
         }else if(room.getUsers().contains(inviteUserRequest.getUsername())) {
@@ -108,7 +108,7 @@ public class RoomService {
         }
         else {
             room.getPendingUserInvites().add(inviteUserRequest.getUsername());
-            user.getPendingRoomInvites().add(inviteUserRequest.getRoomId());
+            user.getPendingRoomInvites().add(roomId);
             userRepository.save(user);
             Room savedRoom = roomRepository.save(room);
             return new BaseResponse("User invited successfully.", true, false, savedRoom);
@@ -159,6 +159,20 @@ public class RoomService {
             return new BaseResponse("You are not a member of this room.", false, false);
         } else {
             return new BaseResponse("Bet slips fetched successfully.", true, false, betSlipPagingRepository.findAllByRoomId(roomId, pageable));
+        }
+    }
+
+    public BaseResponse getRoom(String roomId, String username) {
+        User user = userRepository.findByUsername(username);
+        Room room = roomRepository.findById(roomId).orElse(null);
+        if(room == null) {
+            return new BaseResponse("Room with id "+ roomId + " does not exist.", false, false, null);
+        }else if(!room.getUsers().contains(username)){
+            return new BaseResponse("You are not a member of this room.", false, false);
+        }else if(user == null) {
+            return new BaseResponse("User with username "+ username + " does not exist.", false, false, null);
+        } else {
+            return new BaseResponse("Room fetched successfully.", true, false, room);
         }
     }
 }
