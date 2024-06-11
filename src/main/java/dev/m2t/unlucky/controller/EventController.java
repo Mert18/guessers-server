@@ -2,6 +2,7 @@ package dev.m2t.unlucky.controller;
 
 import dev.m2t.unlucky.dto.BaseResponse;
 import dev.m2t.unlucky.dto.request.CreateEventRequest;
+import dev.m2t.unlucky.dto.request.FinalizeEventRequest;
 import dev.m2t.unlucky.service.EventService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
@@ -31,5 +32,17 @@ public class EventController {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         return ResponseEntity.ok(eventService.listEvents(roomId, username, pageable));
+    }
+
+    @PostMapping("/finalize")
+    public ResponseEntity<BaseResponse> finalizeEvent(@RequestBody FinalizeEventRequest finalizeEventRequest, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        return ResponseEntity.ok(eventService.finalizeEvent(finalizeEventRequest, username));
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<BaseResponse> getEvent(@PathVariable String eventId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        return ResponseEntity.ok(eventService.getEvent(eventId, username));
     }
 }

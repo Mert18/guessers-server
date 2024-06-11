@@ -2,32 +2,26 @@ package dev.m2t.unlucky.model.enums;
 
 public enum SlipStatusEnum {
     IN_PROGRESS,
-    COMPLETED,
+    WON,
+    LOST,
     CANCELLED;
 
-    public static SlipStatusEnum fromString(String status) {
-        switch (status) {
-            case "IN_PROGRESS":
-                return IN_PROGRESS;
-            case "COMPLETED":
-                return COMPLETED;
-            case "CANCELLED":
-                return CANCELLED;
-            default:
-                return null;
-        }
+    SlipStatusEnum() {
     }
 
-    public static String toString(SlipStatusEnum status) {
-        switch (status) {
-            case IN_PROGRESS:
-                return "IN_PROGRESS";
-            case COMPLETED:
-                return "COMPLETED";
-            case CANCELLED:
-                return "CANCELLED";
-            default:
-                return null;
-        }
+    public static SlipStatusEnum fromString(String status) {
+        return valueOf(status);
+    }
+
+    public static SlipStatusEnum fromValue(String status) {
+        return valueOf(status);
+    }
+
+    public String toValue() {
+        return this.name();
+    }
+
+    public String toString() {
+        return this.name();
     }
 }

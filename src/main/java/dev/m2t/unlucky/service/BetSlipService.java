@@ -3,14 +3,10 @@ package dev.m2t.unlucky.service;
 import dev.m2t.unlucky.dto.BaseResponse;
 import dev.m2t.unlucky.dto.request.CreateBetSlipRequest;
 import dev.m2t.unlucky.dto.request.ListRoomBetSlipsRequest;
-import dev.m2t.unlucky.model.BetSlip;
-import dev.m2t.unlucky.model.Event;
-import dev.m2t.unlucky.model.User;
+import dev.m2t.unlucky.model.*;
+import dev.m2t.unlucky.model.enums.BetStatusEnum;
 import dev.m2t.unlucky.model.enums.SlipStatusEnum;
-import dev.m2t.unlucky.repository.BetSlipPagingRepository;
-import dev.m2t.unlucky.repository.BetSlipRepository;
-import dev.m2t.unlucky.repository.EventRepository;
-import dev.m2t.unlucky.repository.UserRepository;
+import dev.m2t.unlucky.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -18,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class BetSlipService {
@@ -25,11 +22,13 @@ public class BetSlipService {
     private final BetSlipRepository betSlipRepository;
     private final BetSlipPagingRepository betSlipPagingRepository;
     private final UserRepository userRepository;
+    private final RoomRepository roomRepository;
 
-    public BetSlipService(BetSlipRepository betSlipRepository, BetSlipPagingRepository betSlipPagingRepository, UserRepository userRepository) {
+    public BetSlipService(BetSlipRepository betSlipRepository, BetSlipPagingRepository betSlipPagingRepository, UserRepository userRepository, RoomRepository roomRepository) {
         this.betSlipRepository = betSlipRepository;
         this.betSlipPagingRepository = betSlipPagingRepository;
         this.userRepository = userRepository;
+        this.roomRepository = roomRepository;
     }
 
     public BaseResponse createBetSlip(CreateBetSlipRequest createBetSlipRequest, String username) {
@@ -45,9 +44,9 @@ public class BetSlipService {
         betSlip.setBets(createBetSlipRequest.getBets());
         betSlip.setDate(LocalDateTime.now());
         betSlip.setStatus(SlipStatusEnum.IN_PROGRESS);
+        betSlip.setStakes(createBetSlipRequest.getStakes());
         betSlip.setTotalOdds(createBetSlipRequest.getTotalOdds());
         betSlip.setUsername(username);
-        betSlip.setWon(false);
         betSlip.setRoomId(createBetSlipRequest.getRoomId());
 
         BetSlip savedBetSlip = betSlipRepository.save(betSlip);
@@ -60,5 +59,64 @@ public class BetSlipService {
 
     public BaseResponse listUserBetSlips(Pageable pageable, String username) {
         return new BaseResponse("Bet slips retrieved successfully", true, false, betSlipPagingRepository.findAllByUsername(username, pageable));
+    }
+
+    public BaseResponse listRoomBetSlips(String roomId, String username, Pageable pageable) {
+        User user = userRepository.findByUsername(username);
+        Room room = roomRepository.findById(roomId).orElse(null);
+        if(room == null) {
+            return new BaseResponse("Room not found.", false, false, null);
+        }else if(user == null) {
+            return new BaseResponse("User not found.", false, false, null);
+        }else if(!room.getUsers().contains(username)) {
+            return new BaseResponse("You are not a member of this room.", false, false, null);
+        }else {
+            Page<BetSlip> betSlips = betSlipPagingRepository.findAllByRoomId(roomId, pageable);
+            return new BaseResponse("Bet slips retrieved successfully", true, false, betSlips);
+        }
+    }
+
+    public BaseResponse checkRoomBetSlips(String roomId, String username) {
+        User user = userRepository.findByUsername(username);
+        Room room = roomRepository.findById(roomId).orElse(null);
+        if (room == null) {
+            return new BaseResponse("Room not found.", false, false, null);
+        } else if (user == null) {
+            return new BaseResponse("User not found.", false, false, null);
+        } else if (!room.getOwner().equals(username)) {
+            return new BaseResponse("You are not the admin of this room.", false, false, null);
+        } else {
+            List<BetSlip> betSlips = betSlipRepository.findByRoomIdAndStatus(room.getId(), SlipStatusEnum.IN_PROGRESS);
+            for (BetSlip betSlip : betSlips) {
+                boolean won = true;
+                // Check if any bet.status is PENDING
+                for (Bet bet : betSlip.getBets()) {
+                    if (bet.getStatus().equals(BetStatusEnum.PENDING)) {
+                        betSlip.setStatus(SlipStatusEnum.IN_PROGRESS);
+                        won = false;
+                        break;
+                    } else if (bet.getStatus().equals(BetStatusEnum.LOST)) {
+                        betSlip.setStatus(SlipStatusEnum.LOST);
+                        won = false;
+                        break;
+                    }else if(bet.getStatus().equals(BetStatusEnum.WON)) {
+                        continue;
+                    }
+                }
+
+                if(!won && (betSlip.getStatus().equals(SlipStatusEnum.LOST) || !won && betSlip.getStatus().equals(SlipStatusEnum.IN_PROGRESS))) {
+                    betSlipRepository.save(betSlip);
+                    continue;
+                }else {
+                    betSlip.setStatus(SlipStatusEnum.WON);
+                    User user1 = userRepository.findByUsername(betSlip.getUsername());
+                    user1.setBalance(user1.getBalance() + betSlip.getStakes() * betSlip.getTotalOdds());
+                    userRepository.save(user1);
+                }
+                betSlipRepository.save(betSlip);
+            }
+        }
+
+        return new BaseResponse("Bet slips checked successfully.", true, false, null);
     }
 }

@@ -16,7 +16,6 @@ public class BetSlip {
     private LocalDateTime date;
     private Double totalOdds;
     private Double stakes;
-    private Boolean won;
     private SlipStatusEnum status;
     private String roomId;
 
@@ -24,14 +23,13 @@ public class BetSlip {
 
     }
 
-    public BetSlip(List<Bet> bets, String username, LocalDateTime date, Double totalOdds, Double stakes, Boolean won, SlipStatusEnum status, String roomId) {
+    public BetSlip(List<Bet> bets, String username, LocalDateTime date, Double totalOdds, Double stakes, SlipStatusEnum status, String roomId) {
         this.bets = bets;
         this.username = username;
         this.date = date;
         this.totalOdds = totalOdds;
         this.stakes = stakes;
         this.status = status;
-        this.won = won;
         this.roomId = roomId;
     }
 
@@ -73,14 +71,6 @@ public class BetSlip {
 
     public void setStakes(Double stakes) {
         this.stakes = stakes;
-    }
-
-    public Boolean getWon() {
-        return won;
-    }
-
-    public void setWon(Boolean won) {
-        this.won = won;
     }
 
     public List<Bet> getBets() {
