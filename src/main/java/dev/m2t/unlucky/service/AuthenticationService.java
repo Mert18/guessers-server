@@ -54,7 +54,7 @@ public class AuthenticationService {
         logger.debug("User {} saved to keycloak", username);
 
         logger.info("User {} created successfully.", username);
-        return new BaseResponse("User created successfully", true, true);
+        return new BaseResponse("User created successfully", true, true, dbUser);
     }
 
     private UserRepresentation fillKeycloakUserDetails(CreateUserRequest createUserRequest) {

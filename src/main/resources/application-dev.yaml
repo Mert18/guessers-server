@@ -6,7 +6,8 @@ spring:
     name: unlucky
   data:
     mongodb:
-      uri: mongodb://localhost:27018/unlucky
+      uri: mongodb://localhost:27018
+      database: unlucky
   security:
     oauth2:
       resource-server:
