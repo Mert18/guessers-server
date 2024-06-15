@@ -11,6 +11,8 @@ import dev.m2t.unlucky.model.enums.BetStatusEnum;
 import dev.m2t.unlucky.model.enums.EventStatusEnum;
 import dev.m2t.unlucky.model.enums.SlipStatusEnum;
 import dev.m2t.unlucky.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ public class EventService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final BetSlipRepository betSlipRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(EventService.class);
 
     public EventService(EventRepository eventRepository, EventPagingRepository eventPagingRepository, RoomRepository roomRepository, UserRepository userRepository, BetSlipRepository betSlipRepository) {
         this.eventRepository = eventRepository;
@@ -68,13 +72,18 @@ public class EventService {
     public BaseResponse finalizeEvent(FinalizeEventRequest finalizeEventRequest, String username) {
         Optional<Event> event = eventRepository.findById(finalizeEventRequest.getEventId());
         Optional<Room> room = roomRepository.findById(finalizeEventRequest.getRoomId());
+        logger.info("Finalize event request received for event: {}", event.get().getName());
         if (event.isEmpty()) {
+            logger.info("Event with id {} does not exist.", finalizeEventRequest.getEventId());
             throw new EventNotExistsException("Event with id " + finalizeEventRequest.getEventId() + " does not exist.");
         } else if(room.isEmpty()) {
+            logger.info("Room with id {} does not exist.", finalizeEventRequest.getRoomId());
             throw new RoomNotExistsException("Room with id " + finalizeEventRequest.getRoomId() + " does not exist.");
         } else if((!room.get().getOwner().equals(username))) {
+            logger.info("User {} is not the owner of the room.", username);
             throw new UnauthorizedException("You are not the owner of this room. Only the owner can finalize events.");
         } else {
+            logger.info("Finalizing event: {}", event.get().getName());
             List<BetSlip> betSlips = betSlipRepository.findByRoomIdAndStatus(room.get().getId(), SlipStatusEnum.IN_PROGRESS);
             for(BetSlip betSlip : betSlips) {
                 for(Bet bet: betSlip.getBets()) {

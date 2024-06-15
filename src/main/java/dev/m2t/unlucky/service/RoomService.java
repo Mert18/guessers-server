@@ -61,6 +61,7 @@ public class RoomService {
             room.getUsers().add(username);
             room.getPendingUserInvites().remove(username);
             user.getPendingRoomInvites().remove(roomId);
+            user.getRooms().add(roomId);
             userRepository.save(user);
             Room savedRoom = roomRepository.save(room);
             return new BaseResponse("You have joined the room successfully.", true, false, savedRoom);
