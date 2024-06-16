@@ -4,7 +4,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Document(collection = "rooms")
 public class Room {
@@ -16,6 +18,7 @@ public class Room {
     private boolean isPublic;
     private List<String> pendingUserInvites = new ArrayList<>();
     private List<String> users = new ArrayList<>();
+    private Map<String, Integer> userCorrectPredictions = new HashMap<>();
 
     public Room() {
 
@@ -84,5 +87,13 @@ public class Room {
 
     public void setUsers(List<String> users) {
         this.users = users;
+    }
+
+    public Map<String, Integer> getUserCorrectPredictions() {
+        return userCorrectPredictions;
+    }
+
+    public void setUserCorrectPredictions(Map<String, Integer> userCorrectPredictions) {
+        this.userCorrectPredictions = userCorrectPredictions;
     }
 }

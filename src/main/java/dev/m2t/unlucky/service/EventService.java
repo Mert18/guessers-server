@@ -85,20 +85,10 @@ public class EventService {
         } else {
             logger.info("Finalizing event: {}", event.get().getName());
             List<BetSlip> betSlips = betSlipRepository.findByRoomIdAndStatus(room.get().getId(), SlipStatusEnum.IN_PROGRESS);
-            for(BetSlip betSlip : betSlips) {
-                for(Bet bet: betSlip.getBets()) {
-                    if(bet.getEvent().getId().equals(finalizeEventRequest.getEventId())) {
-                        if(finalizeEventRequest.getWinnerOptionNumbers().contains(bet.getOption().getOptionNumber()) &&
-                            bet.getStatus().equals(BetStatusEnum.PENDING)
-                        ) {
-                            bet.setStatus(BetStatusEnum.WON);
-                        }else {
-                            bet.setStatus(BetStatusEnum.LOST);
-                        }
-                    }
-                }
-                betSlipRepository.save(betSlip);
-            }
+
+            evaluateBets(finalizeEventRequest, betSlips);
+
+            evaluateBetSlips(betSlips);
 
             Event eventToFinalize = event.get();
             eventToFinalize.setStatus(EventStatusEnum.FINISHED);
@@ -107,6 +97,60 @@ public class EventService {
         }
     }
 
+    private void evaluateBets(FinalizeEventRequest finalizeEventRequest, List<BetSlip> betSlips) {
+        for(BetSlip betSlip : betSlips) {
+            for(Bet bet: betSlip.getBets()) {
+                if(bet.getEvent().getId().equals(finalizeEventRequest.getEventId())) {
+                    if(finalizeEventRequest.getWinnerOptionNumbers().contains(bet.getOption().getOptionNumber()) &&
+                            bet.getStatus().equals(BetStatusEnum.PENDING)
+                    ) {
+                        bet.setStatus(BetStatusEnum.WON);
+                    }else {
+                        bet.setStatus(BetStatusEnum.LOST);
+                    }
+                }
+            }
+            betSlipRepository.save(betSlip);
+        }
+    }
+
+    private void evaluateBetSlips(List<BetSlip> betSlips) {
+        for (BetSlip betSlip : betSlips) {
+            boolean won = true;
+            // Check if any bet.status is PENDING
+            for (Bet bet : betSlip.getBets()) {
+                if (bet.getStatus().equals(BetStatusEnum.PENDING)) {
+                    betSlip.setStatus(SlipStatusEnum.IN_PROGRESS);
+                    won = false;
+                    break;
+                } else if (bet.getStatus().equals(BetStatusEnum.LOST)) {
+                    betSlip.setStatus(SlipStatusEnum.LOST);
+                    won = false;
+                    break;
+                }else if(bet.getStatus().equals(BetStatusEnum.WON)) {
+                    Room room = roomRepository.findById(betSlip.getRoomId()).orElse(null);
+                    if(room == null) {
+                        throw new RoomNotExistsException("Room with id " + betSlip.getRoomId() + " does not exist.");
+                    } else {
+                        room.getUserCorrectPredictions().put(betSlip.getUsername(), room.getUserCorrectPredictions().get(betSlip.getUsername()) + 1);
+                        roomRepository.save(room);
+                    }
+                    continue;
+                }
+            }
+
+            if(!won && (betSlip.getStatus().equals(SlipStatusEnum.LOST) || !won && betSlip.getStatus().equals(SlipStatusEnum.IN_PROGRESS))) {
+                betSlipRepository.save(betSlip);
+                continue;
+            }else {
+                betSlip.setStatus(SlipStatusEnum.WON);
+                User user1 = userRepository.findByUsername(betSlip.getUsername());
+                user1.setBalance(user1.getBalance() + betSlip.getStakes() * betSlip.getTotalOdds());
+                userRepository.save(user1);
+            }
+            betSlipRepository.save(betSlip);
+        }
+    }
     public BaseResponse getEvent(String eventId, String username) {
         Optional<Event> event = eventRepository.findById(eventId);
         if (event.isEmpty()) {
