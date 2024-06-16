@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -39,6 +41,7 @@ public class RoomService {
         room.setDescription(createRoomRequest.getDescription());
         room.setUsers(List.of(owner));
         room.setOwner(owner);
+        room.getUserCorrectPredictions().put(owner, 0);
         Room savedRoom = roomRepository.save(room);
 
         user.getRooms().add(savedRoom.getId());
@@ -60,6 +63,7 @@ public class RoomService {
         }else {
             room.getUsers().add(username);
             room.getPendingUserInvites().remove(username);
+            room.getUserCorrectPredictions().put(username, 0);
             user.getPendingRoomInvites().remove(roomId);
             user.getRooms().add(roomId);
             userRepository.save(user);
@@ -174,6 +178,36 @@ public class RoomService {
             return new BaseResponse("User with username "+ username + " does not exist.", false, false, null);
         } else {
             return new BaseResponse("Room fetched successfully.", true, false, room);
+        }
+    }
+
+    public BaseResponse rankPredictions(String roomId, String username) {
+        Room room = roomRepository.findById(roomId).orElse(null);
+        if(room == null) {
+            return new BaseResponse("Room with id "+ roomId + " does not exist.", false, false, null);
+        }else if(!room.getUsers().contains(username)){
+            return new BaseResponse("You are not a member of this room.", false, false);
+        } else {
+            List<Map.Entry<String, Integer>> results = room.getUserCorrectPredictions().entrySet().stream()
+                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).collect(Collectors.toList());
+
+            return new BaseResponse("Predictions ranked successfully.", true, false, results);
+        }
+    }
+
+    public BaseResponse rankRiches(String roomId, String username) {
+        Room room = roomRepository.findById(roomId).orElse(null);
+        if(room == null) {
+            return new BaseResponse("Room with id "+ roomId + " does not exist.", false, false, null);
+        }else if(!room.getUsers().contains(username)){
+            return new BaseResponse("You are not a member of this room.", false, false);
+        } else {
+            List<User> users = userRepository.findByUsernameIn(room.getUsers());
+            List<Map.Entry<String, Double>> results = users.stream()
+                    .sorted((u1, u2) -> Double.compare(u2.getBalance(), u1.getBalance()))
+                    .map(u -> Map.entry(u.getUsername(), u.getBalance()))
+                    .collect(Collectors.toList());
+            return new BaseResponse("Riches ranked successfully.", true, false, results);
         }
     }
 }

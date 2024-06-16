@@ -41,10 +41,4 @@ public class BetSlipController {
 
         return ResponseEntity.ok(betSlipService.listRoomBetSlips(roomId, username, pageable));
     }
-
-    @GetMapping("/check/room/{roomId}")
-    public ResponseEntity<BaseResponse> checkRoomBetSlips(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(betSlipService.checkRoomBetSlips(roomId, username));
-    }
 }

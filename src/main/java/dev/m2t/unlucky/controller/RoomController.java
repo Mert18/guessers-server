@@ -77,4 +77,16 @@ public class RoomController {
         String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(roomService.isOwner(roomId, username));
     }
+
+    @GetMapping("/{roomId}/rank-predictions")
+    public ResponseEntity<BaseResponse> rankPredictions(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username");
+        return ResponseEntity.ok(roomService.rankPredictions(roomId, username));
+    }
+
+    @GetMapping("/{roomId}/rank-riches")
+    public ResponseEntity<BaseResponse> rankRiches(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username");
+        return ResponseEntity.ok(roomService.rankRiches(roomId, username));
+    }
 }
