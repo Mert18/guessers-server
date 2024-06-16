@@ -5,6 +5,7 @@ import dev.m2t.unlucky.dto.request.CreateUserRequest;
 import dev.m2t.unlucky.service.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

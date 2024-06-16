@@ -17,9 +17,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler({UsernameAlreadyExistsException.class, UsernameNotFoundException.class})
     public <T extends RuntimeException> ResponseEntity<Object> handleBadRequestExceptions(T exception) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new BaseResponse<>(exception.getMessage(), false, true));
+        return ResponseEntity.ok().body(new BaseResponse<>(exception.getMessage(), false, true));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -31,8 +29,6 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new BaseResponse<>("Fields validation failed", false, false, errors));
+        return ResponseEntity.ok().body(new BaseResponse<>("Fields validation failed", false, true, errors));
     }
 }
