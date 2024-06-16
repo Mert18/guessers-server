@@ -63,7 +63,7 @@ public class EventService {
         } else if (!room.get().getUsers().contains(username)) {
             throw new UnauthorizedException("You are not one of the members of this room. Only the members can list events.");
         } else {
-            Page<Event> events = eventPagingRepository.findByStatusAndRoomId(EventStatusEnum.NOT_STARTED, roomId, pageable);
+            Page<Event> events = eventPagingRepository.findByStatusInAndRoomId(List.of(EventStatusEnum.NOT_STARTED, EventStatusEnum.IN_PROGRESS), roomId, pageable);
 
             return new BaseResponse("Events fetched successfully.", true, false, events);
         }
@@ -166,5 +166,24 @@ public class EventService {
             }
         }
 
+    }
+
+    public BaseResponse startEvent(String eventId, String username) {
+        Optional<Event> event = eventRepository.findById(eventId);
+        if (event.isEmpty()) {
+            throw new EventNotExistsException("Event with id " + eventId + " does not exist.");
+        } else {
+            Room room = roomRepository.findById(event.get().getRoomId()).orElse(null);
+            if (room == null) {
+                throw new RoomNotExistsException("Room with id " + event.get().getRoomId() + " does not exist.");
+            } else if (!room.getOwner().equals(username)) {
+                throw new UnauthorizedException("You are not the owner of this room. Only the owner can start events.");
+            } else {
+                Event eventToStart = event.get();
+                eventToStart.setStatus(EventStatusEnum.IN_PROGRESS);
+                Event savedEvent = eventRepository.save(eventToStart);
+                return new BaseResponse("Event started successfully.", true, true, savedEvent);
+            }
+        }
     }
 }

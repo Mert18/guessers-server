@@ -34,6 +34,12 @@ public class EventController {
         return ResponseEntity.ok(eventService.listEvents(roomId, username, pageable));
     }
 
+    @GetMapping("/start/{eventId}")
+    public ResponseEntity<BaseResponse> startEvent(@PathVariable String eventId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        return ResponseEntity.ok(eventService.startEvent(eventId, username));
+    }
+
     @PostMapping("/finalize")
     public ResponseEntity<BaseResponse> finalizeEvent(@RequestBody FinalizeEventRequest finalizeEventRequest, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username

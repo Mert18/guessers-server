@@ -14,6 +14,7 @@ import dev.m2t.unlucky.repository.UserRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class RoomService {
             user.getRooms().add(roomId);
             userRepository.save(user);
             Room savedRoom = roomRepository.save(room);
-            return new BaseResponse("You have joined the room successfully.", true, false, savedRoom);
+            return new BaseResponse("You have joined the room successfully.", true, true, savedRoom);
         }
     }
 
@@ -116,7 +117,7 @@ public class RoomService {
             user.getPendingRoomInvites().add(roomId);
             userRepository.save(user);
             Room savedRoom = roomRepository.save(room);
-            return new BaseResponse("User invited successfully.", true, false, savedRoom);
+            return new BaseResponse("User invited successfully.", true, true, savedRoom);
         }
     }
 
@@ -132,7 +133,7 @@ public class RoomService {
             user.getPendingRoomInvites().remove(roomId);
             userRepository.save(user);
             Room savedRoom = roomRepository.save(room);
-            return new BaseResponse("Room invite rejected successfully.", true, false, savedRoom);
+            return new BaseResponse("Room invite rejected successfully.", true, true, savedRoom);
         }
     }
 
@@ -163,7 +164,7 @@ public class RoomService {
         }else if(!room.getUsers().contains(username)){
             return new BaseResponse("You are not a member of this room.", false, false);
         } else {
-            return new BaseResponse("Bet slips fetched successfully.", true, false, betSlipPagingRepository.findAllByRoomId(roomId, pageable));
+            return new BaseResponse("Bet slips fetched successfully.", true, false, betSlipPagingRepository.findAllByRoomIdAndDateAfter(roomId, LocalDateTime.now().minusHours(6), pageable));
         }
     }
 

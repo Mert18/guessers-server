@@ -71,52 +71,8 @@ public class BetSlipService {
         }else if(!room.getUsers().contains(username)) {
             return new BaseResponse("You are not a member of this room.", false, false, null);
         }else {
-            Page<BetSlip> betSlips = betSlipPagingRepository.findAllByRoomId(roomId, pageable);
+            Page<BetSlip> betSlips = betSlipPagingRepository.findAllByRoomIdAndDateAfter(roomId, LocalDateTime.now().minusHours(6), pageable);
             return new BaseResponse("Bet slips retrieved successfully", true, false, betSlips);
         }
-    }
-
-    public BaseResponse checkRoomBetSlips(String roomId, String username) {
-        User user = userRepository.findByUsername(username);
-        Room room = roomRepository.findById(roomId).orElse(null);
-        if (room == null) {
-            return new BaseResponse("Room not found.", false, false, null);
-        } else if (user == null) {
-            return new BaseResponse("User not found.", false, false, null);
-        } else if (!room.getOwner().equals(username)) {
-            return new BaseResponse("You are not the admin of this room.", false, false, null);
-        } else {
-            List<BetSlip> betSlips = betSlipRepository.findByRoomIdAndStatus(room.getId(), SlipStatusEnum.IN_PROGRESS);
-            for (BetSlip betSlip : betSlips) {
-                boolean won = true;
-                // Check if any bet.status is PENDING
-                for (Bet bet : betSlip.getBets()) {
-                    if (bet.getStatus().equals(BetStatusEnum.PENDING)) {
-                        betSlip.setStatus(SlipStatusEnum.IN_PROGRESS);
-                        won = false;
-                        break;
-                    } else if (bet.getStatus().equals(BetStatusEnum.LOST)) {
-                        betSlip.setStatus(SlipStatusEnum.LOST);
-                        won = false;
-                        break;
-                    }else if(bet.getStatus().equals(BetStatusEnum.WON)) {
-                        continue;
-                    }
-                }
-
-                if(!won && (betSlip.getStatus().equals(SlipStatusEnum.LOST) || !won && betSlip.getStatus().equals(SlipStatusEnum.IN_PROGRESS))) {
-                    betSlipRepository.save(betSlip);
-                    continue;
-                }else {
-                    betSlip.setStatus(SlipStatusEnum.WON);
-                    User user1 = userRepository.findByUsername(betSlip.getUsername());
-                    user1.setBalance(user1.getBalance() + betSlip.getStakes() * betSlip.getTotalOdds());
-                    userRepository.save(user1);
-                }
-                betSlipRepository.save(betSlip);
-            }
-        }
-
-        return new BaseResponse("Bet slips checked successfully.", true, false, null);
     }
 }
