@@ -36,7 +36,7 @@ public class BetSlipService {
         if(user == null) {
             return new BaseResponse("User not found.", false, false, null);
         }else if(user.getBalance() < createBetSlipRequest.getStakes()) {
-            return new BaseResponse("Insufficient balance.", false, false, null);
+            return new BaseResponse("Insufficient balance.", false, true, null);
         }else if(!user.getRooms().contains(createBetSlipRequest.getRoomId())) {
             return new BaseResponse("You are not a member of this room.", false, false, null);
         }

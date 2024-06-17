@@ -132,10 +132,10 @@ public class EventService {
                     if(room == null) {
                         throw new RoomNotExistsException("Room with id " + betSlip.getRoomId() + " does not exist.");
                     } else {
-                        room.getUserCorrectPredictions().put(betSlip.getUsername(), room.getUserCorrectPredictions().get(betSlip.getUsername()) + 1);
+                        room.getUserCorrectPredictions().put(betSlip.getUsername(), room.getUserCorrectPredictions().getOrDefault(betSlip.getUsername(), 0) + 1);
+
                         roomRepository.save(room);
                     }
-                    continue;
                 }
             }
 

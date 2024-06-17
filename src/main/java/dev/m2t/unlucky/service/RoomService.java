@@ -204,10 +204,10 @@ public class RoomService {
             return new BaseResponse("You are not a member of this room.", false, false);
         } else {
             List<User> users = userRepository.findByUsernameIn(room.getUsers());
-            List<Map.Entry<String, Double>> results = users.stream()
-                    .sorted((u1, u2) -> Double.compare(u2.getBalance(), u1.getBalance()))
-                    .map(u -> Map.entry(u.getUsername(), u.getBalance()))
-                    .collect(Collectors.toList());
+            // Return most rich three people by their balance, return List<User> instead of List<Map.Entry<String, Double>>
+            List<User> results = users.stream()
+                    .sorted((u1, u2) -> u2.getBalance().compareTo(u1.getBalance()))
+                    .limit(3).collect(Collectors.toList());
             return new BaseResponse("Riches ranked successfully.", true, false, results);
         }
     }
