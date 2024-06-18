@@ -27,7 +27,7 @@ public class EventController {
         return ResponseEntity.ok(eventService.createEvent(createEventRequest, username, roomId));
     }
 
-    @PostMapping("/list/{roomId}")
+    @GetMapping("/list/{roomId}")
     public ResponseEntity<BaseResponse> listEvents(@PathVariable String roomId, @RequestParam int page, @RequestParam int size, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
         Pageable pageable = Pageable.ofSize(size).withPage(page);

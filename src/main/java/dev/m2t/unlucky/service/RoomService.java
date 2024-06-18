@@ -6,6 +6,7 @@ import dev.m2t.unlucky.dto.request.InviteUserRequest;
 import dev.m2t.unlucky.dto.request.JoinRoomRequest;
 import dev.m2t.unlucky.dto.response.IsRoomOwnerResponse;
 import dev.m2t.unlucky.dto.response.ListRoomsResponse;
+import dev.m2t.unlucky.dto.response.RoomMetadataResponse;
 import dev.m2t.unlucky.model.Room;
 import dev.m2t.unlucky.model.User;
 import dev.m2t.unlucky.repository.BetSlipPagingRepository;
@@ -182,33 +183,24 @@ public class RoomService {
         }
     }
 
-    public BaseResponse rankPredictions(String roomId, String username) {
+    public BaseResponse getRoomMetadata(String roomId, String username) {
         Room room = roomRepository.findById(roomId).orElse(null);
         if(room == null) {
             return new BaseResponse("Room with id "+ roomId + " does not exist.", false, false, null);
         }else if(!room.getUsers().contains(username)){
             return new BaseResponse("You are not a member of this room.", false, false);
         } else {
-            List<Map.Entry<String, Integer>> results = room.getUserCorrectPredictions().entrySet().stream()
-                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())).collect(Collectors.toList());
+            RoomMetadataResponse roomMetadataResponse = new RoomMetadataResponse();
+            roomMetadataResponse.setRoom(room);
+            roomMetadataResponse.setOwner(room.getOwner().equals(username));
 
-            return new BaseResponse("Predictions ranked successfully.", true, false, results);
-        }
-    }
-
-    public BaseResponse rankRiches(String roomId, String username) {
-        Room room = roomRepository.findById(roomId).orElse(null);
-        if(room == null) {
-            return new BaseResponse("Room with id "+ roomId + " does not exist.", false, false, null);
-        }else if(!room.getUsers().contains(username)){
-            return new BaseResponse("You are not a member of this room.", false, false);
-        } else {
             List<User> users = userRepository.findByUsernameIn(room.getUsers());
             // Return most rich three people by their balance, return List<User> instead of List<Map.Entry<String, Double>>
-            List<User> results = users.stream()
+            roomMetadataResponse.setRiches(users.stream()
                     .sorted((u1, u2) -> u2.getBalance().compareTo(u1.getBalance()))
-                    .limit(3).collect(Collectors.toList());
-            return new BaseResponse("Riches ranked successfully.", true, false, results);
+                    .limit(3).collect(Collectors.toList()));
+
+            return new BaseResponse("Room metadata fetched successfully.", true, false, roomMetadataResponse);
         }
     }
 }

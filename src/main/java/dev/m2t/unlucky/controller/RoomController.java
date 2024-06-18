@@ -36,6 +36,12 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getRoom(roomId, username));
     }
 
+    @GetMapping("/{roomId}/metadata")
+    public ResponseEntity<BaseResponse> getRoomMetadata(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username");
+        return ResponseEntity.ok(roomService.getRoomMetadata(roomId, username));
+    }
+
     @GetMapping("/{roomId}/accept")
     public ResponseEntity<BaseResponse> acceptRoomInvite(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
@@ -76,17 +82,5 @@ public class RoomController {
     public ResponseEntity<BaseResponse> isOwner(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(roomService.isOwner(roomId, username));
-    }
-
-    @GetMapping("/{roomId}/rank-predictions")
-    public ResponseEntity<BaseResponse> rankPredictions(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(roomService.rankPredictions(roomId, username));
-    }
-
-    @GetMapping("/{roomId}/rank-riches")
-    public ResponseEntity<BaseResponse> rankRiches(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(roomService.rankRiches(roomId, username));
     }
 }
