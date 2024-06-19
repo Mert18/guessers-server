@@ -9,10 +9,10 @@ import java.util.Map;
 public class RoomMetadataResponse {
     private Room room;
     private Boolean owner;
-    private List<Map.Entry<String, Integer>> rankPredictions;
+    private Map<String, Integer> rankPredictions;
     private List<User> riches;
 
-    public RoomMetadataResponse(Room room, Boolean owner, List<Map.Entry<String, Integer>> rankPredictions, List<User> riches) {
+    public RoomMetadataResponse(Room room, Boolean owner, Map<String, Integer> rankPredictions, List<User> riches) {
         this.room = room;
         this.owner = owner;
         this.rankPredictions = rankPredictions;
@@ -39,11 +39,11 @@ public class RoomMetadataResponse {
         this.owner = owner;
     }
 
-    public List<Map.Entry<String, Integer>> getRankPredictions() {
+    public Map<String, Integer> getRankPredictions() {
         return rankPredictions;
     }
 
-    public void setRankPredictions(List<Map.Entry<String, Integer>> rankPredictions) {
+    public void setRankPredictions(Map<String, Integer> rankPredictions) {
         this.rankPredictions = rankPredictions;
     }
 

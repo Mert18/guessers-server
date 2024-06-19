@@ -57,7 +57,7 @@ public class BetSlipService {
         return new BaseResponse("Bet placed successfully.", true, true, savedBetSlip);
     }
 
-    public BaseResponse listUserBetSlips(Pageable pageable, String username) {
+    public BaseResponse listSelfBetSlips(Pageable pageable, String username) {
         return new BaseResponse("Bet slips retrieved successfully", true, false, betSlipPagingRepository.findAllByUsername(username, pageable));
     }
 

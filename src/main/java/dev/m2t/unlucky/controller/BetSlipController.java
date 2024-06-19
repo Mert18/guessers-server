@@ -28,10 +28,11 @@ public class BetSlipController {
         return ResponseEntity.ok(betSlipService.createBetSlip(createBetSlipRequest, username));
     }
 
-    @PostMapping("/list/self")
-    public ResponseEntity<BaseResponse> listUserBetSlips(@RequestBody Pageable pageable, @AuthenticationPrincipal Jwt jwt) {
+    @GetMapping("/list/self")
+    public ResponseEntity<BaseResponse> listSelfBetSlips(@RequestParam int page, @RequestParam int size, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(betSlipService.listUserBetSlips(pageable, username));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
+        return ResponseEntity.ok(betSlipService.listSelfBetSlips(pageable, username));
     }
 
     @GetMapping("/list/room/{roomId}")
