@@ -71,7 +71,7 @@ public class BetSlipService {
         }else if(!room.getUsers().contains(username)) {
             return new BaseResponse("You are not a member of this room.", false, false, null);
         }else {
-            Page<BetSlip> betSlips = betSlipPagingRepository.findAllByRoomIdAndDateAfter(roomId, LocalDateTime.now().minusHours(6), pageable);
+            Page<BetSlip> betSlips = betSlipPagingRepository.findAllByRoomIdAndDateAfter(roomId, LocalDateTime.now().minusDays(1), pageable);
             return new BaseResponse("Bet slips retrieved successfully", true, false, betSlips);
         }
     }
