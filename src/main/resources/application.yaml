@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: prod
   output:
     ansi:
       enabled: ALWAYS
@@ -6,21 +8,21 @@ spring:
     name: unlucky
   data:
     mongodb:
-      uri: mongodb://localhost:27018
+      uri: mongodb+srv://mertuygur02:uYk88ReOjStLEdND@cluster0.tpjz4ik.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       database: unlucky
   security:
     oauth2:
       resource-server:
         jwt:
-          jwk-set-uri: http://localhost:3333/realms/quickstart/protocol/openid-connect/certs
+          jwk-set-uri: http://keycloak:8080/realms/quickstart/protocol/openid-connect/certs
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost:3333/realms/quickstart
+            issuer-uri: http://keycloak:8080/realms/quickstart
         registration:
           keycloak:
             client-id: backend-service
-            client-secret: el7XGSgMTwBXEhn6VEp5trfr6TuuzcXU
+            client-secret: fQLfbDrSRHTcIgFiR24YE1YWwp1t1xC7
             scope: openid
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
@@ -28,6 +30,6 @@ spring:
 keycloak:
   realm: quickstart
   client: admin-cli
-  auth-server-url: http://localhost:3333
+  auth-server-url: http://keycloak:8080
   credentials:
-    secret: GJ9zGlYkUWajMeFYHjIP5h1Qemmuawyw
+    secret: 3zLcfw6pRuJM6aHOJokaTtGFtBQh7QNu
