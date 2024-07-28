@@ -3,34 +3,34 @@ package dev.m2t.unlucky.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Document(collection = "rooms")
 public class Room {
     @Id
     private String id;
     private String name;
     private String description;
-    private String owner;
+    private User owner;
     private boolean isPublic;
-    private List<String> pendingUserInvites = new ArrayList<>();
-    private List<String> users = new ArrayList<>();
-    private Map<String, Integer> userCorrectPredictions = new HashMap<>();
+    private List<RoomInvite> invites;
+    private List<User> users;
+    private LocalDateTime createdOn = LocalDateTime.now();
 
     public Room() {
 
     }
 
-    public Room(String name, String description, String owner, boolean isPublic, List<String> pendingUserInvites, List<String> users) {
+    public Room(String name, String description, User owner, boolean isPublic) {
         this.name = name;
         this.description = description;
         this.owner = owner;
         this.isPublic = isPublic;
-        this.pendingUserInvites = pendingUserInvites;
-        this.users = users;
+        this.invites = new ArrayList<>();
+        this.users = new ArrayList<>();
     }
 
     public String getId() {
@@ -57,11 +57,11 @@ public class Room {
         this.description = description;
     }
 
-    public String getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 
@@ -73,27 +73,27 @@ public class Room {
         isPublic = aPublic;
     }
 
-    public List<String> getPendingUserInvites() {
-        return pendingUserInvites;
+    public List<RoomInvite> getInvites() {
+        return invites;
     }
 
-    public void setPendingUserInvites(List<String> pendingUserInvites) {
-        this.pendingUserInvites = pendingUserInvites;
+    public void setInvites(List<RoomInvite> invites) {
+        this.invites = invites;
     }
 
-    public List<String> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<String> users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 
-    public Map<String, Integer> getUserCorrectPredictions() {
-        return userCorrectPredictions;
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
-    public void setUserCorrectPredictions(Map<String, Integer> userCorrectPredictions) {
-        this.userCorrectPredictions = userCorrectPredictions;
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
     }
 }

@@ -1,7 +1,6 @@
 package dev.m2t.unlucky.service;
 
 import dev.m2t.unlucky.dto.request.CreateStoredImageRequest;
-import dev.m2t.unlucky.model.StoredImage;
 import dev.m2t.unlucky.repository.StoredImageRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

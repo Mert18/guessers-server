@@ -8,14 +8,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "events")
 public class Event {
     @Id
     private String id;
     private String name;
     private String description;
-    private String roomId;
-    private List<EventOption> options;
+    private Room room;
+    private List<EventCase> eventCases = new ArrayList<>();
     private EventStatusEnum status;
     private LocalDateTime createdOn = LocalDateTime.now();
 
@@ -23,11 +22,11 @@ public class Event {
 
     }
 
-    public Event(String name, String description, String roomId, List<EventOption> options, EventStatusEnum status) {
+    public Event(String name, String description, Room room, List<EventCase> eventCases, EventStatusEnum status) {
         this.name = name;
         this.description = description;
-        this.roomId = roomId;
-        this.options = options;
+        this.room = room;
+        this.eventCases = eventCases;
         this.status = status;
     }
 
@@ -47,12 +46,28 @@ public class Event {
         this.name = name;
     }
 
-    public List<EventOption> getOptions() {
-        return options;
+    public String getDescription() {
+        return description;
     }
 
-    public void setOptions(List<EventOption> options) {
-        this.options = options;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public List<EventCase> getEventCases() {
+        return eventCases;
+    }
+
+    public void setEventCases(List<EventCase> eventCases) {
+        this.eventCases = eventCases;
     }
 
     public EventStatusEnum getStatus() {
@@ -63,19 +78,11 @@ public class Event {
         this.status = status;
     }
 
-    public String getRoomId() {
-        return roomId;
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
     }
 }

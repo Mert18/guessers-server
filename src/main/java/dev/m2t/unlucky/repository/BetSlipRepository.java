@@ -1,6 +1,5 @@
 package dev.m2t.unlucky.repository;
 
-import dev.m2t.unlucky.model.BetSlip;
 import dev.m2t.unlucky.model.enums.SlipStatusEnum;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

@@ -1,6 +1,5 @@
 package dev.m2t.unlucky.dto.request;
 
-import dev.m2t.unlucky.model.EventOption;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 

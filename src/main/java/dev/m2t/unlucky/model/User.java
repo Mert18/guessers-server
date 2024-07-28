@@ -2,25 +2,35 @@ package dev.m2t.unlucky.model;
 
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "users")
 public class User {
     @Id
     private String id;
-    private String username;
-    private Double balance;
-    private Double luckPercentage;
-    private List<String> rooms = new ArrayList<>();
-    private List<String> pendingRoomInvites = new ArrayList<>();
 
-    public User(String username, Double balance, Double luckPercentage) {
+    private String username;
+    private Double luck;
+    private LocalDateTime createdOn = LocalDateTime.now();
+    private List<RoomUser> rooms = new ArrayList<>();
+
+    public User() {
+
+    }
+
+    public User(String username, Double luck) {
         this.username = username;
-        this.balance = balance;
-        this.luckPercentage = luckPercentage;
+        this.luck = luck;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -31,43 +41,27 @@ public class User {
         this.username = username;
     }
 
-    public Double getBalance() {
-        return balance;
+    public Double getLuck() {
+        return luck;
     }
 
-    public void setBalance(Double balance) {
-        this.balance = balance;
+    public void setLuck(Double luck) {
+        this.luck = luck;
     }
 
-    public Double getLuckPercentage() {
-        return luckPercentage;
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
-    public void setLuckPercentage(Double luckPercentage) {
-        this.luckPercentage = luckPercentage;
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
     }
 
-    public List<String> getPendingRoomInvites() {
-        return pendingRoomInvites;
-    }
-
-    public void setPendingRoomInvites(List<String> pendingRoomInvites) {
-        this.pendingRoomInvites = pendingRoomInvites;
-    }
-
-    public List<String> getRooms() {
+    public List<RoomUser> getRooms() {
         return rooms;
     }
 
-    public void setRooms(List<String> rooms) {
+    public void setRooms(List<RoomUser> rooms) {
         this.rooms = rooms;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }
