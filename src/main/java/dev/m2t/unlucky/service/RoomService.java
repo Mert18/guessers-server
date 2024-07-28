@@ -5,13 +5,16 @@ import dev.m2t.unlucky.dto.request.CreateRoomRequest;
 import dev.m2t.unlucky.dto.request.InviteUserRequest;
 import dev.m2t.unlucky.dto.request.JoinRoomRequest;
 import dev.m2t.unlucky.dto.response.IsRoomOwnerResponse;
+import dev.m2t.unlucky.dto.response.ListPublicRoomsResponse;
 import dev.m2t.unlucky.dto.response.ListRoomsResponse;
 import dev.m2t.unlucky.dto.response.RoomMetadataResponse;
 import dev.m2t.unlucky.model.Room;
 import dev.m2t.unlucky.model.User;
 import dev.m2t.unlucky.repository.BetSlipPagingRepository;
+import dev.m2t.unlucky.repository.RoomPagingRepository;
 import dev.m2t.unlucky.repository.RoomRepository;
 import dev.m2t.unlucky.repository.UserRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +25,13 @@ import java.util.stream.Collectors;
 @Service
 public class RoomService {
     private final RoomRepository roomRepository;
+    private final RoomPagingRepository roomPagingRepository;
     private final UserRepository userRepository;
     private final BetSlipPagingRepository betSlipPagingRepository;
 
-    public RoomService(RoomRepository roomRepository, UserRepository userRepository, BetSlipPagingRepository betSlipPagingRepository) {
+    public RoomService(RoomRepository roomRepository, RoomPagingRepository roomPagingRepository, UserRepository userRepository, BetSlipPagingRepository betSlipPagingRepository) {
         this.roomRepository = roomRepository;
+        this.roomPagingRepository = roomPagingRepository;
         this.userRepository = userRepository;
         this.betSlipPagingRepository = betSlipPagingRepository;
     }
@@ -207,6 +212,34 @@ public class RoomService {
                     .limit(3).collect(Collectors.toList()));
 
             return new BaseResponse("Room metadata fetched successfully.", true, false, roomMetadataResponse);
+        }
+    }
+
+    public BaseResponse listPublicRooms(Pageable pageable) {
+        ListPublicRoomsResponse listPublicRoomsResponse = new ListPublicRoomsResponse();
+        Page<Room> rooms = roomPagingRepository.findAllByIsPublic(pageable, true);
+        if (rooms != null && !rooms.isEmpty()) {
+            listPublicRoomsResponse.setRooms(rooms);
+        }
+        return new BaseResponse("Public rooms fetched successfully.", true, false, listPublicRoomsResponse);
+    }
+
+    public BaseResponse joinPublicRoom(String username, String roomId) {
+        User user = userRepository.findByUsername(username);
+        Room room = roomRepository.findById(roomId).orElse(null);
+        if (room == null) {
+            return new BaseResponse("Room with id " + roomId + " does not exist.", false, false, null);
+        } else if (room.getUsers().contains(username)) {
+            return new BaseResponse("You are already a member of this room.", false, false);
+        }else if (user == null) {
+            return new BaseResponse("User with username " + username + " does not exist.", false, false, null);
+        } else {
+            room.getUsers().add(username);
+            room.getUserCorrectPredictions().put(username, 0);
+            user.getRooms().add(roomId);
+            userRepository.save(user);
+            Room savedRoom = roomRepository.save(room);
+            return new BaseResponse("You have joined the room successfully.", true, true, savedRoom);
         }
     }
 }
