@@ -7,6 +7,7 @@ import dev.m2t.unlucky.exception.EventNotExistsException;
 import dev.m2t.unlucky.exception.RoomNotExistsException;
 import dev.m2t.unlucky.exception.UnauthorizedException;
 import dev.m2t.unlucky.model.*;
+import dev.m2t.unlucky.model.Event;
 import dev.m2t.unlucky.model.enums.BetStatusEnum;
 import dev.m2t.unlucky.model.enums.EventStatusEnum;
 import dev.m2t.unlucky.model.enums.SlipStatusEnum;

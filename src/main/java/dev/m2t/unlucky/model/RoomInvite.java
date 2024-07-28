@@ -1,12 +1,17 @@
 package dev.m2t.unlucky.model;
 
 import dev.m2t.unlucky.model.enums.RoomInviteStatusEnum;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
+@Entity
 public class RoomInvite {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     private Room room;
