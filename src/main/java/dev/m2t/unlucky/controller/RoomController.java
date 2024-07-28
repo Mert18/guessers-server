@@ -78,6 +78,19 @@ public class RoomController {
         return ResponseEntity.ok(roomService.listSelfRooms(username));
     }
 
+    @GetMapping("/list/public")
+    public ResponseEntity<BaseResponse> listPublicRooms(@RequestParam int page, @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
+        return ResponseEntity.ok(roomService.listPublicRooms(pageable));
+    }
+
+    @GetMapping("/join/{roomId}")
+    public ResponseEntity<BaseResponse> joinPublicRoom(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username");
+        return ResponseEntity.ok(roomService.joinPublicRoom(username, roomId));
+    }
+
+
     @GetMapping("/{roomId}/owner")
     public ResponseEntity<BaseResponse> isOwner(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
