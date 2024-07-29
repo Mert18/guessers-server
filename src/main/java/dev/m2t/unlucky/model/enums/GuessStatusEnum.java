@@ -1,24 +1,20 @@
 package dev.m2t.unlucky.model.enums;
 
-public enum SlipStatusEnum {
+public enum GuessStatusEnum {
     IN_PROGRESS,
     WON,
     LOST,
     CANCELLED;
 
-    SlipStatusEnum() {
+    GuessStatusEnum() {
     }
 
-    public static SlipStatusEnum fromString(String status) {
+    public static GuessStatusEnum fromString(String status) {
         return valueOf(status);
     }
 
-    public static SlipStatusEnum fromValue(String status) {
+    public static GuessStatusEnum fromValue(String status) {
         return valueOf(status);
-    }
-
-    public String toValue() {
-        return this.name();
     }
 
     public String toString() {

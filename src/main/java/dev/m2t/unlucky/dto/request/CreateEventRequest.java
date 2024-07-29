@@ -1,5 +1,6 @@
 package dev.m2t.unlucky.dto.request;
 
+import dev.m2t.unlucky.model.EventCase;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -16,15 +17,15 @@ public class CreateEventRequest {
 
     @NotNull(message = "Options cannot be null")
     @Size(min = 2, message = "Options must be at least 2")
-    private List<EventOption> options;
+    private List<EventCase> eventCases;
 
     public CreateEventRequest() {
     }
 
-    public CreateEventRequest(String name, String description, List<EventOption> options) {
+    public CreateEventRequest(String name, String description, List<EventCase> eventCases) {
         this.name = name;
         this.description = description;
-        this.options = options;
+        this.eventCases = eventCases;
     }
 
     public String getName() {
@@ -35,19 +36,19 @@ public class CreateEventRequest {
         this.name = name;
     }
 
-    public List<EventOption> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<EventOption> options) {
-        this.options = options;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<EventCase> getEventCases() {
+        return eventCases;
+    }
+
+    public void setEventCases(List<EventCase> eventCases) {
+        this.eventCases = eventCases;
     }
 }

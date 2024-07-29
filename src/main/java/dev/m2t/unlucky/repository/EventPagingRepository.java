@@ -8,6 +8,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
-public interface EventPagingRepository extends PagingAndSortingRepository<Event, String> {
+public interface EventPagingRepository extends PagingAndSortingRepository<Event, Long> {
     Page<Event> findByStatusInAndRoomId(List<EventStatusEnum> status, String roomId, Pageable pageable);
 }

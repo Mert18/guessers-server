@@ -22,24 +22,24 @@ public class BetSlipController {
         this.betSlipService = betSlipService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<BaseResponse> createBetSlip(@Valid @RequestBody CreateBetSlipRequest createBetSlipRequest, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(betSlipService.createBetSlip(createBetSlipRequest, username));
-    }
-
-    @GetMapping("/list/self")
-    public ResponseEntity<BaseResponse> listSelfBetSlips(@RequestParam int page, @RequestParam int size, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username");
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
-        return ResponseEntity.ok(betSlipService.listSelfBetSlips(pageable, username));
-    }
-
-    @GetMapping("/list/room/{roomId}")
-    public ResponseEntity<BaseResponse> listRoomBetSlips(@PathVariable String roomId, @RequestParam int page, @RequestParam int size,  @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username");
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
-
-        return ResponseEntity.ok(betSlipService.listRoomBetSlips(roomId, username, pageable));
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<BaseResponse> createBetSlip(@Valid @RequestBody CreateBetSlipRequest createBetSlipRequest, @AuthenticationPrincipal Jwt jwt) {
+//        String username = jwt.getClaimAsString("preferred_username");
+//        return ResponseEntity.ok(betSlipService.createBetSlip(createBetSlipRequest, username));
+//    }
+//
+//    @GetMapping("/list/self")
+//    public ResponseEntity<BaseResponse> listSelfBetSlips(@RequestParam int page, @RequestParam int size, @AuthenticationPrincipal Jwt jwt) {
+//        String username = jwt.getClaimAsString("preferred_username");
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
+//        return ResponseEntity.ok(betSlipService.listSelfBetSlips(pageable, username));
+//    }
+//
+//    @GetMapping("/list/room/{roomId}")
+//    public ResponseEntity<BaseResponse> listRoomBetSlips(@PathVariable String roomId, @RequestParam int page, @RequestParam int size,  @AuthenticationPrincipal Jwt jwt) {
+//        String username = jwt.getClaimAsString("preferred_username");
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
+//
+//        return ResponseEntity.ok(betSlipService.listRoomBetSlips(roomId, username, pageable));
+//    }
 }

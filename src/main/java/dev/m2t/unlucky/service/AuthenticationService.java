@@ -48,7 +48,7 @@ public class AuthenticationService {
         Double luck = Math.random() * 100;
 
         // Save user to db.
-        User dbUser = new User(username, 1000.0, luck);
+        User dbUser = new User(username, luck);
         userRepository.save(dbUser);
         logger.debug("User {} saved to db.", username);
 

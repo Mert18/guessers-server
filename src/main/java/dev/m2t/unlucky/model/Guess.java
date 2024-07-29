@@ -1,5 +1,6 @@
 package dev.m2t.unlucky.model;
 
+import dev.m2t.unlucky.model.enums.GuessStatusEnum;
 import jakarta.persistence.*;
 
 @Entity
@@ -23,6 +24,9 @@ public class Guess {
     @ManyToOne
     @JoinColumn(name = "guess_paper_id", nullable = false)
     private GuessPaper guessPaper;
+
+    @Enumerated(EnumType.STRING)
+    private GuessStatusEnum status;
 
     public Guess () {
 
@@ -72,5 +76,13 @@ public class Guess {
 
     public void setGuessPaper(GuessPaper guessPaper) {
         this.guessPaper = guessPaper;
+    }
+
+    public GuessStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(GuessStatusEnum status) {
+        this.status = status;
     }
 }

@@ -21,7 +21,9 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventCase> eventCases = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
     private EventStatusEnum status;
+
     private LocalDateTime createdOn = LocalDateTime.now();
 
     public Event() {

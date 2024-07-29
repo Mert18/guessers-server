@@ -21,16 +21,16 @@ public class UserController {
         this.betSlipService = betSlipService;
     }
 
-    @GetMapping("/balance")
-    public ResponseEntity<BaseResponse> getUserBalance(@AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-        return ResponseEntity.ok(userService.getUserBalance(username));
-    }
-
-    @GetMapping("/invites")
-    public ResponseEntity<BaseResponse> getUserInvites(@AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-        return ResponseEntity.ok(userService.getUserInvites(username));
-    }
+//    @GetMapping("/balance")
+//    public ResponseEntity<BaseResponse> getUserBalance(@AuthenticationPrincipal Jwt jwt) {
+//        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+//        return ResponseEntity.ok(userService.getUserBalance(username));
+//    }
+//
+//    @GetMapping("/invites")
+//    public ResponseEntity<BaseResponse> getUserInvites(@AuthenticationPrincipal Jwt jwt) {
+//        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+//        return ResponseEntity.ok(userService.getUserInvites(username));
+//    }
 
 }

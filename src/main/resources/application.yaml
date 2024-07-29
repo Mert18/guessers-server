@@ -6,10 +6,18 @@ spring:
       enabled: ALWAYS
   application:
     name: unlucky
-  data:
-    mongodb:
-      uri: mongodb+srv://mertuygur02:uYk88ReOjStLEdND@cluster0.tpjz4ik.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-      database: unlucky
+  datasource:
+    url: jdbc:postgresql://localhost:5432/unlucky
+    username: your_username
+    password: your_password
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
   security:
     oauth2:
       resource-server:

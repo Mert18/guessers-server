@@ -1,4 +1,5 @@
-package dev.m2t.unlucky.model.enums;
+package dev.m2t.unlucky.model.enums;import dev.m2t.unlucky.model.enums.EventStatusEnum;
+
 
 public enum GuessPaperStatusEnum {
     IN_PROGRESS,

@@ -1,12 +1,9 @@
 package dev.m2t.unlucky.repository;
 
 import dev.m2t.unlucky.model.Room;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-import java.util.List;
-
-public interface RoomRepository extends MongoRepository<Room, String> {
-    @Query("{ '$or': [ { 'owner': ?0 }, { 'users': ?0 } ] }")
-    List<Room> findByOwnerOrUsersContaining(String username);
+public interface RoomRepository extends JpaRepository<Room, Long> {
+    Optional<Room> findById(Long aLong);
 }

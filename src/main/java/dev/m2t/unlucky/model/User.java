@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "\"user\"")
 public class User {
     @Id
     @GeneratedValue
@@ -17,7 +18,7 @@ public class User {
     private Double luck;
 
     @OneToMany(mappedBy = "owner")
-    private List<Room> ownedRooms;
+    private List<Room> ownedRooms = new ArrayList<>();
 
     private LocalDateTime createdOn = LocalDateTime.now();
 
