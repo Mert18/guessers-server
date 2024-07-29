@@ -1,10 +1,7 @@
 package dev.m2t.unlucky.model;
 
 import dev.m2t.unlucky.model.enums.EventStatusEnum;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,12 +10,17 @@ import java.util.List;
 @Entity
 public class Event {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    @GeneratedValue
+    private Long id;
     private String name;
     private String description;
+
+    @ManyToOne
     private Room room;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventCase> eventCases = new ArrayList<>();
+
     private EventStatusEnum status;
     private LocalDateTime createdOn = LocalDateTime.now();
 
@@ -34,11 +36,11 @@ public class Event {
         this.status = status;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

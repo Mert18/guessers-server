@@ -1,28 +1,30 @@
 package dev.m2t.unlucky.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 public class Room {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    @GeneratedValue
+    private Long id;
     private String name;
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
     private boolean isPublic;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomInvite> invites;
-    private List<User> users;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomUser> roomUsers = new ArrayList<>();
+
     private LocalDateTime createdOn = LocalDateTime.now();
 
     public Room() {
@@ -35,14 +37,13 @@ public class Room {
         this.owner = owner;
         this.isPublic = isPublic;
         this.invites = new ArrayList<>();
-        this.users = new ArrayList<>();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -86,19 +87,19 @@ public class Room {
         this.invites = invites;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
     public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
     public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public List<RoomUser> getRoomUsers() {
+        return roomUsers;
+    }
+
+    public void setRoomUsers(List<RoomUser> roomUsers) {
+        this.roomUsers = roomUsers;
     }
 }

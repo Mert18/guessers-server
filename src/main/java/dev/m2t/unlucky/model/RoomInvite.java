@@ -1,21 +1,25 @@
 package dev.m2t.unlucky.model;
 
 import dev.m2t.unlucky.model.enums.RoomInviteStatusEnum;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 public class RoomInvite {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    @GeneratedValue
+    private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Enumerated(EnumType.STRING)
     private RoomInviteStatusEnum status;
     private LocalDateTime createdOn = LocalDateTime.now();
 
@@ -29,11 +33,11 @@ public class RoomInvite {
         this.status = status;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

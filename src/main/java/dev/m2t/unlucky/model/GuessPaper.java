@@ -1,10 +1,7 @@
 package dev.m2t.unlucky.model;
 
 import dev.m2t.unlucky.model.enums.GuessPaperStatusEnum;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,10 +10,14 @@ import java.util.List;
 @Entity
 public class GuessPaper {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    @GeneratedValue
+    private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "guessPaper", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Guess> guesses = new ArrayList<>();
     private Double totalOdd = 1.0;
     private GuessPaperStatusEnum status;
@@ -33,11 +34,11 @@ public class GuessPaper {
         this.status = status;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

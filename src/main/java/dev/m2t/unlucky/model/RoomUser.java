@@ -1,10 +1,23 @@
 package dev.m2t.unlucky.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
+@Entity
 public class RoomUser {
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
     private Double balance;
     private Boolean isOwner;
     private Integer score;
@@ -20,6 +33,14 @@ public class RoomUser {
         this.balance = balance;
         this.isOwner = isOwner;
         this.score = score;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Room getRoom() {

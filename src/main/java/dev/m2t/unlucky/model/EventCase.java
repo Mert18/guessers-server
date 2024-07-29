@@ -1,9 +1,6 @@
 package dev.m2t.unlucky.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,11 +8,16 @@ import java.util.List;
 @Entity
 public class EventCase {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    @GeneratedValue
+    private Long id;
 
     private String name;
+
+    @OneToMany(mappedBy = "eventCase", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventCaseOption> options;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
     private LocalDateTime createdOn = LocalDateTime.now();
 
@@ -29,11 +31,11 @@ public class EventCase {
         this.event = event;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
