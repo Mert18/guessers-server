@@ -81,4 +81,14 @@ public class User {
     public void setOwnedRooms(List<Room> ownedRooms) {
         this.ownedRooms = ownedRooms;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        return username != null && username.equals(user.username);
+    }
 }

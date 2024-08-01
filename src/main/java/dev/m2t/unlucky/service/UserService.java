@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-//    private final UserRepository userRepository;
-//    private final RoomRepository roomRepository;
-//
-//    public UserService(UserRepository userRepository, RoomRepository roomRepository) {
-//        this.userRepository = userRepository;
-//        this.roomRepository = roomRepository;
-//    }
+    private final UserRepository userRepository;
+    private final RoomRepository roomRepository;
+
+    public UserService(UserRepository userRepository, RoomRepository roomRepository) {
+        this.userRepository = userRepository;
+        this.roomRepository = roomRepository;
+    }
 //
 //    public BaseResponse getUserBalance(String username) {
 //        User user = userRepository.findByUsername(username);
