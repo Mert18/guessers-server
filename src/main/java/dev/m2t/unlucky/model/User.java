@@ -1,11 +1,14 @@
 package dev.m2t.unlucky.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "\"user\"")
@@ -17,13 +20,15 @@ public class User {
     private String username;
     private Double luck;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Room> ownedRooms = new ArrayList<>();
 
     private LocalDateTime createdOn = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RoomUser> rooms = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<RoomUser> rooms = new HashSet<>();
 
     public User() {
 
@@ -66,11 +71,11 @@ public class User {
         this.createdOn = createdOn;
     }
 
-    public List<RoomUser> getRooms() {
+    public Set<RoomUser> getRooms() {
         return rooms;
     }
 
-    public void setRooms(List<RoomUser> rooms) {
+    public void setRooms(Set<RoomUser> rooms) {
         this.rooms = rooms;
     }
 

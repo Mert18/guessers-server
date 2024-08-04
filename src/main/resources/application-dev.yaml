@@ -28,7 +28,7 @@ spring:
         registration:
           keycloak:
             client-id: backend-service
-            client-secret: EJsOKHoUjbc6sDhgwMosJfRhj1SvcTPQ
+            client-secret: MhWCD0tqXxUWCtvwyQnTmqtHBoRED0qH
             scope: openid
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
@@ -38,4 +38,4 @@ keycloak:
   client: admin-cli
   auth-server-url: http://localhost:3333
   credentials:
-    secret: dymndMHTYWcX075fpZ01ALTAWvGoIjDz
+    secret: XFMMQDz9pSfQSZtdutO1NBr03xPvcxuX
