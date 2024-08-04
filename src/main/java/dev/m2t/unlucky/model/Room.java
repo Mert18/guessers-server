@@ -1,5 +1,6 @@
 package dev.m2t.unlucky.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,6 @@ public class Room {
     @GeneratedValue
     private Long id;
     private String name;
-    private String description;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
@@ -23,6 +23,7 @@ public class Room {
     private List<RoomInvite> invites;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<RoomUser> roomUsers = new ArrayList<>();
 
     private LocalDateTime createdOn = LocalDateTime.now();
@@ -31,9 +32,8 @@ public class Room {
 
     }
 
-    public Room(String name, String description, User owner, boolean isPublic) {
+    public Room(String name, User owner, boolean isPublic) {
         this.name = name;
-        this.description = description;
         this.owner = owner;
         this.isPublic = isPublic;
         this.invites = new ArrayList<>();
@@ -53,14 +53,6 @@ public class Room {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public User getOwner() {
@@ -85,14 +77,6 @@ public class Room {
 
     public void setInvites(List<RoomInvite> invites) {
         this.invites = invites;
-    }
-
-    public LocalDateTime getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(LocalDateTime createdOn) {
-        this.createdOn = createdOn;
     }
 
     public List<RoomUser> getRoomUsers() {

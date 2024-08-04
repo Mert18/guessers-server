@@ -7,16 +7,14 @@ public class CreateRoomRequest {
     @NotNull(message = "Name cannot be null")
     private String name;
 
-    private String description;
-    private Boolean isPublic;
+    private Boolean publico;
 
     public CreateRoomRequest() {
     }
 
-    public CreateRoomRequest(String name, String description, Boolean isPublic) {
+    public CreateRoomRequest(String name, Boolean publico) {
         this.name = name;
-        this.description = description;
-        this.isPublic = isPublic;
+        this.publico = publico;
     }
 
     public String getName() {
@@ -27,19 +25,11 @@ public class CreateRoomRequest {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public Boolean getPublico() {
+        return publico;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getIsPublic() {
-        return isPublic;
-    }
-
-    public void setIsPublic(Boolean isPublic) {
-        this.isPublic = isPublic;
+    public void setPublico(Boolean publico) {
+        this.publico = publico;
     }
 }

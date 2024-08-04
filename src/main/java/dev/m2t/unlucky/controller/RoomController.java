@@ -6,6 +6,8 @@ import dev.m2t.unlucky.dto.request.InviteUserRequest;
 import dev.m2t.unlucky.dto.request.JoinRoomRequest;
 import dev.m2t.unlucky.service.RoomService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.jboss.resteasy.annotations.jaxrs.QueryParam;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,6 +24,13 @@ public class RoomController {
 
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<BaseResponse> searchRooms(@RequestParam String query, @RequestParam int page, @RequestParam int size, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username");
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(roomService.searchRooms(query, pageable, username));
     }
 
     @PostMapping("/create")
@@ -73,9 +82,10 @@ public class RoomController {
     }
 
     @GetMapping("/list/public")
-    public ResponseEntity<BaseResponse> listPublicRooms(@RequestParam int page, @RequestParam int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
-        return ResponseEntity.ok(roomService.listPublicRooms(pageable));
+    public ResponseEntity<BaseResponse> listPublicRooms(@RequestParam int page, @RequestParam int size, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username");
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(roomService.listPublicRooms(pageable, username));
     }
 
     @GetMapping("/{roomId}/join")

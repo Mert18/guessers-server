@@ -16,6 +16,7 @@ import dev.m2t.unlucky.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -44,8 +45,7 @@ public class RoomService {
         // Create Room
         Room room = new Room();
         room.setName(createRoomRequest.getName());
-        room.setDescription(createRoomRequest.getDescription());
-        room.setPublic(createRoomRequest.getIsPublic());
+        room.setPublic(createRoomRequest.getPublico());
         room.setRoomUsers(new ArrayList<>());
         room.setOwner(user.get());
 
@@ -141,7 +141,7 @@ public class RoomService {
 
     public BaseResponse listSelfRooms(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        List<RoomUser> rooms = user.getRooms();
+        Set<RoomUser> rooms = roomUserRepository.findAllByUser(user);
         return new BaseResponse("Rooms fetched successfully.", true, false, rooms);
     }
 
@@ -167,9 +167,11 @@ public class RoomService {
         }
     }
 
-    public BaseResponse listPublicRooms(Pageable pageable) {
+    public BaseResponse listPublicRooms(Pageable pageable, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+
         ListPublicRoomsResponse listPublicRoomsResponse = new ListPublicRoomsResponse();
-        Page<Room> rooms = roomPagingRepository.findAllByIsPublic(pageable, true);
+        Page<Room> rooms = roomPagingRepository.findAllPublicRoomsExcludingUser(user.getId(), pageable);
         if (rooms != null && !rooms.isEmpty()) {
             listPublicRoomsResponse.setRooms(rooms);
         }
@@ -180,6 +182,10 @@ public class RoomService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
 
+        Optional<RoomUser> existRoomUser = roomUserRepository.findByRoomAndUser(room, user);
+        if(existRoomUser.isPresent()){
+            return new BaseResponse("You are already a member of this room.", false, false);
+        }
         RoomUser roomUser = new RoomUser();
         roomUser.setUser(user);
         roomUser.setRoom(room);
@@ -197,5 +203,11 @@ public class RoomService {
         Optional<RoomInvite> invite = roomInviteRepository.findByRoomAndUser(room, user);
 
         return invite.isPresent() && invite.get().getStatus() == RoomInviteStatusEnum.PENDING;
+    }
+
+    public BaseResponse searchRooms(String query, Pageable pageable, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        Page<Room> searchResultRooms = roomPagingRepository.findRoomsExcludingUser(user.getId(), query, pageable);
+        return new BaseResponse("Rooms fetched successfully.", true, false, searchResultRooms);
     }
 }
