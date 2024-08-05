@@ -94,10 +94,15 @@ public class RoomController {
         return ResponseEntity.ok(roomService.joinPublicRoom(username, Long.parseLong(roomId)));
     }
 
-
-    @GetMapping("/{roomId}/owner")
-    public ResponseEntity<BaseResponse> isOwner(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
+    @GetMapping("/{roomId}/self")
+    public ResponseEntity<BaseResponse> getSelfRoomUser(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(roomService.isOwner(Long.parseLong(roomId), username));
+        return ResponseEntity.ok(roomService.getSelfRoomUser(Long.parseLong(roomId), username));
+    }
+
+    @GetMapping("/{roomId}/ranks")
+    public ResponseEntity<BaseResponse> getRoomRanks(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username");
+        return ResponseEntity.ok(roomService.getRoomRanks(Long.parseLong(roomId), username));
     }
 }

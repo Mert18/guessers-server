@@ -4,6 +4,7 @@ import dev.m2t.unlucky.dto.BaseResponse;
 import dev.m2t.unlucky.dto.request.CreateRoomRequest;
 import dev.m2t.unlucky.dto.request.JoinRoomRequest;
 import dev.m2t.unlucky.dto.response.ListPublicRoomsResponse;
+import dev.m2t.unlucky.dto.response.RoomRanksResponse;
 import dev.m2t.unlucky.exception.RoomNotExistsException;
 import dev.m2t.unlucky.exception.RoomUserNotFoundException;
 import dev.m2t.unlucky.exception.UsernameNotExistsException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -160,11 +162,11 @@ public class RoomService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
 
-        if(room.getRoomUsers().contains(user)){
+        if(room.getRoomUsers().stream().anyMatch(roomUser -> roomUser.getUser().equals(user))) {
             return new BaseResponse("Room fetched successfully.", true, false, room);
-        } else {
-            return new BaseResponse("You are not a member of this room.", false, false);
         }
+
+        return new BaseResponse("You are not a member of this room.", false, false);
     }
 
     public BaseResponse listPublicRooms(Pageable pageable, String username) {
@@ -209,5 +211,40 @@ public class RoomService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
         Page<Room> searchResultRooms = roomPagingRepository.findRoomsExcludingUser(user.getId(), query, pageable);
         return new BaseResponse("Rooms fetched successfully.", true, false, searchResultRooms);
+    }
+
+    public BaseResponse getSelfRoomUser(Long roomId, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new RoomUserNotFoundException("User is not part of the room."));
+        return new BaseResponse("Room user fetched successfully.", true, false, roomUser);
+    }
+
+    public BaseResponse getRoomRanks(Long roomId, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+
+        RoomRanksResponse roomRanksResponse = new RoomRanksResponse();
+        if(room.getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
+            return new BaseResponse("You are not a member of this room.", false, false);
+        }
+
+        List<RoomUser> roomUsers = roomUserRepository.findAllByRoom(room);
+
+        roomRanksResponse.setRoomId(roomId);
+        roomRanksResponse.setRoomName(room.getName());
+        List<RoomUser> roomUsersSortedByCorrectPredictions = roomUsers.stream()
+                .sorted(Comparator.comparing(RoomUser::getScore).reversed())
+                .limit(3)
+                .collect(Collectors.toList());
+        List<RoomUser> roomUsersSortedByBalance = roomUsers.stream()
+                .sorted(Comparator.comparing(RoomUser::getBalance).reversed())
+                .limit(3)
+                .collect(Collectors.toList());
+
+        roomRanksResponse.setRankedByCorrectPredictions(roomUsersSortedByCorrectPredictions);
+        roomRanksResponse.setRankedByBalance(roomUsersSortedByBalance);
+        roomRanksResponse.setUserCount(roomUsers.size());
+        return new BaseResponse("Room ranks fetched successfully.", true, false, roomRanksResponse);
     }
 }

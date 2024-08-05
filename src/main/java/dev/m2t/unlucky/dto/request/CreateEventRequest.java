@@ -1,6 +1,6 @@
 package dev.m2t.unlucky.dto.request;
 
-import dev.m2t.unlucky.model.EventCase;
+import dev.m2t.unlucky.model.EventGuessOption;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -11,21 +11,18 @@ public class CreateEventRequest {
     @Size(min = 3, message = "Name must be at least 3 characters long")
     private String name;
 
-    @NotNull(message = "Description cannot be null")
-    @Size(min = 3, message = "Description must be at least 3 characters long")
     private String description;
 
     @NotNull(message = "Options cannot be null")
-    @Size(min = 2, message = "Options must be at least 2")
-    private List<EventCase> eventCases;
+    private List<EventGuessOption> eventGuessOptions;
 
     public CreateEventRequest() {
     }
 
-    public CreateEventRequest(String name, String description, List<EventCase> eventCases) {
+    public CreateEventRequest(String name, String description, List<EventGuessOption> guessOptions) {
         this.name = name;
         this.description = description;
-        this.eventCases = eventCases;
+        this.eventGuessOptions = guessOptions;
     }
 
     public String getName() {
@@ -44,11 +41,11 @@ public class CreateEventRequest {
         this.description = description;
     }
 
-    public List<EventCase> getEventCases() {
-        return eventCases;
+    public List<EventGuessOption> getEventGuessOptions() {
+        return eventGuessOptions;
     }
 
-    public void setEventCases(List<EventCase> eventCases) {
-        this.eventCases = eventCases;
+    public void setEventGuessOptions(List<EventGuessOption> eventGuessOptions) {
+        this.eventGuessOptions = eventGuessOptions;
     }
 }

@@ -17,4 +17,6 @@ public interface RoomUserRepository extends JpaRepository<RoomUser, Long> {
     Optional<RoomUser> findByRoomAndUser(Room room, User user);
 
     Set<RoomUser> findAllByUser(User user);
+
+    List<RoomUser> findAllByRoom(Room room);
 }

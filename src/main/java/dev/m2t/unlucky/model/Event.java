@@ -19,7 +19,7 @@ public class Event {
     private Room room;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventCase> eventCases = new ArrayList<>();
+    private List<EventGuessOption> eventGuessOptions = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private EventStatusEnum status;
@@ -30,11 +30,11 @@ public class Event {
 
     }
 
-    public Event(String name, String description, Room room, List<EventCase> eventCases, EventStatusEnum status) {
+    public Event(String name, String description, Room room, List<EventGuessOption> eventGuessOptions, EventStatusEnum status) {
         this.name = name;
         this.description = description;
         this.room = room;
-        this.eventCases = eventCases;
+        this.eventGuessOptions = eventGuessOptions;
         this.status = status;
     }
 
@@ -70,12 +70,12 @@ public class Event {
         this.room = room;
     }
 
-    public List<EventCase> getEventCases() {
-        return eventCases;
+    public List<EventGuessOption> getEventGuessOptions() {
+        return eventGuessOptions;
     }
 
-    public void setEventCases(List<EventCase> eventCases) {
-        this.eventCases = eventCases;
+    public void setEventGuessOptions(List<EventGuessOption> eventGuessOptions) {
+        this.eventGuessOptions = eventGuessOptions;
     }
 
     public EventStatusEnum getStatus() {

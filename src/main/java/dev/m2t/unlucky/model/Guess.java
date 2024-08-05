@@ -15,11 +15,11 @@ public class Guess {
 
     @ManyToOne
     @JoinColumn(name = "event_case_id", nullable = false)
-    private EventCase eventCase;
+    private EventGuessOption eventGuessOption;
 
     @ManyToOne
     @JoinColumn(name = "event_case_option_id", nullable = false)
-    private EventCaseOption eventCaseOption;
+    private EventGuessOptionOption eventGuessOptionOption;
 
     @ManyToOne
     @JoinColumn(name = "guess_paper_id", nullable = false)
@@ -32,10 +32,10 @@ public class Guess {
 
     }
 
-    public Guess (Event event, EventCase eventCase, EventCaseOption eventCaseOption) {
+    public Guess (Event event, EventGuessOption eventGuessOption, EventGuessOptionOption eventGuessOptionOption) {
         this.event = event;
-        this.eventCase = eventCase;
-        this.eventCaseOption = eventCaseOption;
+        this.eventGuessOption = eventGuessOption;
+        this.eventGuessOptionOption = eventGuessOptionOption;
     }
 
     public Long getId() {
@@ -54,20 +54,20 @@ public class Guess {
         this.event = event;
     }
 
-    public EventCase getEventCase() {
-        return eventCase;
+    public EventGuessOption getEventCase() {
+        return eventGuessOption;
     }
 
-    public void setEventCase(EventCase eventCase) {
-        this.eventCase = eventCase;
+    public void setEventCase(EventGuessOption eventGuessOption) {
+        this.eventGuessOption = eventGuessOption;
     }
 
-    public EventCaseOption getEventCaseOption() {
-        return eventCaseOption;
+    public EventGuessOptionOption getEventCaseOption() {
+        return eventGuessOptionOption;
     }
 
-    public void setEventCaseOption(EventCaseOption eventCaseOption) {
-        this.eventCaseOption = eventCaseOption;
+    public void setEventCaseOption(EventGuessOptionOption eventGuessOptionOption) {
+        this.eventGuessOptionOption = eventGuessOptionOption;
     }
 
     public GuessPaper getGuessPaper() {

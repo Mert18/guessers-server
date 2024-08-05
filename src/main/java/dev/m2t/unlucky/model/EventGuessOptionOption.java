@@ -5,26 +5,26 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class EventCaseOption {
+public class EventGuessOptionOption {
     @Id
     @GeneratedValue
     private Long id;
 
     private String name;
-    private Double odd;
+    private Double odds;
     @ManyToOne
-    @JoinColumn(name = "event_case_id", nullable = false)
-    private EventCase eventCase;
+    @JoinColumn(name = "event_guess_option_id", nullable = false)
+    private EventGuessOption eventGuessOption;
     private LocalDateTime createdOn = LocalDateTime.now();
 
-    public EventCaseOption() {
+    public EventGuessOptionOption() {
 
     }
 
-    public EventCaseOption(String name, Double odd, EventCase eventCase) {
+    public EventGuessOptionOption(String name, Double odds, EventGuessOption eventGuessOption) {
         this.name = name;
-        this.odd = odd;
-        this.eventCase = eventCase;
+        this.odds = odds;
+        this.eventGuessOption = eventGuessOption;
     }
 
     public Long getId() {
@@ -43,20 +43,20 @@ public class EventCaseOption {
         this.name = name;
     }
 
-    public Double getOdd() {
-        return odd;
+    public Double getOdds() {
+        return odds;
     }
 
-    public void setOdd(Double odd) {
-        this.odd = odd;
+    public void setOdds(Double odds) {
+        this.odds = odds;
     }
 
-    public EventCase getEventCase() {
-        return eventCase;
+    public EventGuessOption getEventGuessOption() {
+        return eventGuessOption;
     }
 
-    public void setEventCase(EventCase eventCase) {
-        this.eventCase = eventCase;
+    public void setEventGuessOption(EventGuessOption eventGuessOption) {
+        this.eventGuessOption = eventGuessOption;
     }
 
     public LocalDateTime getCreatedOn() {

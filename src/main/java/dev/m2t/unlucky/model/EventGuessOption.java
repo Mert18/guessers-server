@@ -1,33 +1,35 @@
 package dev.m2t.unlucky.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-public class EventCase {
+public class EventGuessOption {
     @Id
     @GeneratedValue
     private Long id;
 
     private String name;
 
-    @OneToMany(mappedBy = "eventCase", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventCaseOption> options;
+    @OneToMany(mappedBy = "eventGuessOption", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Size(min = 2, message = "Options must be at least 2")
+    private List<EventGuessOptionOption> eventGuessOptionOptions;
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
     private LocalDateTime createdOn = LocalDateTime.now();
 
-    public EventCase() {
+    public EventGuessOption() {
 
     }
 
-    public EventCase(String name, List<EventCaseOption> options, Event event) {
+    public EventGuessOption(String name, List<EventGuessOptionOption> options, Event event) {
         this.name = name;
-        this.options = options;
+        this.eventGuessOptionOptions = options;
         this.event = event;
     }
 
@@ -47,12 +49,12 @@ public class EventCase {
         this.name = name;
     }
 
-    public List<EventCaseOption> getOptions() {
-        return options;
+    public List<EventGuessOptionOption> getEventGuessOptionOptions() {
+        return eventGuessOptionOptions;
     }
 
-    public void setOptions(List<EventCaseOption> options) {
-        this.options = options;
+    public void setEventGuessOptionOptions(List<EventGuessOptionOption> eventGuessOptionOptions) {
+        this.eventGuessOptionOptions = eventGuessOptionOptions;
     }
 
     public Event getEvent() {
