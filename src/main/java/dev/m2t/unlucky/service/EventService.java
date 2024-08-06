@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EventService {
@@ -57,8 +56,11 @@ public class EventService {
             eventGuessOption.setEvent(event);
             event.getEventGuessOptions().add(eventGuessOption);
 
-            for (EventGuessOptionOption eventGuessOptionOption : eventGuessOption.getEventGuessOptionOptions()) {
-                eventGuessOptionOption.setEventGuessOption(eventGuessOption);
+            logger.debug("Processing EventGuessOption: {}", eventGuessOption.getName());
+
+            for (EventGuessOptionCase eventGuessOptionCase : eventGuessOption.getEventGuessOptionCases()) {
+                eventGuessOptionCase.setEventGuessOption(eventGuessOption);
+                logger.debug("Processing EventGuessOptionCase: {}", eventGuessOptionCase.getName());
             }
         }
 

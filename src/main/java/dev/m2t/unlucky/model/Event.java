@@ -1,5 +1,6 @@
 package dev.m2t.unlucky.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.m2t.unlucky.model.enums.EventStatusEnum;
 import jakarta.persistence.*;
 
@@ -16,6 +17,7 @@ public class Event {
     private String description;
 
     @ManyToOne
+    @JsonIgnore
     private Room room;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)

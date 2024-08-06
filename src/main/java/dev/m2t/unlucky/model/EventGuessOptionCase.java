@@ -1,27 +1,31 @@
 package dev.m2t.unlucky.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-public class EventGuessOptionOption {
+public class EventGuessOptionCase {
     @Id
     @GeneratedValue
     private Long id;
 
     private String name;
     private Double odds;
+
     @ManyToOne
     @JoinColumn(name = "event_guess_option_id", nullable = false)
+    @JsonIgnore
     private EventGuessOption eventGuessOption;
+
     private LocalDateTime createdOn = LocalDateTime.now();
 
-    public EventGuessOptionOption() {
+    public EventGuessOptionCase() {
 
     }
 
-    public EventGuessOptionOption(String name, Double odds, EventGuessOption eventGuessOption) {
+    public EventGuessOptionCase(String name, Double odds, EventGuessOption eventGuessOption) {
         this.name = name;
         this.odds = odds;
         this.eventGuessOption = eventGuessOption;

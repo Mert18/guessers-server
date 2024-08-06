@@ -1,9 +1,11 @@
 package dev.m2t.unlucky.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,11 +17,11 @@ public class EventGuessOption {
     private String name;
 
     @OneToMany(mappedBy = "eventGuessOption", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Size(min = 2, message = "Options must be at least 2")
-    private List<EventGuessOptionOption> eventGuessOptionOptions;
+    private List<EventGuessOptionCase> eventGuessOptionCases = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
+    @JsonIgnore
     private Event event;
     private LocalDateTime createdOn = LocalDateTime.now();
 
@@ -27,9 +29,9 @@ public class EventGuessOption {
 
     }
 
-    public EventGuessOption(String name, List<EventGuessOptionOption> options, Event event) {
+    public EventGuessOption(String name, List<EventGuessOptionCase> options, Event event) {
         this.name = name;
-        this.eventGuessOptionOptions = options;
+        this.eventGuessOptionCases = options;
         this.event = event;
     }
 
@@ -49,12 +51,12 @@ public class EventGuessOption {
         this.name = name;
     }
 
-    public List<EventGuessOptionOption> getEventGuessOptionOptions() {
-        return eventGuessOptionOptions;
+    public List<EventGuessOptionCase> getEventGuessOptionCases() {
+        return eventGuessOptionCases;
     }
 
-    public void setEventGuessOptionOptions(List<EventGuessOptionOption> eventGuessOptionOptions) {
-        this.eventGuessOptionOptions = eventGuessOptionOptions;
+    public void setEventGuessOptionCases(List<EventGuessOptionCase> eventGuessOptionCases) {
+        this.eventGuessOptionCases = eventGuessOptionCases;
     }
 
     public Event getEvent() {

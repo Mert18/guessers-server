@@ -1,5 +1,6 @@
 package dev.m2t.unlucky.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.m2t.unlucky.model.enums.RoomInviteStatusEnum;
 import jakarta.persistence.*;
 
@@ -13,6 +14,7 @@ public class RoomInvite {
 
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
+    @JsonIgnore
     private Room room;
 
     @ManyToOne

@@ -22,7 +22,7 @@ public class EventController {
     }
 
     @PostMapping("/create/{roomId}")
-    public ResponseEntity<BaseResponse> createEvent(@Valid @RequestBody CreateEventRequest createEventRequest, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<BaseResponse> createEvent(@RequestBody CreateEventRequest createEventRequest, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
         return ResponseEntity.ok(eventService.createEvent(createEventRequest, username, Long.valueOf(roomId)));
     }
