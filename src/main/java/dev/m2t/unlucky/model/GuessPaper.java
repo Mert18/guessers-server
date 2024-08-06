@@ -1,5 +1,6 @@
 package dev.m2t.unlucky.model;
 
+import dev.m2t.unlucky.dto.SingleGuess;
 import dev.m2t.unlucky.model.enums.GuessPaperStatusEnum;
 import jakarta.persistence.*;
 
@@ -17,9 +18,14 @@ public class GuessPaper {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
+
     @OneToMany(mappedBy = "guessPaper", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Guess> guesses = new ArrayList<>();
+    private List<SingleGuess> guesses = new ArrayList<>();
     private Double totalOdd = 1.0;
+    private Double stake;
     private GuessPaperStatusEnum status;
     private LocalDateTime createdOn = LocalDateTime.now();
 
@@ -27,10 +33,12 @@ public class GuessPaper {
 
     }
 
-    public GuessPaper(User user, List<Guess> guesses, Double totalOdd, GuessPaperStatusEnum status) {
+    public GuessPaper(User user, Room room, List<SingleGuess> guesses, Double totalOdd, Double stake, GuessPaperStatusEnum status) {
         this.user = user;
+        this.room = room;
         this.guesses = guesses;
         this.totalOdd = totalOdd;
+        this.stake = stake;
         this.status = status;
     }
 
@@ -50,11 +58,11 @@ public class GuessPaper {
         this.user = user;
     }
 
-    public List<Guess> getGuesses() {
+    public List<SingleGuess> getGuesses() {
         return guesses;
     }
 
-    public void setGuesses(List<Guess> guesses) {
+    public void setGuesses(List<SingleGuess> guesses) {
         this.guesses = guesses;
     }
 
@@ -64,6 +72,14 @@ public class GuessPaper {
 
     public void setTotalOdd(Double totalOdd) {
         this.totalOdd = totalOdd;
+    }
+
+    public Double getStake() {
+        return stake;
+    }
+
+    public void setStake(Double stake) {
+        this.stake = stake;
     }
 
     public GuessPaperStatusEnum getStatus() {
@@ -80,5 +96,13 @@ public class GuessPaper {
 
     public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }
