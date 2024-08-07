@@ -36,8 +36,15 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-//    private final BetSlipRepository betSlipRepository;
+    public BaseResponse getEvent(Long eventId, String username) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
+        if(event.getRoom().getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
+            throw new UnauthorizedException("You are not one of the members of this room. Only the members can get events.");
+        }
 
+        return new BaseResponse("Event fetched successfully.", true, false, event);
+    }
 
     public BaseResponse createEvent(CreateEventRequest createEventRequest, String username, Long roomId) {
         logger.info("Create event request received for room: {}", roomId);
@@ -58,12 +65,8 @@ public class EventService {
         for (EventGuessOption eventGuessOption : createEventRequest.getEventGuessOptions()) {
             eventGuessOption.setEvent(event);
             event.getEventGuessOptions().add(eventGuessOption);
-
-            logger.debug("Processing EventGuessOption: {}", eventGuessOption.getName());
-
             for (EventGuessOptionCase eventGuessOptionCase : eventGuessOption.getEventGuessOptionCases()) {
                 eventGuessOptionCase.setEventGuessOption(eventGuessOption);
-                logger.debug("Processing EventGuessOptionCase: {}", eventGuessOptionCase.getName());
             }
         }
 
@@ -101,6 +104,7 @@ public class EventService {
     }
 
     public BaseResponse finalizeEvent(FinalizeEventRequest finalizeEventRequest, String username, Long eventId) {
+        logger.info("Finalize event request received for event: {}", eventId);
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
 
         event.getEventGuessOptions().forEach(eventGuessOption -> {
@@ -115,118 +119,7 @@ public class EventService {
 
         event.setStatus(EventStatusEnum.FINISHED);
         Event savedEvent = eventRepository.save(event);
+        logger.info("Event finalized successfully for event: {}", eventId);
         return new BaseResponse("Event finalized successfully.", true, true, savedEvent);
     }
-
-//    public BaseResponse finalizeEvent(FinalizeEventRequest finalizeEventRequest, String username) {
-//        Optional<Event> event = eventRepository.findById(finalizeEventRequest.getEventId());
-//        Optional<Room> room = roomRepository.findById(finalizeEventRequest.getRoomId());
-//        logger.info("Finalize event request received for event: {}", event.get().getName());
-//        if (event.isEmpty()) {
-//            logger.info("Event with id {} does not exist.", finalizeEventRequest.getEventId());
-//            throw new EventNotExistsException("Event with id " + finalizeEventRequest.getEventId() + " does not exist.");
-//        } else if(room.isEmpty()) {
-//            logger.info("Room with id {} does not exist.", finalizeEventRequest.getRoomId());
-//            throw new RoomNotExistsException("Room with id " + finalizeEventRequest.getRoomId() + " does not exist.");
-//        } else if((!room.get().getOwner().equals(username))) {
-//            logger.info("User {} is not the owner of the room.", username);
-//            throw new UnauthorizedException("You are not the owner of this room. Only the owner can finalize events.");
-//        } else {
-//            logger.info("Finalizing event: {}", event.get().getName());
-//            List<BetSlip> betSlips = betSlipRepository.findByRoomIdAndStatus(room.get().getId(), SlipStatusEnum.IN_PROGRESS);
-//
-//            evaluateBets(finalizeEventRequest, betSlips);
-//
-//            evaluateBetSlips(betSlips);
-//
-//            Event eventToFinalize = event.get();
-//            eventToFinalize.setStatus(EventStatusEnum.FINISHED);
-//            Event savedEvent = eventRepository.save(eventToFinalize);
-//            return new BaseResponse("Event finalized successfully.", true, true, savedEvent);
-//        }
-//    }
-//
-//    private void evaluateBets(FinalizeEventRequest finalizeEventRequest, List<BetSlip> betSlips) {
-//        for(BetSlip betSlip : betSlips) {
-//            for(Bet bet: betSlip.getBets()) {
-//                if(bet.getEvent().getId().equals(finalizeEventRequest.getEventId())) {
-//                    if(finalizeEventRequest.getWinnerOptionNumbers().contains(bet.getOption().getOptionNumber()) &&
-//                            bet.getStatus().equals(BetStatusEnum.PENDING)
-//                    ) {
-//                        bet.setStatus(BetStatusEnum.WON);
-//                    }else {
-//                        bet.setStatus(BetStatusEnum.LOST);
-//                    }
-//                }
-//            }
-//            betSlipRepository.save(betSlip);
-//        }
-//    }
-//
-//    private void evaluateBetSlips(List<BetSlip> betSlips) {
-//        for (BetSlip betSlip : betSlips) {
-//            boolean won = true;
-//            // Check if any bet.status is PENDING
-//            for (Bet bet : betSlip.getBets()) {
-//                if (bet.getStatus().equals(BetStatusEnum.PENDING)) {
-//                    betSlip.setStatus(SlipStatusEnum.IN_PROGRESS);
-//                    won = false;
-//                    break;
-//                } else if (bet.getStatus().equals(BetStatusEnum.LOST)) {
-//                    betSlip.setStatus(SlipStatusEnum.LOST);
-//                    won = false;
-//                    break;
-//                }else if(bet.getStatus().equals(BetStatusEnum.WON)) {
-//                    Room room = roomRepository.findById(betSlip.getRoomId()).orElse(null);
-//                    if(room == null) {
-//                        throw new RoomNotExistsException("Room with id " + betSlip.getRoomId() + " does not exist.");
-//                    } else {
-//                        room.getUserCorrectPredictions().put(betSlip.getUsername(), room.getUserCorrectPredictions().getOrDefault(betSlip.getUsername(), 0) + 1);
-//
-//                        roomRepository.save(room);
-//                    }
-//                }
-//            }
-//
-//            if(!won && (betSlip.getStatus().equals(SlipStatusEnum.LOST) || !won && betSlip.getStatus().equals(SlipStatusEnum.IN_PROGRESS))) {
-//                betSlipRepository.save(betSlip);
-//                continue;
-//            }else {
-//                betSlip.setStatus(SlipStatusEnum.WON);
-//                User user1 = userRepository.findByUsername(betSlip.getUsername());
-//                user1.setBalance(user1.getBalance() + betSlip.getStakes() * betSlip.getTotalOdds());
-//                userRepository.save(user1);
-//            }
-//            betSlipRepository.save(betSlip);
-//        }
-//    }
-
-    public BaseResponse getEvent(Long eventId, String username) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
-        if(event.getRoom().getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
-            throw new UnauthorizedException("You are not one of the members of this room. Only the members can get events.");
-        }
-
-        return new BaseResponse("Event fetched successfully.", true, false, event);
-    }
-
-//    public BaseResponse startEvent(String eventId, String username) {
-//        Optional<Event> event = eventRepository.findById(eventId);
-//        if (event.isEmpty()) {
-//            throw new EventNotExistsException("Event with id " + eventId + " does not exist.");
-//        } else {
-//            Room room = roomRepository.findById(event.get().getRoomId()).orElse(null);
-//            if (room == null) {
-//                throw new RoomNotExistsException("Room with id " + event.get().getRoomId() + " does not exist.");
-//            } else if (!room.getOwner().equals(username)) {
-//                throw new UnauthorizedException("You are not the owner of this room. Only the owner can start events.");
-//            } else {
-//                Event eventToStart = event.get();
-//                eventToStart.setStatus(EventStatusEnum.IN_PROGRESS);
-//                Event savedEvent = eventRepository.save(eventToStart);
-//                return new BaseResponse("Event started successfully.", true, true, savedEvent);
-//            }
-//        }
-//    }
 }

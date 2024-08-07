@@ -36,13 +36,11 @@ public class AuthenticationService {
         String username = createUserRequest.getUsername();
         UsersResource users = keycloak.realm(realm).users();
         if(!users.searchByUsername(username, true).isEmpty()) {
-            logger.debug("Username already exists: {}", username);
             throw new UsernameAlreadyExistsException("Username already exists: " + username);
         }
 
         // Save user to keycloak
         users.create(fillKeycloakUserDetails(createUserRequest));
-        logger.debug("User {} saved to keycloak.", username);
 
         // Calculate Luck
         Double luck = Math.random() * 100;
@@ -50,7 +48,6 @@ public class AuthenticationService {
         // Save user to db.
         User dbUser = new User(username, luck);
         userRepository.save(dbUser);
-        logger.debug("User {} saved to db.", username);
 
         logger.info("User {} created successfully.", username);
         return new BaseResponse("User created successfully", true, true, dbUser);

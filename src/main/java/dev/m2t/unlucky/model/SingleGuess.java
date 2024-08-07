@@ -22,9 +22,6 @@ public class SingleGuess {
     @JoinColumn(name = "event_guess_option_case_id", nullable = false)
     private EventGuessOptionCase eventGuessOptionCase;
 
-    @Enumerated(EnumType.STRING)
-    private SingleGuessStatusEnum status = SingleGuessStatusEnum.IN_PROGRESS;
-
     @ManyToOne
     @JoinColumn(name = "guess_paper_id", nullable = false)
     @JsonIgnore
@@ -71,13 +68,5 @@ public class SingleGuess {
 
     public void setGuessPaper(GuessPaper guessPaper) {
         this.guessPaper = guessPaper;
-    }
-
-    public SingleGuessStatusEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(SingleGuessStatusEnum status) {
-        this.status = status;
     }
 }

@@ -9,6 +9,7 @@ import dev.m2t.unlucky.exception.RoomNotExistsException;
 import dev.m2t.unlucky.exception.UnauthorizedException;
 import dev.m2t.unlucky.exception.UsernameNotExistsException;
 import dev.m2t.unlucky.model.*;
+import dev.m2t.unlucky.model.enums.EventGuessOptionCaseStatusEnum;
 import dev.m2t.unlucky.model.enums.GuessPaperStatusEnum;
 import dev.m2t.unlucky.repository.*;
 import jakarta.persistence.EntityManager;
@@ -16,7 +17,9 @@ import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +40,28 @@ public class GuessPaperService {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.eventRepository = eventRepository;
+    }
+
+    @Scheduled(fixedRate = 60000)
+    @Transactional
+    public void checkGuessPapers() {
+        logger.info("Checking guess papers.");
+        List<GuessPaper> guessPapers = guessPaperRepository.findAllByStatus(GuessPaperStatusEnum.IN_PROGRESS);
+        guessPapers.forEach(guessPaper -> {
+            if(guessPaper.getGuesses().stream().anyMatch(singleGuess -> singleGuess.getEventGuessOptionCase().getStatus().equals(EventGuessOptionCaseStatusEnum.LOST))) {
+                guessPaper.setStatus(GuessPaperStatusEnum.LOST);
+            } else if(guessPaper.getGuesses().stream().anyMatch(singleGuess -> singleGuess.getEventGuessOptionCase().getStatus().equals(EventGuessOptionCaseStatusEnum.CANCELLED))) {
+                // If any of the guesses is cancelled, the whole guess paper is cancelled
+                // This part may change in the future.
+                guessPaper.setStatus(GuessPaperStatusEnum.CANCELLED);
+            } else if(guessPaper.getGuesses().stream().anyMatch(singleGuess -> singleGuess.getEventGuessOptionCase().getStatus().equals(EventGuessOptionCaseStatusEnum.IN_PROGRESS))) {
+                guessPaper.setStatus(GuessPaperStatusEnum.IN_PROGRESS);
+            } else if(guessPaper.getGuesses().stream().allMatch(singleGuess -> singleGuess.getEventGuessOptionCase().getStatus().equals(EventGuessOptionCaseStatusEnum.WON))) {
+                guessPaper.setStatus(GuessPaperStatusEnum.WON);
+            }
+        });
+        guessPaperRepository.saveAll(guessPapers);
+        logger.info("Guess papers checked.");
     }
 
 
