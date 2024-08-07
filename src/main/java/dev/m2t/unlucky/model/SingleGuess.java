@@ -1,6 +1,7 @@
 package dev.m2t.unlucky.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dev.m2t.unlucky.model.enums.SingleGuessStatusEnum;
 import jakarta.persistence.*;
 
 @Entity
@@ -20,6 +21,9 @@ public class SingleGuess {
     @ManyToOne
     @JoinColumn(name = "event_guess_option_case_id", nullable = false)
     private EventGuessOptionCase eventGuessOptionCase;
+
+    @Enumerated(EnumType.STRING)
+    private SingleGuessStatusEnum status = SingleGuessStatusEnum.IN_PROGRESS;
 
     @ManyToOne
     @JoinColumn(name = "guess_paper_id", nullable = false)
@@ -67,5 +71,13 @@ public class SingleGuess {
 
     public void setGuessPaper(GuessPaper guessPaper) {
         this.guessPaper = guessPaper;
+    }
+
+    public SingleGuessStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(SingleGuessStatusEnum status) {
+        this.status = status;
     }
 }

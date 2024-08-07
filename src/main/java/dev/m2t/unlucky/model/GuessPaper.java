@@ -27,7 +27,10 @@ public class GuessPaper {
     private Double totalOdd = 1.0;
     private Double stake;
     private Double wins;
+
+    @Enumerated(EnumType.STRING)
     private GuessPaperStatusEnum status;
+
     private LocalDateTime createdOn = LocalDateTime.now();
 
     public GuessPaper() {

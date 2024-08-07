@@ -2,9 +2,12 @@ package dev.m2t.unlucky.service;
 
 import dev.m2t.unlucky.dto.BaseResponse;
 import dev.m2t.unlucky.dto.request.CreateEventRequest;
+import dev.m2t.unlucky.dto.request.FinalizeEventRequest;
+import dev.m2t.unlucky.exception.EventNotExistsException;
 import dev.m2t.unlucky.exception.RoomNotExistsException;
 import dev.m2t.unlucky.exception.UnauthorizedException;
 import dev.m2t.unlucky.model.*;
+import dev.m2t.unlucky.model.enums.EventGuessOptionCaseStatusEnum;
 import dev.m2t.unlucky.model.enums.EventStatusEnum;
 import dev.m2t.unlucky.repository.EventPagingRepository;
 import dev.m2t.unlucky.repository.EventRepository;
@@ -97,6 +100,24 @@ public class EventService {
         return new BaseResponse("Events fetched successfully.", true, false, events);
     }
 
+    public BaseResponse finalizeEvent(FinalizeEventRequest finalizeEventRequest, String username, Long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
+
+        event.getEventGuessOptions().forEach(eventGuessOption -> {
+            eventGuessOption.getEventGuessOptionCases().forEach(eventGuessOptionCase -> {
+                if (finalizeEventRequest.getWinnerEventGuessOptionCases().contains(eventGuessOptionCase.getId())) {
+                    eventGuessOptionCase.setStatus(EventGuessOptionCaseStatusEnum.WON);
+                }else {
+                    eventGuessOptionCase.setStatus(EventGuessOptionCaseStatusEnum.LOST);
+                }
+            });
+        });
+
+        event.setStatus(EventStatusEnum.FINISHED);
+        Event savedEvent = eventRepository.save(event);
+        return new BaseResponse("Event finalized successfully.", true, true, savedEvent);
+    }
+
 //    public BaseResponse finalizeEvent(FinalizeEventRequest finalizeEventRequest, String username) {
 //        Optional<Event> event = eventRepository.findById(finalizeEventRequest.getEventId());
 //        Optional<Room> room = roomRepository.findById(finalizeEventRequest.getRoomId());
@@ -179,23 +200,17 @@ public class EventService {
 //            betSlipRepository.save(betSlip);
 //        }
 //    }
-//    public BaseResponse getEvent(String eventId, String username) {
-//        Optional<Event> event = eventRepository.findById(eventId);
-//        if (event.isEmpty()) {
-//            throw new EventNotExistsException("Event with id " + eventId + " does not exist.");
-//        } else {
-//            Room room = roomRepository.findById(event.get().getRoomId()).orElse(null);
-//            if (room == null) {
-//                throw new RoomNotExistsException("Room with id " + event.get().getRoomId() + " does not exist.");
-//            } else if (!room.getUsers().contains(username)) {
-//                throw new UnauthorizedException("You are not one of the members of this room. Only the members can get events.");
-//            } else {
-//                return new BaseResponse("Event fetched successfully.", true, false, event.get());
-//            }
-//        }
-//
-//    }
-//
+
+    public BaseResponse getEvent(Long eventId, String username) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
+        if(event.getRoom().getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
+            throw new UnauthorizedException("You are not one of the members of this room. Only the members can get events.");
+        }
+
+        return new BaseResponse("Event fetched successfully.", true, false, event);
+    }
+
 //    public BaseResponse startEvent(String eventId, String username) {
 //        Optional<Event> event = eventRepository.findById(eventId);
 //        if (event.isEmpty()) {

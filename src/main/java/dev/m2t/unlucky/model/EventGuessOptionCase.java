@@ -1,6 +1,7 @@
 package dev.m2t.unlucky.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dev.m2t.unlucky.model.enums.EventGuessOptionCaseStatusEnum;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,9 @@ public class EventGuessOptionCase {
     @JoinColumn(name = "event_guess_option_id", nullable = false)
     @JsonIgnore
     private EventGuessOption eventGuessOption;
+
+    @Enumerated(EnumType.STRING)
+    private EventGuessOptionCaseStatusEnum status = EventGuessOptionCaseStatusEnum.IN_PROGRESS;
 
     private LocalDateTime createdOn = LocalDateTime.now();
 
@@ -69,5 +73,13 @@ public class EventGuessOptionCase {
 
     public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public EventGuessOptionCaseStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(EventGuessOptionCaseStatusEnum status) {
+        this.status = status;
     }
 }

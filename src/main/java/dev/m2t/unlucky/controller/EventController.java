@@ -47,16 +47,16 @@ public class EventController {
 //        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
 //        return ResponseEntity.ok(eventService.startEvent(eventId, username));
 //    }
-//
-//    @PostMapping("/finalize")
-//    public ResponseEntity<BaseResponse> finalizeEvent(@RequestBody FinalizeEventRequest finalizeEventRequest, @AuthenticationPrincipal Jwt jwt) {
-//        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-//        return ResponseEntity.ok(eventService.finalizeEvent(finalizeEventRequest, username));
-//    }
-//
-//    @GetMapping("/{eventId}")
-//    public ResponseEntity<BaseResponse> getEvent(@PathVariable String eventId, @AuthenticationPrincipal Jwt jwt) {
-//        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-//        return ResponseEntity.ok(eventService.getEvent(eventId, username));
-//    }
+
+    @PostMapping("/{eventId}/finalize")
+    public ResponseEntity<BaseResponse> finalizeEvent(@RequestBody FinalizeEventRequest finalizeEventRequest, @PathVariable String eventId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        return ResponseEntity.ok(eventService.finalizeEvent(finalizeEventRequest, username, Long.parseLong(eventId)));
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<BaseResponse> getEvent(@PathVariable String eventId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        return ResponseEntity.ok(eventService.getEvent(Long.parseLong(eventId), username));
+    }
 }
