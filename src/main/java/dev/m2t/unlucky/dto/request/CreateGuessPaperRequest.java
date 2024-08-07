@@ -1,28 +1,29 @@
 package dev.m2t.unlucky.dto.request;
 
-import dev.m2t.unlucky.dto.SingleGuess;
+import dev.m2t.unlucky.dto.SingleGuessDto;
+import dev.m2t.unlucky.model.SingleGuess;
 
 import java.util.List;
 
 public class CreateGuessPaperRequest {
-    private List<SingleGuess> guesses;
+    private List<SingleGuessDto> guesses;
     private Double stake;
     private Long roomId;
 
     public CreateGuessPaperRequest() {
     }
 
-    public CreateGuessPaperRequest(List<SingleGuess> guesses, Double stake, Long roomId) {
+    public CreateGuessPaperRequest(List<SingleGuessDto> guesses, Double stake, Long roomId) {
         this.guesses = guesses;
         this.stake = stake;
         this.roomId = roomId;
     }
 
-    public List<SingleGuess> getGuesses() {
+    public List<SingleGuessDto> getGuesses() {
         return guesses;
     }
 
-    public void setGuesses(List<SingleGuess> guesses) {
+    public void setGuesses(List<SingleGuessDto> guesses) {
         this.guesses = guesses;
     }
 

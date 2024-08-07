@@ -14,7 +14,6 @@ public class RoomInvite {
 
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
-    @JsonIgnore
     private Room room;
 
     @ManyToOne

@@ -2,15 +2,10 @@ package dev.m2t.unlucky.controller;
 
 import dev.m2t.unlucky.dto.BaseResponse;
 import dev.m2t.unlucky.dto.request.CreateRoomRequest;
-import dev.m2t.unlucky.dto.request.InviteUserRequest;
-import dev.m2t.unlucky.dto.request.JoinRoomRequest;
 import dev.m2t.unlucky.service.RoomService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
-import org.jboss.resteasy.annotations.jaxrs.QueryParam;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -57,19 +52,19 @@ public class RoomController {
         return ResponseEntity.ok(roomService.rejectRoomInvite(Long.parseLong(roomId), username));
     }
 
-    @PostMapping("/leave")
+    @GetMapping("/leave")
     public ResponseEntity<BaseResponse> leaveRoom(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(roomService.leaveRoom(Long.parseLong(roomId), username));
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<BaseResponse> deleteRoom(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(roomService.deleteRoom(Long.parseLong(roomId), username));
     }
 
-    @PostMapping("/{roomId}/invite")
+    @GetMapping("/{roomId}/invite/{invitedUsername}")
     public ResponseEntity<BaseResponse> inviteUser(@PathVariable String invitedUsername, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(roomService.inviteUser(invitedUsername, Long.parseLong(roomId), username));

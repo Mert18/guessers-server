@@ -1,14 +1,15 @@
 package dev.m2t.unlucky.dto;
 
-public class SingleGuess {
+public class SingleGuessDto {
     private Long eventId;
     private Long eventGuessOptionId;
     private Long eventGuessOptionCaseId;
 
-    public SingleGuess() {
+    public SingleGuessDto() {
+
     }
 
-    public SingleGuess(Long eventId, Long eventGuessOptionId, Long eventGuessOptionCaseId) {
+    public SingleGuessDto(Long eventId, Long eventGuessOptionId, Long eventGuessOptionCaseId) {
         this.eventId = eventId;
         this.eventGuessOptionId = eventGuessOptionId;
         this.eventGuessOptionCaseId = eventGuessOptionCaseId;

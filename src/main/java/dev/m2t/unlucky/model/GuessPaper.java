@@ -1,6 +1,5 @@
 package dev.m2t.unlucky.model;
 
-import dev.m2t.unlucky.dto.SingleGuess;
 import dev.m2t.unlucky.model.enums.GuessPaperStatusEnum;
 import jakarta.persistence.*;
 
@@ -24,8 +23,10 @@ public class GuessPaper {
 
     @OneToMany(mappedBy = "guessPaper", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SingleGuess> guesses = new ArrayList<>();
+
     private Double totalOdd = 1.0;
     private Double stake;
+    private Double wins;
     private GuessPaperStatusEnum status;
     private LocalDateTime createdOn = LocalDateTime.now();
 
@@ -33,12 +34,13 @@ public class GuessPaper {
 
     }
 
-    public GuessPaper(User user, Room room, List<SingleGuess> guesses, Double totalOdd, Double stake, GuessPaperStatusEnum status) {
+    public GuessPaper(User user, Room room, List<SingleGuess> guesses, Double totalOdd, Double stake, Double wins, GuessPaperStatusEnum status) {
         this.user = user;
         this.room = room;
         this.guesses = guesses;
         this.totalOdd = totalOdd;
         this.stake = stake;
+        this.wins = wins;
         this.status = status;
     }
 
@@ -104,5 +106,13 @@ public class GuessPaper {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public Double getWins() {
+        return wins;
+    }
+
+    public void setWins(Double wins) {
+        this.wins = wins;
     }
 }
