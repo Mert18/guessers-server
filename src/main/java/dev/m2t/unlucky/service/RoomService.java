@@ -31,14 +31,16 @@ public class RoomService {
     private final UserRepository userRepository;
     private final RoomUserRepository roomUserRepository;
     private RoomInviteRepository roomInviteRepository;
+    private final RoomUserPagingRepository roomUserPagingRepository;
     private static final Logger logger = LoggerFactory.getLogger(RoomService.class);
 
-    public RoomService(RoomRepository roomRepository, RoomPagingRepository roomPagingRepository, UserRepository userRepository, RoomUserRepository roomUserRepository, RoomInviteRepository roomInviteRepository) {
+    public RoomService(RoomRepository roomRepository, RoomPagingRepository roomPagingRepository, UserRepository userRepository, RoomUserRepository roomUserRepository, RoomInviteRepository roomInviteRepository, RoomUserPagingRepository roomUserPagingRepository) {
         this.roomRepository = roomRepository;
         this.roomPagingRepository = roomPagingRepository;
         this.userRepository = userRepository;
         this.roomUserRepository = roomUserRepository;
         this.roomInviteRepository = roomInviteRepository;
+        this.roomUserPagingRepository = roomUserPagingRepository;
     }
 
     public BaseResponse createRoom(CreateRoomRequest createRoomRequest, String owner) {
@@ -151,9 +153,11 @@ public class RoomService {
         return new BaseResponse("You have rejected the room invite.", true, false);
     }
 
-    public BaseResponse listSelfRooms(String username) {
+    public BaseResponse listSelfRooms(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        Set<RoomUser> rooms = roomUserRepository.findAllByUser(user);
+        Page<RoomUser> rooms = roomUserPagingRepository.findAllByUser(user, pageable);
+
+        rooms.forEach(roomUser -> roomUser.setMemberCount(roomUser.getRoom().getRoomUsers().size()));
         return new BaseResponse("Rooms fetched successfully.", true, false, rooms);
     }
 

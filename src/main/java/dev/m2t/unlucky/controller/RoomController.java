@@ -71,9 +71,10 @@ public class RoomController {
     }
 
     @GetMapping("/list/self")
-    public ResponseEntity<BaseResponse> listSelfRooms(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<BaseResponse> listSelfRooms(@AuthenticationPrincipal Jwt jwt, @RequestParam int page, @RequestParam int size) {
         String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(roomService.listSelfRooms(username));
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(roomService.listSelfRooms(username, pageable));
     }
 
     @GetMapping("/list/public")

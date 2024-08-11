@@ -27,6 +27,17 @@ public class Room {
     @JsonIgnore
     private List<RoomUser> roomUsers = new ArrayList<>();
 
+    @Transient
+    private int memberCount;
+
+    public int getMemberCount() {
+        return roomUsers != null ? roomUsers.size() : 0;
+    }
+
+    public void setMemberCount(int memberCount) {
+        this.memberCount = memberCount;
+    }
+
     private LocalDateTime createdOn = LocalDateTime.now();
 
     public Room() {

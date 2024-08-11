@@ -1,7 +1,6 @@
 package dev.m2t.unlucky.service;
 
 import dev.m2t.unlucky.dto.BaseResponse;
-import dev.m2t.unlucky.dto.SingleGuessDto;
 import dev.m2t.unlucky.dto.request.CreateGuessPaperRequest;
 import dev.m2t.unlucky.dto.request.ListGuessPapersRequest;
 import dev.m2t.unlucky.exception.EventNotExistsException;
@@ -12,8 +11,6 @@ import dev.m2t.unlucky.model.*;
 import dev.m2t.unlucky.model.enums.EventGuessOptionCaseStatusEnum;
 import dev.m2t.unlucky.model.enums.GuessPaperStatusEnum;
 import dev.m2t.unlucky.repository.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +18,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,14 +28,16 @@ public class GuessPaperService {
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
     private final EventRepository eventRepository;
+    private final RoomUserRepository roomUserRepository;
     private static final Logger logger = LoggerFactory.getLogger(GuessPaperService.class);
 
-    public GuessPaperService(GuessPaperRepository guessPaperRepository, GuessPaperPagingRepository guessPaperPagingRepository, UserRepository userRepository, RoomRepository roomRepository, EventRepository eventRepository) {
+    public GuessPaperService(GuessPaperRepository guessPaperRepository, GuessPaperPagingRepository guessPaperPagingRepository, UserRepository userRepository, RoomRepository roomRepository, EventRepository eventRepository, RoomUserRepository roomUserRepository) {
         this.guessPaperRepository = guessPaperRepository;
         this.guessPaperPagingRepository = guessPaperPagingRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.eventRepository = eventRepository;
+        this.roomUserRepository = roomUserRepository;
     }
 
     @Scheduled(fixedRate = 60000)
@@ -58,6 +56,10 @@ public class GuessPaperService {
                 guessPaper.setStatus(GuessPaperStatusEnum.IN_PROGRESS);
             } else if(guessPaper.getGuesses().stream().allMatch(singleGuess -> singleGuess.getEventGuessOptionCase().getStatus().equals(EventGuessOptionCaseStatusEnum.WON))) {
                 guessPaper.setStatus(GuessPaperStatusEnum.WON);
+                roomUserRepository.findByRoomAndUser(guessPaper.getRoom(), guessPaper.getUser()).ifPresent(roomUser -> {
+                    roomUser.setBalance(roomUser.getBalance() + guessPaper.getWins());
+                    roomUserRepository.save(roomUser);
+                });
             }
         });
         guessPaperRepository.saveAll(guessPapers);
@@ -70,8 +72,10 @@ public class GuessPaperService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User not found."));
         Room room = roomRepository.findById(createGuessPaperRequest.getRoomId()).orElseThrow(() -> new RoomNotExistsException("Room not found."));
 
-        if (room.getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
-            throw new UnauthorizedException("You are not one of the members of this room. Only the members can list events.");
+        RoomUser ru = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new UnauthorizedException("You are not one of the members of this room. Only the members can create guess papers."));
+
+        if(ru.getBalance() < createGuessPaperRequest.getStake()) {
+            return new BaseResponse("You do not have enough balance to create this guess paper.", false, true, null);
         }
 
         GuessPaper guessPaper = new GuessPaper();
@@ -100,6 +104,9 @@ public class GuessPaperService {
 
         logger.info("Saving guess paper for user {}.", username);
         GuessPaper savedGuessPaper = guessPaperRepository.save(guessPaper);
+
+        ru.setBalance(ru.getBalance() - createGuessPaperRequest.getStake());
+        roomUserRepository.save(ru);
         logger.info("Guess paper with id {} created successfully.", savedGuessPaper.getId());
 
         return new BaseResponse("Guess paper created successfully.", true, true, savedGuessPaper);

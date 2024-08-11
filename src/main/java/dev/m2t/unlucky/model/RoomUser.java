@@ -23,6 +23,18 @@ public class RoomUser {
     private Double balance;
     private Boolean isOwner;
     private Integer score;
+
+    @Transient
+    private int memberCount;
+
+    public int getMemberCount() {
+        return room != null ? room.getRoomUsers().size() : 0;
+    }
+
+    public void setMemberCount(int memberCount) {
+        this.memberCount = memberCount;
+    }
+
     private LocalDateTime createdOn = LocalDateTime.now();
 
     public RoomUser() {
