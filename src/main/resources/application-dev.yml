@@ -3,7 +3,7 @@ spring:
     ansi:
       enabled: ALWAYS
   application:
-    name: unlucky
+    name: guessers
   datasource:
     url: jdbc:postgresql://localhost:5432/unlucky
     username: postgres

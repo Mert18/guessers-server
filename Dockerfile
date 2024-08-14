@@ -8,8 +8,8 @@ COPY src src
 RUN ./mvnw package
 
 FROM eclipse-temurin:17
-WORKDIR unlucky
-COPY target/*.jar unlucky.jar
+WORKDIR guessers
+COPY target/*.jar guessers.jar
 
-ENTRYPOINT ["java","-jar","unlucky.jar"]
+ENTRYPOINT ["java","-jar","guessers.jar"]
 EXPOSE 8080
