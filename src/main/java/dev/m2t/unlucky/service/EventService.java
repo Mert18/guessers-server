@@ -85,7 +85,7 @@ public class EventService {
             throw new UnauthorizedException("You are not one of the members of this room. Only the members can list events.");
         }
 
-        Page<Event> events = eventPagingRepository.findByStatusInAndRoom(List.of(EventStatusEnum.NOT_STARTED, EventStatusEnum.IN_PROGRESS), room, pageable);
+        Page<Event> events = eventPagingRepository.findByStatusInAndRoom(List.of(EventStatusEnum.NOT_STARTED, EventStatusEnum.IN_PROGRESS, EventStatusEnum.STARTED), room, pageable);
 
         return new BaseResponse("Events fetched successfully.", true, false, events);
     }
@@ -103,9 +103,20 @@ public class EventService {
         return new BaseResponse("Events fetched successfully.", true, false, events);
     }
 
-    public BaseResponse finalizeEvent(FinalizeEventRequest finalizeEventRequest, String username, Long eventId) {
+    public BaseResponse finalizeEvent(FinalizeEventRequest finalizeEventRequest, Long roomId, String username, Long eventId) {
         logger.info("Finalize event request received for event: {}", eventId);
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
+
+        if (!room.getOwner().equals(user)) {
+            logger.debug("User {} is not the owner of the room.", username);
+            throw new UnauthorizedException("You are not the owner of this room. Only the owner can create events.");
+        }
+
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
+        if(event.getStatus() != EventStatusEnum.STARTED) {
+            return new BaseResponse("Event could not be finalized.", false, true);
+        }
 
         event.getEventGuessOptions().forEach(eventGuessOption -> {
             eventGuessOption.getEventGuessOptionCases().forEach(eventGuessOptionCase -> {
@@ -121,5 +132,22 @@ public class EventService {
         Event savedEvent = eventRepository.save(event);
         logger.info("Event finalized successfully for event: {}", eventId);
         return new BaseResponse("Event finalized successfully.", true, true, savedEvent);
+    }
+
+    public BaseResponse startEvent(Long eventId, Long roomId, String username) {
+        logger.info("Start event request received for event: {}", eventId);
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
+
+        if (!room.getOwner().equals(user)) {
+            logger.debug("User {} is not the owner of the room.", username);
+            throw new UnauthorizedException("You are not the owner of this room. Only the owner can create events.");
+        }
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
+
+        event.setStatus(EventStatusEnum.STARTED);
+        Event savedEvent = eventRepository.save(event);
+        logger.info("Event started successfully for event: {}", eventId);
+        return new BaseResponse("Event started successfully.", true, true, savedEvent);
     }
 }

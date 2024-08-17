@@ -41,17 +41,17 @@ public class EventController {
         return ResponseEntity.ok(eventService.listCompletedEvents(Long.parseLong(roomId), username, pageable));
     }
 
-//
-//    @GetMapping("/start/{eventId}")
-//    public ResponseEntity<BaseResponse> startEvent(@PathVariable String eventId, @AuthenticationPrincipal Jwt jwt) {
-//        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-//        return ResponseEntity.ok(eventService.startEvent(eventId, username));
-//    }
 
-    @PostMapping("/{eventId}/finalize")
-    public ResponseEntity<BaseResponse> finalizeEvent(@RequestBody FinalizeEventRequest finalizeEventRequest, @PathVariable String eventId, @AuthenticationPrincipal Jwt jwt) {
+    @GetMapping("/{eventId}/start/{roomId}")
+    public ResponseEntity<BaseResponse> startEvent(@PathVariable String eventId, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-        return ResponseEntity.ok(eventService.finalizeEvent(finalizeEventRequest, username, Long.parseLong(eventId)));
+        return ResponseEntity.ok(eventService.startEvent(Long.parseLong(eventId), Long.parseLong(roomId), username));
+    }
+
+    @PostMapping("/{eventId}/finalize/{roomId}")
+    public ResponseEntity<BaseResponse> finalizeEvent(@RequestBody FinalizeEventRequest finalizeEventRequest, @PathVariable String eventId, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        return ResponseEntity.ok(eventService.finalizeEvent(finalizeEventRequest, Long.parseLong(roomId), username, Long.parseLong(eventId)));
     }
 
     @GetMapping("/{eventId}")

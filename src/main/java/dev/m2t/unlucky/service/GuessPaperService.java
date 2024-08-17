@@ -9,6 +9,7 @@ import dev.m2t.unlucky.exception.UnauthorizedException;
 import dev.m2t.unlucky.exception.UsernameNotExistsException;
 import dev.m2t.unlucky.model.*;
 import dev.m2t.unlucky.model.enums.EventGuessOptionCaseStatusEnum;
+import dev.m2t.unlucky.model.enums.EventStatusEnum;
 import dev.m2t.unlucky.model.enums.GuessPaperStatusEnum;
 import dev.m2t.unlucky.repository.*;
 import org.slf4j.Logger;
@@ -88,6 +89,9 @@ public class GuessPaperService {
         List<SingleGuess> singleGuesses = createGuessPaperRequest.getGuesses().stream().map(singleGuessDto -> {
             SingleGuess singleGuess = new SingleGuess();
             Event event = eventRepository.findById(singleGuessDto.getEventId()).orElseThrow(() -> new EventNotExistsException("Event with id " + singleGuessDto.getEventId() + " not exists."));
+            if(event.getStatus() != EventStatusEnum.IN_PROGRESS) {
+                throw new EventNotExistsException("Event with id " + singleGuessDto.getEventId() + " is not in progress.");
+            }
             EventGuessOption ego = event.getEventGuessOptions().stream().filter(eventGuessOption -> eventGuessOption.getId().equals(singleGuessDto.getEventGuessOptionId())).findFirst().orElseThrow(() -> new EventNotExistsException("Event guess option with id " + singleGuessDto.getEventGuessOptionId() + " not exists."));
             EventGuessOptionCase egoc = ego.getEventGuessOptionCases().stream().filter(eventGuessOptionCase -> eventGuessOptionCase.getId().equals(singleGuessDto.getEventGuessOptionCaseId())).findFirst().orElseThrow(() -> new EventNotExistsException("Event guess option case with id " + singleGuessDto.getEventGuessOptionCaseId() + " not exists."));
 
