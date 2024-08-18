@@ -14,6 +14,7 @@ import dev.m2t.unlucky.model.enums.GuessPaperStatusEnum;
 import dev.m2t.unlucky.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -116,15 +117,14 @@ public class GuessPaperService {
         return new BaseResponse("Guess paper created successfully.", true, true, savedGuessPaper);
     }
 
-    public BaseResponse listSelfGuessPapers(ListGuessPapersRequest listGuessPapersRequest, String username, Pageable pageable) {
+    public BaseResponse listSelfGuessPapers(String username, Pageable pageable) {
         logger.info("Listing guess papers for user {}.", username);
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User not found."));
-
         return new BaseResponse("Guess papers retrieved successfully.", true, false, guessPaperPagingRepository.findAllByUser(user, pageable));
     }
 
-    public BaseResponse listRoomGuessPapers(ListGuessPapersRequest listGuessPapersRequest, String username, Long roomId, Pageable pageable) {
-        logger.info("Listing guess papers for user {}.", username);
+    public BaseResponse listRoomGuessPapers(String username, Long roomId, Pageable pageable) {
+        logger.info("Listing room guess papers for user {}.", username);
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User not found."));
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room not found."));
         if (room.getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
