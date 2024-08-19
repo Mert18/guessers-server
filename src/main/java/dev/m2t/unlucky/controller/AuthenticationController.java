@@ -22,4 +22,9 @@ public class AuthenticationController {
     public ResponseEntity<BaseResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
         return ResponseEntity.ok(authenticationService.createUser(createUserRequest));
     }
+
+    @GetMapping("/stats")
+    public ResponseEntity<BaseResponse> getStats() {
+        return ResponseEntity.ok(authenticationService.getStats());
+    }
 }

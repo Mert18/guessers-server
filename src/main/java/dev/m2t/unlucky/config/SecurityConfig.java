@@ -36,7 +36,6 @@ public class SecurityConfig {
         http.csrf((csrf) -> csrf.disable()).cors((cors) -> cors.configurationSource(corsConfigurationSource))
             .authorizeHttpRequests((authorize) -> authorize
                     .requestMatchers("/api/authentication/**").permitAll()
-                    .requestMatchers("/api/stored-images/**").permitAll()
                     .anyRequest().authenticated()
             )
             .oauth2ResourceServer((oauth2) -> oauth2

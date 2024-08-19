@@ -130,6 +130,8 @@ public class GuessPaperService {
         if (room.getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
             throw new UnauthorizedException("You are not one of the members of this room. Only the members can list events.");
         }
-        return new BaseResponse("Guess papers retrieved successfully.", true, false, guessPaperPagingRepository.findAllByRoom(room, pageable));
+
+        Page<GuessPaper> roomGuessPapers = guessPaperPagingRepository.findAllByRoom(room, pageable);
+        return new BaseResponse("Guess papers retrieved successfully.", true, false, roomGuessPapers);
     }
 }
