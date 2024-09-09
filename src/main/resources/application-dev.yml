@@ -15,6 +15,7 @@ spring:
     show-sql: false
     properties:
       hibernate:
+        show_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
   security:
     oauth2:
@@ -39,3 +40,6 @@ keycloak:
   auth-server-url: http://localhost:3333
   credentials:
     secret: XFMMQDz9pSfQSZtdutO1NBr03xPvcxuX
+
+oddsApi:
+  key: a7814a2a1fc39c123ae9a7036043418b
