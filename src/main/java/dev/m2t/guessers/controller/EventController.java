@@ -10,6 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/events")
 @CrossOrigin("*")
@@ -26,10 +28,10 @@ public class EventController {
         return ResponseEntity.ok(eventService.createEvent(createEventRequest, username, Long.valueOf(roomId)));
     }
 
-    @GetMapping("/create/{roomId}/{readyEventId}")
-    public ResponseEntity<BaseResponse> createEventFromReadyEvent(@PathVariable String roomId, @PathVariable String readyEventId, @AuthenticationPrincipal Jwt jwt) {
+    @GetMapping("/create/{roomId}")
+    public ResponseEntity<BaseResponse> createEventFromReadyEvent(@PathVariable String roomId, @RequestParam List<String> readyEventIds, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
-        return ResponseEntity.ok(eventService.createEventFromReadyEvent(Long.valueOf(roomId), readyEventId, username));
+        return ResponseEntity.ok(eventService.createEventFromReadyEvent(Long.valueOf(roomId), readyEventIds, username));
     }
 
     @GetMapping("/list/{roomId}/active")

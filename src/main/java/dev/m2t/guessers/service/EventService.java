@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -153,7 +154,7 @@ public class EventService {
         return new BaseResponse("Event started successfully.", true, true, savedEvent);
     }
 
-    public BaseResponse createEventFromReadyEvent(Long roomId, String readyEventId, String username) {
+    public BaseResponse createEventFromReadyEvent(Long roomId, List<String> readyEventIds, String username) {
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
 
@@ -162,13 +163,19 @@ public class EventService {
             throw new UnauthorizedException("You are not the owner of this room. Only the owner can create events.");
         }
 
-        ReadyEvent readyEvent = readyEventRepository.findById(readyEventId).orElseThrow(() -> new EventNotExistsException("Ready event with id " + readyEventId + " does not exist."));
+        List<Event> eventsToCreate = new ArrayList<>();
+        for(String readyEventId : readyEventIds) {
+            ReadyEvent readyEvent = readyEventRepository.findById(readyEventId).orElseThrow(() -> new EventNotExistsException("Ready event with id " + readyEventId + " does not exist."));
 
-        Event event = eventReadyEventMapper.toEvent(readyEvent);
-        event.setRoom(room);
+            Event event = eventReadyEventMapper.toEvent(readyEvent);
+            event.setRoom(room);
 
-        Event savedEvent = eventRepository.save(event);
+            eventsToCreate.add(event);
+        }
 
-        return new BaseResponse("Event created successfully from ready event.", true, true, savedEvent);
+
+        eventRepository.saveAll(eventsToCreate);
+
+        return new BaseResponse("Event created successfully from ready event.", true, true);
     }
 }
