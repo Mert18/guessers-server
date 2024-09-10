@@ -249,4 +249,32 @@ public class RoomService {
         roomRanksResponse.setUserCount(roomUsers.size());
         return new BaseResponse("Room ranks fetched successfully.", true, false, roomRanksResponse);
     }
+
+    public BaseResponse giveToken(Long roomId, List<String> roomUserIds, Double amount, String username) {
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new RoomUserNotFoundException("User is not part of the room."));
+        if(!roomUser.getOwner()) {
+            return new BaseResponse("You are not the owner of this room.", false, false);
+        }
+
+        List<Long> roomUserIdsLong = roomUserIds.stream().map(Long::parseLong).collect(Collectors.toList());
+        List<RoomUser> roomUsers = roomUserRepository.findAllByIdIn(roomUserIdsLong);
+
+        for (RoomUser ru : roomUsers) {
+            ru.setBalance(ru.getBalance() + amount);
+        }
+
+        roomUserRepository.saveAll(roomUsers);
+        return new BaseResponse("Tokens given successfully.", true, false);
+    }
+
+    public BaseResponse getRoomUsers(Long roomId, String username) {
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new RoomUserNotFoundException("User is not part of the room."));
+
+        List<RoomUser> roomUsers = roomUserRepository.findAllByRoom(room);
+        return new BaseResponse("Room users fetched successfully.", true, false, roomUsers);
+    }
 }

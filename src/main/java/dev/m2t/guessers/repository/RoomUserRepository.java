@@ -15,4 +15,6 @@ public interface RoomUserRepository extends JpaRepository<RoomUser, Long> {
     Set<RoomUser> findAllByUser(User user);
 
     List<RoomUser> findAllByRoom(Room room);
+
+    List<RoomUser> findAllByIdIn(List<Long> roomUserIds);
 }
