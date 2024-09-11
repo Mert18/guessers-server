@@ -24,10 +24,30 @@ public class LeagueEventReadyEventMapper {
         readyEvent.setLeague(ReadyEventLeagueEnum.fromString(leagueEvent.getSportKey()));
 
         if(!leagueEvent.getBookmakers().isEmpty()) {
-            leagueEvent.getBookmakers().get(0).getMarkets().forEach(market -> {
+            int maxMarketsIndex = 0;
+            for(int i=0; i<leagueEvent.getBookmakers().size(); i++) {
+                if(leagueEvent.getBookmakers().get(i).getMarkets().size() > leagueEvent.getBookmakers().get(maxMarketsIndex).getMarkets().size()) {
+                    maxMarketsIndex = i;
+                }
+            }
+
+            leagueEvent.getBookmakers().get(maxMarketsIndex).getMarkets().forEach(market -> {
                 ReadyEventOption readyEventOption = new ReadyEventOption();
                 readyEventOption.setId(leagueEvent.getId() + "-" + market.getKey());
-                readyEventOption.setName(market.getKey());
+                switch (market.getKey()){
+                    case "h2h":
+                        readyEventOption.setName("Match Result");
+                        break;
+                    case "totals":
+                        readyEventOption.setName("Over/Under");
+                        break;
+                    case "spreads":
+                        readyEventOption.setName("Spread");
+                        break;
+                    default:
+                        readyEventOption.setName(market.getKey());
+                        break;
+                }
 
                 market.getOutcomes().forEach(outcome -> {
                     ReadyEventOptionCase readyEventOptionCase = new ReadyEventOptionCase();

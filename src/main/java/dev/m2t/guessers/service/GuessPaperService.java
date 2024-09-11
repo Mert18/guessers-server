@@ -68,14 +68,14 @@ public class GuessPaperService {
     }
 
 
-    public BaseResponse createGuessPaper(CreateGuessPaperRequest createGuessPaperRequest, String username) {
+    synchronized public BaseResponse createGuessPaper(CreateGuessPaperRequest createGuessPaperRequest, String username) {
         logger.info("Creating guess paper for user {}.", username);
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User not found."));
         Room room = roomRepository.findById(createGuessPaperRequest.getRoomId()).orElseThrow(() -> new RoomNotExistsException("Room not found."));
 
         RoomUser ru = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new UnauthorizedException("You are not one of the members of this room. Only the members can create guess papers."));
 
-        if(ru.getBalance() < createGuessPaperRequest.getStake()) {
+        if(ru.getBalance() < createGuessPaperRequest.getStake() && !room.isBorderless()) {
             return new BaseResponse("You do not have enough balance to create this guess paper.", false, true, null);
         }
 

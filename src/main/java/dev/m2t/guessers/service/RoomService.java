@@ -7,10 +7,7 @@ import dev.m2t.guessers.dto.response.RoomRanksResponse;
 import dev.m2t.guessers.exception.RoomNotExistsException;
 import dev.m2t.guessers.exception.RoomUserNotFoundException;
 import dev.m2t.guessers.exception.UsernameNotExistsException;
-import dev.m2t.guessers.model.Room;
-import dev.m2t.guessers.model.RoomInvite;
-import dev.m2t.guessers.model.RoomUser;
-import dev.m2t.guessers.model.User;
+import dev.m2t.guessers.model.*;
 import dev.m2t.guessers.model.enums.RoomInviteStatusEnum;
 import dev.m2t.guessers.repository.*;
 import org.slf4j.Logger;
@@ -19,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,17 +26,19 @@ public class RoomService {
     private final RoomPagingRepository roomPagingRepository;
     private final UserRepository userRepository;
     private final RoomUserRepository roomUserRepository;
-    private RoomInviteRepository roomInviteRepository;
+    private final RoomInviteRepository roomInviteRepository;
     private final RoomUserPagingRepository roomUserPagingRepository;
+    private final LendLogRepository lendLogRepository;
     private static final Logger logger = LoggerFactory.getLogger(RoomService.class);
 
-    public RoomService(RoomRepository roomRepository, RoomPagingRepository roomPagingRepository, UserRepository userRepository, RoomUserRepository roomUserRepository, RoomInviteRepository roomInviteRepository, RoomUserPagingRepository roomUserPagingRepository) {
+    public RoomService(RoomRepository roomRepository, RoomPagingRepository roomPagingRepository, UserRepository userRepository, RoomUserRepository roomUserRepository, RoomInviteRepository roomInviteRepository, RoomUserPagingRepository roomUserPagingRepository, LendLogRepository lendLogRepository) {
         this.roomRepository = roomRepository;
         this.roomPagingRepository = roomPagingRepository;
         this.userRepository = userRepository;
         this.roomUserRepository = roomUserRepository;
         this.roomInviteRepository = roomInviteRepository;
         this.roomUserPagingRepository = roomUserPagingRepository;
+        this.lendLogRepository = lendLogRepository;
     }
 
     public BaseResponse createRoom(CreateRoomRequest createRoomRequest, String owner) {
@@ -54,6 +54,7 @@ public class RoomService {
         room.setPublic(createRoomRequest.getPublico());
         room.setRoomUsers(new ArrayList<>());
         room.setOwner(user.get());
+        room.setBorderless(createRoomRequest.getBorderless());
 
         // Create RoomUser (owner)
         RoomUser roomUser = new RoomUser();
@@ -252,20 +253,33 @@ public class RoomService {
 
     public BaseResponse giveToken(Long roomId, List<String> roomUserIds, Double amount, String username) {
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+
+        if(room.isBorderless()) {
+            return new BaseResponse("This room is borderless. You cannot give tokens in borderless rooms.", false, false);
+        }
+
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
         RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new RoomUserNotFoundException("User is not part of the room."));
+
         if(!roomUser.getOwner()) {
             return new BaseResponse("You are not the owner of this room.", false, false);
         }
 
+        List<LendLog> lendLogs = new ArrayList<>();
         List<Long> roomUserIdsLong = roomUserIds.stream().map(Long::parseLong).collect(Collectors.toList());
         List<RoomUser> roomUsers = roomUserRepository.findAllByIdIn(roomUserIdsLong);
-
         for (RoomUser ru : roomUsers) {
             ru.setBalance(ru.getBalance() + amount);
+            LendLog lendLog = new LendLog();
+            lendLog.setAmount(amount);
+            lendLog.setCreatedOn(LocalDateTime.now());
+            lendLog.setRoom(room);
+            lendLog.setRoomUser(ru);
+            lendLogs.add(lendLog);
         }
 
         roomUserRepository.saveAll(roomUsers);
+        lendLogRepository.saveAll(lendLogs);
         return new BaseResponse("Tokens given successfully.", true, false);
     }
 

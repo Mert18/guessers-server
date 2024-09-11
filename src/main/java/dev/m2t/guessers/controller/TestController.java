@@ -19,7 +19,7 @@ public class TestController {
 
     @GetMapping("/leagueodds")
     public void test() {
-        String league = "soccer_epl";
+        String league = "soccer_turkey_super_league";
         oddsApiClient.fetchOddsLeague(league);
     }
 }
