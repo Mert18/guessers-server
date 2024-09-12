@@ -3,8 +3,7 @@ package dev.m2t.guessers.service;
 import dev.m2t.guessers.dto.BaseResponse;
 import dev.m2t.guessers.dto.request.CreateEventRequest;
 import dev.m2t.guessers.dto.request.FinalizeEventRequest;
-import dev.m2t.guessers.exception.EventNotExistsException;
-import dev.m2t.guessers.exception.RoomNotExistsException;
+import dev.m2t.guessers.exception.ResourceNotFoundException;
 import dev.m2t.guessers.exception.UnauthorizedException;
 import dev.m2t.guessers.mapper.EventReadyEventMapper;
 import dev.m2t.guessers.model.*;
@@ -40,7 +39,7 @@ public class EventService {
     }
 
     public BaseResponse getEvent(Long eventId, String username) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
         if(event.getRoom().getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
             throw new UnauthorizedException("You are not one of the members of this room. Only the members can get events.");
@@ -51,7 +50,7 @@ public class EventService {
 
     public BaseResponse createEvent(CreateEventRequest createEventRequest, String username, Long roomId) {
         logger.info("Create event request received for room: {}", roomId);
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
 
         if (!room.getOwner().equals(user)) {
@@ -82,7 +81,7 @@ public class EventService {
     // Lists events that are not started yet for a given room
     public BaseResponse listEvents(Long roomId, String username, Pageable pageable) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
 
         if (room.getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
             throw new UnauthorizedException("You are not one of the members of this room. Only the members can list events.");
@@ -95,7 +94,7 @@ public class EventService {
 
     public BaseResponse listCompletedEvents(Long roomId, String username, Pageable pageable) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
 
         if (room.getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
             throw new UnauthorizedException("You are not one of the members of this room. Only the members can list events.");
@@ -108,7 +107,7 @@ public class EventService {
 
     public BaseResponse finalizeEvent(FinalizeEventRequest finalizeEventRequest, Long roomId, String username, Long eventId) {
         logger.info("Finalize event request received for event: {}", eventId);
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
 
         if (!room.getOwner().equals(user)) {
@@ -116,7 +115,7 @@ public class EventService {
             throw new UnauthorizedException("You are not the owner of this room. Only the owner can create events.");
         }
 
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId));
         if(event.getStatus() != EventStatusEnum.STARTED) {
             return new BaseResponse("Event could not be finalized.", false, true);
         }
@@ -139,14 +138,14 @@ public class EventService {
 
     public BaseResponse startEvent(Long eventId, Long roomId, String username) {
         logger.info("Start event request received for event: {}", eventId);
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
 
         if (!room.getOwner().equals(user)) {
             logger.debug("User {} is not the owner of the room.", username);
             throw new UnauthorizedException("You are not the owner of this room. Only the owner can create events.");
         }
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotExistsException("Event with id " + eventId + " does not exist."));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId));
 
         event.setStatus(EventStatusEnum.STARTED);
         Event savedEvent = eventRepository.save(event);
@@ -155,7 +154,7 @@ public class EventService {
     }
 
     public BaseResponse createEventFromReadyEvent(Long roomId, List<String> readyEventIds, String username) {
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
 
         if (!room.getOwner().equals(user)) {
@@ -165,7 +164,7 @@ public class EventService {
 
         List<Event> eventsToCreate = new ArrayList<>();
         for(String readyEventId : readyEventIds) {
-            ReadyEvent readyEvent = readyEventRepository.findById(readyEventId).orElseThrow(() -> new EventNotExistsException("Ready event with id " + readyEventId + " does not exist."));
+            ReadyEvent readyEvent = readyEventRepository.findById(readyEventId).orElseThrow(() -> new ResourceNotFoundException("Ready Event", "id", readyEventId));
 
             Event event = eventReadyEventMapper.toEvent(readyEvent);
             event.setRoom(room);
