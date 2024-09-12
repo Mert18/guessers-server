@@ -9,7 +9,6 @@ import dev.m2t.guessers.repository.ReadyEventRepository;
 import dev.m2t.guessers.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,16 +29,19 @@ public class ReadyEventService {
     }
 
     public void saveReadyEvents(List<LeagueEvent> leagueEvents) {
+        logger.info("Saving ready events.");
+        int savedReadyEventsCounter = 0;
         for(LeagueEvent leagueEvent : leagueEvents) {
             ReadyEvent readyEvent = leagueEventFootballMatchMapper.toReadyEvent(leagueEvent);
-
             if(readyEventRepository.existsById(readyEvent.getId())) {
                 logger.info("Football match already exists: {}", readyEvent.getName());
                 continue;
             }
 
             readyEventRepository.save(readyEvent);
+            savedReadyEventsCounter++;
         }
+        logger.info("{} ready events saved.", savedReadyEventsCounter);
     }
 
     public List<ReadyEvent> getUpcomingReadyEvents(String league, String username) {
