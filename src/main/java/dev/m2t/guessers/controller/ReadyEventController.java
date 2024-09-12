@@ -22,7 +22,7 @@ public class ReadyEventController {
 
     @GetMapping("/upcoming/{league}")
     public ResponseEntity<List<ReadyEvent>> getUpcomingReadyEvents(@PathVariable String league, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         List<ReadyEvent> readyEvents = readyEventService.getUpcomingReadyEvents(league, username);
         return ResponseEntity.ok(readyEvents);
     }
