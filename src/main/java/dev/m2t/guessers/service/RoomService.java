@@ -252,6 +252,7 @@ public class RoomService {
     }
 
     public BaseResponse giveToken(Long roomId, List<String> roomUserIds, Double amount, String username) {
+        logger.info("Give token request received for room: {} and user: {}", roomId, username);
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
 
         if(room.isBorderless()) {
@@ -280,6 +281,7 @@ public class RoomService {
 
         roomUserRepository.saveAll(roomUsers);
         lendLogRepository.saveAll(lendLogs);
+        logger.info("Tokens given successfully for room {}.", room.getName());
         return new BaseResponse("Tokens given successfully.", true, false);
     }
 

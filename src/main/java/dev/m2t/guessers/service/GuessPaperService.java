@@ -44,7 +44,7 @@ public class GuessPaperService {
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void checkGuessPapers() {
-        logger.info("Checking guess papers.");
+        logger.info("Periodic guess paper check starting.");
         List<GuessPaper> guessPapers = guessPaperRepository.findAllByStatus(GuessPaperStatusEnum.IN_PROGRESS);
         guessPapers.forEach(guessPaper -> {
             if(guessPaper.getGuesses().stream().anyMatch(singleGuess -> singleGuess.getEventGuessOptionCase().getStatus().equals(EventGuessOptionCaseStatusEnum.LOST))) {
@@ -64,7 +64,7 @@ public class GuessPaperService {
             }
         });
         guessPaperRepository.saveAll(guessPapers);
-        logger.info("Guess papers checked.");
+        logger.info("Periodic guess paper check completed.");
     }
 
 

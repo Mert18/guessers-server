@@ -85,6 +85,7 @@ public class AuthenticationService {
 
     @Scheduled(fixedRate = 3600000)
     public void stats() {
+        logger.info("Updating the app user stats");
         Long userCount = userRepository.count();
         Long roomCount = roomRepository.count();
         Long eventCount = eventRepository.count();
@@ -95,6 +96,7 @@ public class AuthenticationService {
         stats.setEventCount(eventCount);
         stats.setLastUpdated(LocalDateTime.now());
         statsRepository.save(stats);
+        logger.info("The app user stats updated successfully.");
     }
 
     public BaseResponse getStats() {
