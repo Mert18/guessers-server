@@ -2,10 +2,8 @@ package dev.m2t.guessers.service;
 
 import dev.m2t.guessers.dto.BaseResponse;
 import dev.m2t.guessers.dto.request.CreateGuessPaperRequest;
-import dev.m2t.guessers.exception.EventNotExistsException;
-import dev.m2t.guessers.exception.RoomNotExistsException;
+import dev.m2t.guessers.exception.ResourceNotFoundException;
 import dev.m2t.guessers.exception.UnauthorizedException;
-import dev.m2t.guessers.exception.UsernameNotExistsException;
 import dev.m2t.guessers.model.*;
 import dev.m2t.guessers.model.enums.EventGuessOptionCaseStatusEnum;
 import dev.m2t.guessers.model.enums.EventStatusEnum;
@@ -70,8 +68,8 @@ public class GuessPaperService {
 
     synchronized public BaseResponse createGuessPaper(CreateGuessPaperRequest createGuessPaperRequest, String username) {
         logger.info("Creating guess paper for user {}.", username);
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User not found."));
-        Room room = roomRepository.findById(createGuessPaperRequest.getRoomId()).orElseThrow(() -> new RoomNotExistsException("Room not found."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        Room room = roomRepository.findById(createGuessPaperRequest.getRoomId()).orElseThrow(() -> new ResourceNotFoundException("Room", "id", createGuessPaperRequest.getRoomId()));
 
         RoomUser ru = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new UnauthorizedException("You are not one of the members of this room. Only the members can create guess papers."));
 
@@ -88,12 +86,12 @@ public class GuessPaperService {
         // Map SingleGuessDto to SingleGuess and add to GuessPaper
         List<SingleGuess> singleGuesses = createGuessPaperRequest.getGuesses().stream().map(singleGuessDto -> {
             SingleGuess singleGuess = new SingleGuess();
-            Event event = eventRepository.findById(singleGuessDto.getEventId()).orElseThrow(() -> new EventNotExistsException("Event with id " + singleGuessDto.getEventId() + " not exists."));
+            Event event = eventRepository.findById(singleGuessDto.getEventId()).orElseThrow(() -> new ResourceNotFoundException("Event", "id", singleGuessDto.getEventId()));
             if(event.getStatus() != EventStatusEnum.IN_PROGRESS) {
-                throw new EventNotExistsException("Event with id " + singleGuessDto.getEventId() + " is not in progress.");
+                throw new ResourceNotFoundException("Event", "status", EventStatusEnum.IN_PROGRESS);
             }
-            EventGuessOption ego = event.getEventGuessOptions().stream().filter(eventGuessOption -> eventGuessOption.getId().equals(singleGuessDto.getEventGuessOptionId())).findFirst().orElseThrow(() -> new EventNotExistsException("Event guess option with id " + singleGuessDto.getEventGuessOptionId() + " not exists."));
-            EventGuessOptionCase egoc = ego.getEventGuessOptionCases().stream().filter(eventGuessOptionCase -> eventGuessOptionCase.getId().equals(singleGuessDto.getEventGuessOptionCaseId())).findFirst().orElseThrow(() -> new EventNotExistsException("Event guess option case with id " + singleGuessDto.getEventGuessOptionCaseId() + " not exists."));
+            EventGuessOption ego = event.getEventGuessOptions().stream().filter(eventGuessOption -> eventGuessOption.getId().equals(singleGuessDto.getEventGuessOptionId())).findFirst().orElseThrow(() -> new ResourceNotFoundException("Event Guess Option", "id", singleGuessDto.getEventGuessOptionId()));
+            EventGuessOptionCase egoc = ego.getEventGuessOptionCases().stream().filter(eventGuessOptionCase -> eventGuessOptionCase.getId().equals(singleGuessDto.getEventGuessOptionCaseId())).findFirst().orElseThrow(() -> new ResourceNotFoundException("Event Guess Option", "id", singleGuessDto.getEventGuessOptionCaseId()));
 
             singleGuess.setEvent(event);
             singleGuess.setEventGuessOption(ego);
@@ -118,14 +116,14 @@ public class GuessPaperService {
 
     public BaseResponse listSelfGuessPapers(String username, Pageable pageable) {
         logger.info("Listing guess papers for user {}.", username);
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User not found."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         return new BaseResponse("Guess papers retrieved successfully.", true, false, guessPaperPagingRepository.findAllByUser(user, pageable));
     }
 
     public BaseResponse listRoomGuessPapers(String username, Long roomId, Pageable pageable) {
         logger.info("Listing room guess papers for user {}.", username);
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User not found."));
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room not found."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
         if (room.getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
             throw new UnauthorizedException("You are not one of the members of this room. Only the members can list events.");
         }

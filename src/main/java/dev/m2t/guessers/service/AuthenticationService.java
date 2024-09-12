@@ -2,7 +2,7 @@ package dev.m2t.guessers.service;
 
 import dev.m2t.guessers.dto.BaseResponse;
 import dev.m2t.guessers.dto.request.CreateUserRequest;
-import dev.m2t.guessers.exception.UsernameAlreadyExistsException;
+import dev.m2t.guessers.exception.ResourceAlreadyExistsException;
 import dev.m2t.guessers.model.Stats;
 import dev.m2t.guessers.model.User;
 import dev.m2t.guessers.repository.EventRepository;
@@ -48,7 +48,7 @@ public class AuthenticationService {
         String username = createUserRequest.getUsername();
         UsersResource users = keycloak.realm(realm).users();
         if(!users.searchByUsername(username, true).isEmpty()) {
-            throw new UsernameAlreadyExistsException("Username already exists: " + username);
+            throw new ResourceAlreadyExistsException("User", "user", username);
         }
 
         // Save user to keycloak

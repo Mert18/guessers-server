@@ -4,9 +4,7 @@ import dev.m2t.guessers.dto.BaseResponse;
 import dev.m2t.guessers.dto.request.CreateRoomRequest;
 import dev.m2t.guessers.dto.response.ListPublicRoomsResponse;
 import dev.m2t.guessers.dto.response.RoomRanksResponse;
-import dev.m2t.guessers.exception.RoomNotExistsException;
-import dev.m2t.guessers.exception.RoomUserNotFoundException;
-import dev.m2t.guessers.exception.UsernameNotExistsException;
+import dev.m2t.guessers.exception.ResourceNotFoundException;
 import dev.m2t.guessers.model.*;
 import dev.m2t.guessers.model.enums.RoomInviteStatusEnum;
 import dev.m2t.guessers.repository.*;
@@ -72,8 +70,8 @@ public class RoomService {
 
     public BaseResponse acceptRoomInvite(Long roomId, String username) {
         logger.info("Accept room invite request received for room: {} and user: {}", roomId, username);
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
         if(isUserInvitedToRoom(user, room)) {
             RoomInvite invite = roomInviteRepository.findByRoomAndUser(room, user).get();
@@ -98,9 +96,9 @@ public class RoomService {
 
     public BaseResponse leaveRoom(Long roomId, String username) {
         logger.info("Leave room request received for room: {} and user: {}", roomId, username);
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new RoomUserNotFoundException("User is not part of the room."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new ResourceNotFoundException("User", "user", user));
 
         roomUserRepository.delete(roomUser);
         logger.info("User {} left room {} successfully.", username, room.getName());
@@ -110,8 +108,8 @@ public class RoomService {
 
     public BaseResponse deleteRoom(Long roomId, String username) {
         logger.info("Delete room request received for room: {} and user: {}", roomId, username);
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         if(room.getOwner().equals(user)){
             roomRepository.delete(room);
             logger.info("Room {} deleted successfully.", room.getName());
@@ -123,9 +121,9 @@ public class RoomService {
 
     public BaseResponse inviteUser(String invitedUsername, Long roomId, String username) {
         logger.info("Invite user request received for room: {} and user: {}", roomId, username);
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
-        User invitedUser = userRepository.findByUsername(invitedUsername).orElseThrow(() -> new UsernameNotExistsException("User with username " + invitedUsername + " does not exist."));
-        User ownerUser = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
+        User invitedUser = userRepository.findByUsername(invitedUsername).orElseThrow(() -> new ResourceNotFoundException("User", "username", invitedUsername));
+        User ownerUser = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
         if(room.getOwner().equals(ownerUser)){
             RoomInvite invite = new RoomInvite();
@@ -142,8 +140,8 @@ public class RoomService {
 
     public BaseResponse rejectRoomInvite(Long roomId, String username) {
         logger.info("Reject room invite request received for room: {} and user: {}", roomId, username);
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
         // Or we should just set as REJECTED?
         RoomInvite invite = roomInviteRepository.findByRoomAndUser(room, user).get();
@@ -153,7 +151,7 @@ public class RoomService {
     }
 
     public BaseResponse listSelfRooms(String username, Pageable pageable) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         Page<RoomUser> rooms = roomUserPagingRepository.findAllByUser(user, pageable);
 
         rooms.forEach(roomUser -> roomUser.setMemberCount(roomUser.getRoom().getRoomUsers().size()));
@@ -161,8 +159,8 @@ public class RoomService {
     }
 
     public BaseResponse getRoom(Long roomId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
         if(room.getRoomUsers().stream().anyMatch(roomUser -> roomUser.getUser().equals(user))) {
             return new BaseResponse("Room fetched successfully.", true, false, room);
@@ -172,7 +170,7 @@ public class RoomService {
     }
 
     public BaseResponse listPublicRooms(Pageable pageable, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
         ListPublicRoomsResponse listPublicRoomsResponse = new ListPublicRoomsResponse();
         Page<Room> rooms = roomPagingRepository.findAllPublicRoomsExcludingUser(user.getId(), pageable);
@@ -184,8 +182,8 @@ public class RoomService {
 
     public BaseResponse joinPublicRoom(String username, Long roomId) {
         logger.info("Join public room request received for room: {} and user: {}", roomId, username);
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
         Optional<RoomUser> existRoomUser = roomUserRepository.findByRoomAndUser(room, user);
         if(existRoomUser.isPresent()){
@@ -211,21 +209,21 @@ public class RoomService {
     }
 
     public BaseResponse searchRooms(String query, Pageable pageable, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         Page<Room> searchResultRooms = roomPagingRepository.findRoomsExcludingUser(user.getId(), query, pageable);
         return new BaseResponse("Rooms fetched successfully.", true, false, searchResultRooms);
     }
 
     public BaseResponse getSelfRoomUser(Long roomId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
-        RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new RoomUserNotFoundException("User is not part of the room."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
+        RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new ResourceNotFoundException("Room User", "user", user.getUsername()));
         return new BaseResponse("Room user fetched successfully.", true, false, roomUser);
     }
 
     public BaseResponse getRoomRanks(Long roomId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
         RoomRanksResponse roomRanksResponse = new RoomRanksResponse();
         if(room.getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
@@ -253,14 +251,14 @@ public class RoomService {
 
     public BaseResponse giveToken(Long roomId, List<String> roomUserIds, Double amount, String username) {
         logger.info("Give token request received for room: {} and user: {}", roomId, username);
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
         if(room.isBorderless()) {
             return new BaseResponse("This room is borderless. You cannot give tokens in borderless rooms.", false, false);
         }
 
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new RoomUserNotFoundException("User is not part of the room."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new ResourceNotFoundException("Room User", "user", user.getUsername()));
 
         if(!roomUser.getOwner()) {
             return new BaseResponse("You are not the owner of this room.", false, false);
@@ -286,9 +284,9 @@ public class RoomService {
     }
 
     public BaseResponse getRoomUsers(Long roomId, String username) {
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotExistsException("Room with id " + roomId + " does not exist."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotExistsException("User with username " + username + " does not exist."));
-        roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new RoomUserNotFoundException("User is not part of the room."));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new ResourceNotFoundException("Room User", "user", user.getUsername()));
 
         List<RoomUser> roomUsers = roomUserRepository.findAllByRoom(room);
         return new BaseResponse("Room users fetched successfully.", true, false, roomUsers);

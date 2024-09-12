@@ -15,7 +15,7 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler({UsernameAlreadyExistsException.class, UsernameNotFoundException.class})
+    @ExceptionHandler({ResourceAlreadyExistsException.class})
     public <T extends RuntimeException> ResponseEntity<Object> handleBadRequestExceptions(T exception) {
         return ResponseEntity.ok().body(new BaseResponse<>(exception.getMessage(), false, true));
     }
@@ -31,4 +31,10 @@ public class GlobalExceptionHandler {
         });
         return ResponseEntity.ok().body(new BaseResponse<>("Fields validation failed", false, true, errors));
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public <T extends RuntimeException> ResponseEntity<Object> handleEventNotExistsException(T exception) {
+        return ResponseEntity.ok().body(new BaseResponse<>(exception.getMessage(), false, true));
+    }
+
 }
