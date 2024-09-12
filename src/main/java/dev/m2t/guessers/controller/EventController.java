@@ -24,26 +24,26 @@ public class EventController {
 
     @PostMapping("/create/{roomId}")
     public ResponseEntity<BaseResponse> createEvent(@RequestBody CreateEventRequest createEventRequest, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(eventService.createEvent(createEventRequest, username, Long.valueOf(roomId)));
     }
 
     @GetMapping("/create/{roomId}")
     public ResponseEntity<BaseResponse> createEventFromReadyEvent(@PathVariable String roomId, @RequestParam List<String> readyEventIds, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(eventService.createEventFromReadyEvent(Long.valueOf(roomId), readyEventIds, username));
     }
 
     @GetMapping("/list/{roomId}/active")
     public ResponseEntity<BaseResponse> listEvents(@PathVariable String roomId, @RequestParam int page, @RequestParam int size, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         return ResponseEntity.ok(eventService.listEvents(Long.parseLong(roomId), username, pageable));
     }
 
     @GetMapping("/list/{roomId}/completed")
     public ResponseEntity<BaseResponse> listCompletedEvents(@PathVariable String roomId, @RequestParam int page, @RequestParam int size, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         return ResponseEntity.ok(eventService.listCompletedEvents(Long.parseLong(roomId), username, pageable));
     }
@@ -51,19 +51,19 @@ public class EventController {
 
     @GetMapping("/{eventId}/start/{roomId}")
     public ResponseEntity<BaseResponse> startEvent(@PathVariable String eventId, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(eventService.startEvent(Long.parseLong(eventId), Long.parseLong(roomId), username));
     }
 
     @PostMapping("/{eventId}/finalize/{roomId}")
     public ResponseEntity<BaseResponse> finalizeEvent(@RequestBody FinalizeEventRequest finalizeEventRequest, @PathVariable String eventId, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(eventService.finalizeEvent(finalizeEventRequest, Long.parseLong(roomId), username, Long.parseLong(eventId)));
     }
 
     @GetMapping("/{eventId}")
     public ResponseEntity<BaseResponse> getEvent(@PathVariable String eventId, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(eventService.getEvent(Long.parseLong(eventId), username));
     }
 }

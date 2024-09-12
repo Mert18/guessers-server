@@ -17,7 +17,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler({ResourceAlreadyExistsException.class})
     public <T extends RuntimeException> ResponseEntity<Object> handleBadRequestExceptions(T exception) {
-        return ResponseEntity.ok().body(new BaseResponse<>(exception.getMessage(), false, true));
+        return ResponseEntity.badRequest().body(new BaseResponse<>(exception.getMessage(), false, true));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -29,12 +29,12 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ResponseEntity.ok().body(new BaseResponse<>("Fields validation failed", false, true, errors));
+        return ResponseEntity.badRequest().body(new BaseResponse<>("Fields validation failed", false, true, errors));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public <T extends RuntimeException> ResponseEntity<Object> handleEventNotExistsException(T exception) {
-        return ResponseEntity.ok().body(new BaseResponse<>(exception.getMessage(), false, true));
+        return ResponseEntity.badRequest().body(new BaseResponse<>(exception.getMessage(), false, true));
     }
 
 }

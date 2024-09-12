@@ -19,7 +19,7 @@ public class UserController {
 
     @GetMapping("/invites")
     public ResponseEntity<BaseResponse> getPendingUserInvites(@AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username"); // or whatever claim holds the username
+        String username = jwt.getClaimAsString("preferred_username");
         return ResponseEntity.ok(userService.getPendingUserInvites(username));
     }
 
