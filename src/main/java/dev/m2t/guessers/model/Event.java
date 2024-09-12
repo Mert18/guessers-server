@@ -5,6 +5,7 @@ import dev.m2t.guessers.model.enums.EventStatusEnum;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +29,14 @@ public class Event {
 
     private LocalDateTime createdOn = LocalDateTime.now();
 
-    private LocalDateTime eventTime;
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime eventTime;
 
     public Event() {
 
     }
 
-    public Event(String name, String description, Room room, List<EventGuessOption> eventGuessOptions, EventStatusEnum status, LocalDateTime eventTime) {
+    public Event(String name, String description, Room room, List<EventGuessOption> eventGuessOptions, EventStatusEnum status, ZonedDateTime eventTime) {
         this.name = name;
         this.description = description;
         this.room = room;
@@ -104,11 +106,11 @@ public class Event {
         eventGuessOption.setEvent(this);
     }
 
-    public LocalDateTime getEventTime() {
+    public ZonedDateTime getEventTime() {
         return eventTime;
     }
 
-    public void setEventTime(LocalDateTime eventTime) {
+    public void setEventTime(ZonedDateTime eventTime) {
         this.eventTime = eventTime;
     }
 }

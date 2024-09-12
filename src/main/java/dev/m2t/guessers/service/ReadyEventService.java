@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -48,7 +49,7 @@ public class ReadyEventService {
         userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
 
         ReadyEventLeagueEnum readyEventLeagueEnum = ReadyEventLeagueEnum.fromString(league);
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime now = ZonedDateTime.now();
         return readyEventRepository.findByCommenceTimeBetweenAndLeague(now, now.plusDays(7), readyEventLeagueEnum);
     }
 }

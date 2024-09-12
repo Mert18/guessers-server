@@ -12,7 +12,6 @@ public class EventReadyEventMapper {
         event.setName(readyEvent.getName());
         event.setStatus(EventStatusEnum.IN_PROGRESS);
         event.setEventTime(readyEvent.getCommenceTime());
-
         for(ReadyEventOption reo: readyEvent.getReadyEventOptions()) {
             EventGuessOption eventGuessOption = new EventGuessOption();
             eventGuessOption.setName(reo.getName());

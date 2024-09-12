@@ -1,12 +1,10 @@
 package dev.m2t.guessers.model;
 
 import dev.m2t.guessers.model.enums.ReadyEventLeagueEnum;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +15,8 @@ public class ReadyEvent {
 
     private String name;
 
-    private LocalDateTime commenceTime;
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime commenceTime;
 
     @OneToMany(mappedBy = "readyEvent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReadyEventOption> readyEventOptions = new ArrayList<>();
@@ -30,7 +29,7 @@ public class ReadyEvent {
 
     }
 
-    public ReadyEvent(String id, String name, LocalDateTime commenceTime, List<ReadyEventOption> readyEventOptions, LocalDateTime createdOn, ReadyEventLeagueEnum league) {
+    public ReadyEvent(String id, String name, ZonedDateTime commenceTime, List<ReadyEventOption> readyEventOptions, LocalDateTime createdOn, ReadyEventLeagueEnum league) {
         this.id = id;
         this.name = name;
         this.commenceTime = commenceTime;
@@ -71,11 +70,11 @@ public class ReadyEvent {
         this.createdOn = createdOn;
     }
 
-    public LocalDateTime getCommenceTime() {
+    public ZonedDateTime getCommenceTime() {
         return commenceTime;
     }
 
-    public void setCommenceTime(LocalDateTime commenceTime) {
+    public void setCommenceTime(ZonedDateTime commenceTime) {
         this.commenceTime = commenceTime;
     }
 

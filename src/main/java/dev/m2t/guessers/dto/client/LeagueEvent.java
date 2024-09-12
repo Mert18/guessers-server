@@ -3,6 +3,7 @@ package dev.m2t.guessers.dto.client;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class LeagueEvent {

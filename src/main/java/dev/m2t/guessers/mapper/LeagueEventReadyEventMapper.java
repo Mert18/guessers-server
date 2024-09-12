@@ -1,5 +1,6 @@
 package dev.m2t.guessers.mapper;
 
+import dev.m2t.guessers.dto.client.BookMakerMarket;
 import dev.m2t.guessers.dto.client.LeagueEvent;
 import dev.m2t.guessers.model.ReadyEvent;
 import dev.m2t.guessers.model.ReadyEventOption;
@@ -8,6 +9,9 @@ import dev.m2t.guessers.model.enums.ReadyEventLeagueEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Component
 public class LeagueEventReadyEventMapper {
@@ -19,7 +23,8 @@ public class LeagueEventReadyEventMapper {
     public ReadyEvent toReadyEvent(LeagueEvent leagueEvent) {
         ReadyEvent readyEvent = new ReadyEvent();
         readyEvent.setId(leagueEvent.getId());
-        readyEvent.setCommenceTime(leagueEvent.getCommenceTime());
+        ZonedDateTime zonedDateTime = leagueEvent.getCommenceTime().atZone(ZoneId.of("UTC"));
+        readyEvent.setCommenceTime(zonedDateTime);
         readyEvent.setName(leagueEvent.getHomeTeam() + " - " + leagueEvent.getAwayTeam());
         readyEvent.setLeague(ReadyEventLeagueEnum.fromString(leagueEvent.getSportKey()));
 
@@ -31,7 +36,7 @@ public class LeagueEventReadyEventMapper {
                 }
             }
 
-            leagueEvent.getBookmakers().get(maxMarketsIndex).getMarkets().forEach(market -> {
+            for(BookMakerMarket market: leagueEvent.getBookmakers().get(maxMarketsIndex).getMarkets()) {
                 ReadyEventOption readyEventOption = new ReadyEventOption();
                 readyEventOption.setId(leagueEvent.getId() + "-" + market.getKey());
                 switch (market.getKey()){
@@ -44,6 +49,8 @@ public class LeagueEventReadyEventMapper {
                     case "spreads":
                         readyEventOption.setName("Spread");
                         break;
+                    case "h2h_lay":
+                        continue;
                     default:
                         readyEventOption.setName(market.getKey());
                         break;
@@ -57,7 +64,7 @@ public class LeagueEventReadyEventMapper {
                 });
 
                 readyEvent.addReadyEventOption(readyEventOption);
-            });
+            }
 
             logger.info("Ready event created: {}", readyEvent.getName());
             return readyEvent;
