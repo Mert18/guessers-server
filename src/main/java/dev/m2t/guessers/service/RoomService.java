@@ -81,10 +81,13 @@ public class RoomService {
             RoomUser roomUser = new RoomUser();
             roomUser.setUser(user);
             roomUser.setRoom(room);
-            roomUser.setBalance(1000.0);
+            if(room.isBorderless()) {
+                roomUser.setBalance(0.0);
+            } else {
+                roomUser.setBalance(1000.0);
+            }
             roomUser.setOwner(false);
             roomUser.setScore(0);
-
             room.getRoomUsers().add(roomUser);
             roomRepository.save(room);
             logger.info("User {} joined room {} successfully.", username, room.getName());
@@ -254,7 +257,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
         if(room.isBorderless()) {
-            return new BaseResponse("This room is borderless. You cannot give tokens in borderless rooms.", false, false);
+            return new BaseResponse("This room is borderless. You cannot give tokens in borderless rooms.", false, true);
         }
 
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
