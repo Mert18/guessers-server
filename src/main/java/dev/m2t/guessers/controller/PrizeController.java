@@ -19,10 +19,10 @@ public class PrizeController {
         this.prizeService = prizeService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<BaseResponse> createPrize(@RequestBody CreatePrizeRequest createPrizeRequest, @AuthenticationPrincipal Jwt jwt) {
+    @PostMapping("/create/{roomId}")
+    public ResponseEntity<BaseResponse> createPrize(@RequestBody CreatePrizeRequest createPrizeRequest, @PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(prizeService.createPrize(createPrizeRequest, username));
+        return ResponseEntity.ok(prizeService.createPrize(createPrizeRequest, username, Long.valueOf(roomId)));
     }
 
     @GetMapping("/list/{roomId}")

@@ -26,7 +26,7 @@ public class Prize {
     @ManyToOne
     @JoinColumn(name = "sold_to_id")
     @JsonIgnore
-    private RoomUser roomUser;
+    private RoomUser soldTo;
 
     private LocalDateTime createdOn = LocalDateTime.now();
 
@@ -34,13 +34,13 @@ public class Prize {
 
     }
 
-    public Prize(String name, String description, Double value, Room room, boolean active, RoomUser roomUser) {
+    public Prize(String name, String description, Double value, Room room, boolean active, RoomUser soldTo) {
         this.name = name;
         this.description = description;
         this.value = value;
         this.room = room;
         this.active = active;
-        this.roomUser = roomUser;
+        this.soldTo = soldTo;
     }
 
     public Long getId() {
@@ -91,19 +91,19 @@ public class Prize {
         this.active = active;
     }
 
-    public RoomUser getRoomUser() {
-        return roomUser;
-    }
-
-    public void setRoomUser(RoomUser roomUser) {
-        this.roomUser = roomUser;
-    }
-
     public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
     public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public RoomUser getSoldTo() {
+        return soldTo;
+    }
+
+    public void setSoldTo(RoomUser soldTo) {
+        this.soldTo = soldTo;
     }
 }

@@ -4,16 +4,14 @@ public class CreatePrizeRequest {
     private String name;
     private String description;
     private Double value;
-    private Long roomId;
 
     public CreatePrizeRequest() {
     }
 
-    public CreatePrizeRequest(String name, String description, Double value, Long roomId) {
+    public CreatePrizeRequest(String name, String description, Double value) {
         this.name = name;
         this.description = description;
         this.value = value;
-        this.roomId = roomId;
     }
 
     public String getName() {
@@ -28,10 +26,6 @@ public class CreatePrizeRequest {
         return value;
     }
 
-    public Long getRoomId() {
-        return roomId;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -42,9 +36,5 @@ public class CreatePrizeRequest {
 
     public void setValue(Double value) {
         this.value = value;
-    }
-
-    public void setRoomId(Long roomId) {
-        this.roomId = roomId;
     }
 }

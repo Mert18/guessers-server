@@ -33,10 +33,10 @@ public class PrizeService {
         this.userRepository = userRepository;
     }
 
-    public BaseResponse createPrize(CreatePrizeRequest createPrizeRequest, String username) {
-        logger.info("Creating prize for room {}, for amount {}", createPrizeRequest.getRoomId(), createPrizeRequest.getValue());
+    public BaseResponse createPrize(CreatePrizeRequest createPrizeRequest, String username, Long roomId) {
+        logger.info("Creating prize for room {}, for amount {}", roomId, createPrizeRequest.getValue());
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-        Room room = roomRepository.findById(createPrizeRequest.getRoomId()).orElseThrow(() -> new ResourceNotFoundException("Room", "id", createPrizeRequest.getRoomId()));
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
         RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new ResourceNotFoundException("RoomUser", "room", room.getId().toString()));
 
         if(!roomUser.getOwner()) {
@@ -50,9 +50,9 @@ public class PrizeService {
         prize.setRoom(room);
 
         prizeRepository.save(prize);
-        logger.info("Prize created successfully for room {}", createPrizeRequest.getRoomId());
+        logger.info("Prize created successfully for room {}", roomId);
 
-        return new BaseResponse("Prize created successfully", true, false);
+        return new BaseResponse("Prize created successfully", true, true);
     }
 
     public BaseResponse listPrizes(Pageable pageable, boolean active, Long roomId) {
@@ -68,20 +68,21 @@ public class PrizeService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         Prize prize = prizeRepository.findById(prizeId).orElseThrow(() -> new ResourceNotFoundException("Prize", "id", prizeId));
         Room room = prize.getRoom();
-        RoomUser roomUser = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new ResourceNotFoundException("RoomUser", "room", room.getId().toString()));
+        RoomUser buyer = roomUserRepository.findByRoomAndUser(room, user).orElseThrow(() -> new ResourceNotFoundException("RoomUser", "room", room.getId().toString()));
 
         if(!prize.isActive()) {
             return new BaseResponse("Prize is not active. Thus cannot be bought.", false, true);
         }
 
-        if(roomUser.getBalance() < prize.getValue()) {
+        if(buyer.getBalance() < prize.getValue()) {
             return new BaseResponse("You do not have enough balance.", false, true);
         }
 
-        roomUser.setBalance(roomUser.getBalance() - prize.getValue());
+        buyer.setBalance(buyer.getBalance() - prize.getValue());
         userRepository.save(user);
 
-        prize.setActive(true);
+        prize.setActive(false);
+        prize.setSoldTo(buyer);
         prizeRepository.save(prize);
 
         logger.info("Prize bought successfully with id {}", prizeId);
