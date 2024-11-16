@@ -43,7 +43,7 @@ public class AuthenticationService {
         this.statsRepository = statsRepository;
     }
 
-    public BaseResponse createUser(CreateUserRequest createUserRequest) {
+    public BaseResponse<User> createUser(CreateUserRequest createUserRequest) {
         logger.info("Creating user with username: {}", createUserRequest.getUsername());
         String username = createUserRequest.getUsername();
         UsersResource users = keycloak.realm(realm).users();
@@ -62,7 +62,7 @@ public class AuthenticationService {
         userRepository.save(dbUser);
 
         logger.info("User {} created successfully.", username);
-        return new BaseResponse("User created successfully", true, true, dbUser);
+        return new BaseResponse<>("User created successfully", true, true, dbUser);
     }
 
     private UserRepresentation fillKeycloakUserDetails(CreateUserRequest createUserRequest) {
@@ -99,13 +99,13 @@ public class AuthenticationService {
         logger.info("The app user stats updated successfully.");
     }
 
-    public BaseResponse getStats() {
+    public BaseResponse<Stats> getStats() {
         Stats latestStats = statsRepository.findFirstByOrderByLastUpdatedDesc();
 
         if (latestStats != null) {
-            return new BaseResponse("Stats retrieved successfully", true, false, latestStats);
+            return new BaseResponse<>("Stats retrieved successfully", true, false, latestStats);
         } else {
-            return new BaseResponse("No stats found", false, false, null);
+            return new BaseResponse<>("No stats found", false, false, null);
         }
     }
 }

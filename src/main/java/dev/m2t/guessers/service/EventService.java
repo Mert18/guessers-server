@@ -38,17 +38,17 @@ public class EventService {
         this.eventReadyEventMapper = eventReadyEventMapper;
     }
 
-    public BaseResponse getEvent(Long eventId, String username) {
+    public BaseResponse<Event> getEvent(Long eventId, String username) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
         if(event.getRoom().getRoomUsers().stream().noneMatch(roomUser -> roomUser.getUser().equals(user))) {
             throw new UnauthorizedException("You are not one of the members of this room. Only the members can get events.");
         }
 
-        return new BaseResponse("Event fetched successfully.", true, false, event);
+        return new BaseResponse<>("Event fetched successfully.", true, false, event);
     }
 
-    public BaseResponse createEvent(CreateEventRequest createEventRequest, String username, Long roomId) {
+    public BaseResponse<Event> createEvent(CreateEventRequest createEventRequest, String username, Long roomId) {
         logger.info("Create event request received for room: {}", roomId);
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
@@ -75,11 +75,11 @@ public class EventService {
 
         Event savedEvent = eventRepository.save(event);
         logger.info("Event created successfully for room: {}", roomId);
-        return new BaseResponse("Event created successfully.", true, true, savedEvent);
+        return new BaseResponse<>("Event created successfully.", true, true, savedEvent);
     }
 
     // Lists events that are not started yet for a given room
-    public BaseResponse listEvents(Long roomId, String username, Pageable pageable) {
+    public BaseResponse<Page<Event>> listEvents(Long roomId, String username, Pageable pageable) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
 
@@ -89,10 +89,10 @@ public class EventService {
 
         Page<Event> events = eventPagingRepository.findByStatusInAndRoom(List.of(EventStatusEnum.NOT_STARTED, EventStatusEnum.IN_PROGRESS, EventStatusEnum.STARTED), room, pageable);
 
-        return new BaseResponse("Events fetched successfully.", true, false, events);
+        return new BaseResponse<>("Events fetched successfully.", true, false, events);
     }
 
-    public BaseResponse listCompletedEvents(Long roomId, String username, Pageable pageable) {
+    public BaseResponse<Page<Event>> listCompletedEvents(Long roomId, String username, Pageable pageable) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
 
@@ -102,10 +102,10 @@ public class EventService {
 
         Page<Event> events = eventPagingRepository.findByStatusInAndRoom(List.of(EventStatusEnum.FINISHED, EventStatusEnum.CANCELLED), room, pageable);
 
-        return new BaseResponse("Events fetched successfully.", true, false, events);
+        return new BaseResponse<>("Events fetched successfully.", true, false, events);
     }
 
-    public BaseResponse finalizeEvent(FinalizeEventRequest finalizeEventRequest, Long roomId, String username, Long eventId) {
+    public BaseResponse<Event> finalizeEvent(FinalizeEventRequest finalizeEventRequest, Long roomId, String username, Long eventId) {
         logger.info("Finalize event request received for event: {}", eventId);
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
@@ -117,7 +117,7 @@ public class EventService {
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("Event", "eventId", eventId));
         if(event.getStatus() != EventStatusEnum.STARTED) {
-            return new BaseResponse("Event could not be finalized.", false, true);
+            return new BaseResponse<>("Event could not be finalized.", false, true);
         }
 
         event.getEventGuessOptions().forEach(eventGuessOption -> {
@@ -133,10 +133,10 @@ public class EventService {
         event.setStatus(EventStatusEnum.FINISHED);
         Event savedEvent = eventRepository.save(event);
         logger.info("Event finalized successfully for event: {}", eventId);
-        return new BaseResponse("Event finalized successfully.", true, true, savedEvent);
+        return new BaseResponse<>("Event finalized successfully.", true, true, savedEvent);
     }
 
-    public BaseResponse startEvent(Long eventId, Long roomId, String username) {
+    public BaseResponse<Event> startEvent(Long eventId, Long roomId, String username) {
         logger.info("Start event request received for event: {}", eventId);
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
@@ -150,7 +150,7 @@ public class EventService {
         event.setStatus(EventStatusEnum.STARTED);
         Event savedEvent = eventRepository.save(event);
         logger.info("Event started successfully for event: {}", eventId);
-        return new BaseResponse("Event started successfully.", true, true, savedEvent);
+        return new BaseResponse<>("Event started successfully.", true, true, savedEvent);
     }
 
     public BaseResponse createEventFromReadyEvent(Long roomId, List<String> readyEventIds, String username) {
@@ -175,6 +175,6 @@ public class EventService {
 
         eventRepository.saveAll(eventsToCreate);
 
-        return new BaseResponse("Event created successfully from ready event.", true, true);
+        return new BaseResponse<>("Event created successfully from ready event.", true, true);
     }
 }

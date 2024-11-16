@@ -2,6 +2,8 @@ package dev.m2t.guessers.controller;
 
 import dev.m2t.guessers.dto.BaseResponse;
 import dev.m2t.guessers.dto.request.CreateUserRequest;
+import dev.m2t.guessers.model.Stats;
+import dev.m2t.guessers.model.User;
 import dev.m2t.guessers.service.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +20,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<BaseResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+    public ResponseEntity<BaseResponse<User>> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
         return ResponseEntity.ok(authenticationService.createUser(createUserRequest));
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<BaseResponse> getStats() {
+    public ResponseEntity<BaseResponse<Stats>> getStats() {
         return ResponseEntity.ok(authenticationService.getStats());
     }
 }
