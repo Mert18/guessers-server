@@ -37,4 +37,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(new BaseResponse<>(exception.getMessage(), false, true));
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public <T extends RuntimeException> ResponseEntity<Object> handleUnauthorizedException(T exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BaseResponse<>(exception.getMessage(), false, true));
+    }
+
 }
