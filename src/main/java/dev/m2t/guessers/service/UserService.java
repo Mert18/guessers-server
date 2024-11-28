@@ -2,6 +2,7 @@ package dev.m2t.guessers.service;
 
 import dev.m2t.guessers.dto.BaseResponse;
 import dev.m2t.guessers.dto.request.ChangePasswordRequest;
+import dev.m2t.guessers.exception.ResourceNotFoundException;
 import dev.m2t.guessers.model.RoomInvite;
 import dev.m2t.guessers.model.User;
 import dev.m2t.guessers.model.enums.RoomInviteStatusEnum;
@@ -13,7 +14,6 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,14 +36,14 @@ public class UserService {
     }
 
     public BaseResponse getPendingUserInvites(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
         List<RoomInvite> pendingUserInvites = roomInviteRepository.findAllByUserAndStatus(user, RoomInviteStatusEnum.PENDING);
         return new BaseResponse<>("User invites retrieved successfully", true, false, pendingUserInvites);
     }
 
     public BaseResponse getUser(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found."));
+        User user = userRepository.findByUsername(username).orElseThrow(() ->  new ResourceNotFoundException("User", "username", username));
         return new BaseResponse<>("User retrieved successfully", true, false, user);
     }
 
@@ -51,7 +51,7 @@ public class UserService {
         logger.info("Changing password for user: {}", changePasswordRequest.getUsername());
         List<UserRepresentation> users =  keycloak.realm(realm).users().searchByUsername(changePasswordRequest.getUsername(), true);
         if(users.isEmpty()) {
-            throw new UsernameNotFoundException("User with username " + changePasswordRequest.getUsername() + " not found.");
+            throw new ResourceNotFoundException("User", "username", changePasswordRequest.getUsername());
         }
 
         UserRepresentation user = users.get(0);
