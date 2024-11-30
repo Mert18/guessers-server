@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: guessers
+  datasource:
+    url: jdbc:postgresql://postgres_container:5432/guessers
+    username: postgres
+    password: mysecretpassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          jwk-set-uri: http://keycloak:8080/realms/guessers/protocol/openid-connect/certs
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak:8080/realms/guessers
+        registration:
+          keycloak:
+            client-id: backend-service
+            client-secret: am2tPdVumodhqgfLajT2wiZHuYZaQ9ZM
+            scope: openid
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+
+keycloak:
+  realm: guessers
+  client: admin-cli
+  auth-server-url: http://keycloak:8080
+  credentials:
+    secret: 65XXNkgEwu8ObE5bqDy39K7KYyCFk7h8
+
+oddsApi:
+  key: dockerOddsApiKey
