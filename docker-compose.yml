@@ -25,5 +25,22 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  guessers-app:
+    image: hachiko2k/guessers-server-docker:0.0.1.2
+    container_name: guessers_server_docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - keycloak
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    restart: unless-stopped
+    entrypoint: >
+      /bin/sh -c
+      "while ! curl -f http://keycloak:8080/realms/guessers/.well-known/openid-configuration; do
+         echo 'Waiting for Keycloak...'; sleep 5;
+       done;
+       java -jar guessers.jar"
 volumes:
   postgres_data:
