@@ -2,6 +2,8 @@ package dev.m2t.guessers.controller;
 
 import dev.m2t.guessers.dto.BaseResponse;
 import dev.m2t.guessers.service.UserService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -18,9 +20,10 @@ public class UserController {
     }
 
     @GetMapping("/invites")
-    public ResponseEntity<BaseResponse> getPendingUserInvites(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<BaseResponse> getPendingUserInvites(@AuthenticationPrincipal Jwt jwt, @RequestParam int page, @RequestParam int size) {
         String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(userService.getPendingUserInvites(username));
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(userService.getPendingUserInvites(username, pageable));
     }
 
     @GetMapping("/{username}")

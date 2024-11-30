@@ -11,6 +11,4 @@ import java.util.Optional;
 
 public interface RoomInviteRepository extends JpaRepository<RoomInvite, Long> {
     Optional<RoomInvite> findByRoomAndUser(Room room, User user);
-
-    List<RoomInvite> findAllByUserAndStatus(User user, RoomInviteStatusEnum roomInviteStatusEnum);
 }
