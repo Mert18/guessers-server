@@ -3,7 +3,6 @@ package dev.m2t.guessers.exception;
 import dev.m2t.guessers.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -35,6 +34,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public <T extends RuntimeException> ResponseEntity<Object> handleEventNotExistsException(T exception) {
         return ResponseEntity.badRequest().body(new BaseResponse<>(exception.getMessage(), false, true));
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public <T extends RuntimeException> ResponseEntity<Object> handleUnauthorizedException(T exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BaseResponse<>(exception.getMessage(), false, true));
     }
 
 }
