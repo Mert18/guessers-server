@@ -5,7 +5,7 @@ spring:
   application:
     name: guessers
   datasource:
-    url: jdbc:postgresql://localhost:5432/unlucky
+    url: jdbc:postgresql://localhost:5432/guessers
     username: postgres
     password: mysecretpassword
     driver-class-name: org.postgresql.Driver
@@ -21,11 +21,11 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          jwk-set-uri: http://localhost:3333/realms/quickstart/protocol/openid-connect/certs
+          jwk-set-uri: http://localhost:8180/realms/guessers/protocol/openid-connect/certs
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost:3333/realms/quickstart
+            issuer-uri: http://localhost:8180/realms/guessers
         registration:
           keycloak:
             client-id: backend-service
@@ -35,9 +35,9 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
 
 keycloak:
-  realm: quickstart
+  realm: guessers
   client: admin-cli
-  auth-server-url: http://localhost:3333
+  auth-server-url: http://localhost:8180
   credentials:
     secret: 65XXNkgEwu8ObE5bqDy39K7KYyCFk7h8
 

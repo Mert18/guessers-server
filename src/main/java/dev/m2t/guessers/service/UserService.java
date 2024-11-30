@@ -6,7 +6,7 @@ import dev.m2t.guessers.exception.ResourceNotFoundException;
 import dev.m2t.guessers.model.RoomInvite;
 import dev.m2t.guessers.model.User;
 import dev.m2t.guessers.model.enums.RoomInviteStatusEnum;
-import dev.m2t.guessers.repository.RoomInviteRepository;
+import dev.m2t.guessers.repository.RoomInvitePagingRepository;
 import dev.m2t.guessers.repository.UserRepository;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -14,6 +14,8 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,20 +27,21 @@ public class UserService {
 
     private final Keycloak keycloak;
     private final UserRepository userRepository;
-    private final RoomInviteRepository roomInviteRepository;
+    private final RoomInvitePagingRepository roomInvitePagingRepository;
+
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserService(UserRepository userRepository, RoomInviteRepository roomInviteRepository, Keycloak keycloak) {
+    public UserService(UserRepository userRepository, RoomInvitePagingRepository roomInvitePagingRepository, Keycloak keycloak) {
         this.userRepository = userRepository;
-        this.roomInviteRepository = roomInviteRepository;
+        this.roomInvitePagingRepository = roomInvitePagingRepository;
         this.keycloak = keycloak;
     }
 
-    public BaseResponse getPendingUserInvites(String username) {
+    public BaseResponse getPendingUserInvites(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
-        List<RoomInvite> pendingUserInvites = roomInviteRepository.findAllByUserAndStatus(user, RoomInviteStatusEnum.PENDING);
+        Page<RoomInvite> pendingUserInvites = roomInvitePagingRepository.findAllByUserAndStatus(user, RoomInviteStatusEnum.PENDING, pageable);
         return new BaseResponse<>("User invites retrieved successfully", true, false, pendingUserInvites);
     }
 
