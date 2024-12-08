@@ -11,7 +11,7 @@ public class CreateUserRequest {
     private String username;
 
     @NotNull(message = "Password cannot be null")
-    @Size(min = 3, message = "Password must be at lease 3 characters.")
+    @Size(min = 3, max = 50, message = "Password must be at lease 3 characters.")
     private String password;
 
     public CreateUserRequest() {
