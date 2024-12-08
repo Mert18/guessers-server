@@ -47,8 +47,8 @@ public class AuthenticationService {
         logger.info("Creating user with username: {}", createUserRequest.getUsername());
         String username = createUserRequest.getUsername();
         UsersResource users = keycloak.realm(realm).users();
-        if(!users.searchByUsername(username, true).isEmpty()) {
-            throw new ResourceAlreadyExistsException("User", "user", username);
+        if(!users.searchByUsername(username, true).isEmpty() || !userRepository.findByUsername(username).isEmpty()) {
+            throw new ResourceAlreadyExistsException("User", "username", username);
         }
 
         // Save user to keycloak
