@@ -1,6 +1,6 @@
 package dev.m2t.guessers.client;
 
-import dev.m2t.guessers.dto.client.LeagueEvent;
+import dev.m2t.guessers.dto.client.nosyapi.LeagueEvent;
 import dev.m2t.guessers.service.ReadyEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +27,14 @@ public class OddsApiClient {
     @Value("${oddsApi.key}")
     private String apiKey;
 
-    public void fetchOddsLeague(String league) {
-        logger.info("Fetching odds for league: {}", league);
-        ResponseEntity<List<LeagueEvent>> response = defaultClient.get()
-                .uri("https://api.the-odds-api.com/v4/sports/" + league + "/odds?apiKey=" + apiKey + "&regions=eu&markets=h2h,totals")
-                .retrieve()
-                .toEntity(new ParameterizedTypeReference<List<LeagueEvent>>() {});
-
-        logger.info("Fetched {} events", response.getBody().size());
-        footballMatchService.saveReadyEvents(response.getBody());
-    }
+//    public void fetchOddsLeague(String league) {
+//        logger.info("Fetching odds for league: {}", league);
+//        ResponseEntity<List<LeagueEvent>> response = defaultClient.get()
+//                .uri("https://www.nosyapi.com/apiv2/service/bettable-matches?league=" + league + "&apiKey=" + apiKey)
+//                .retrieve()
+//                .toEntity(new ParameterizedTypeReference<List<LeagueEvent>>() {});
+//
+//        logger.info("Fetched {} events", response.getBody().size());
+//        footballMatchService.saveReadyEvents(response.getBody());
+//    }
 }
