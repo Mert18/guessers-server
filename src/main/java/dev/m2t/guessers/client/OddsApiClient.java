@@ -4,6 +4,7 @@ import dev.m2t.guessers.dto.client.nosyapi.LeagueEvent;
 import dev.m2t.guessers.dto.client.nosyapi.LeagueEventDetailResponse;
 import dev.m2t.guessers.dto.client.nosyapi.MatchesResponse;
 import dev.m2t.guessers.dto.client.nosyapi.SingleMatch;
+import dev.m2t.guessers.model.enums.ReadyEventLeagueEnum;
 import dev.m2t.guessers.service.ReadyEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +32,10 @@ public class OddsApiClient {
     @Value("${oddsApi.key}")
     private String apiKey;
 
-    public void fetchOddsLeague(String league) throws Exception {
-        logger.info("Fetching odds for league: {}", league);
+    public void fetchOddsLeague(ReadyEventLeagueEnum league) throws Exception {
+        logger.info("Fetching odds for league: {}", league.getTextEn());
         ResponseEntity<MatchesResponse> response = defaultClient.get()
-            .uri("https://www.nosyapi.com/apiv2/service/bettable-matches?type=1&league=" + league + "&apiKey=" + apiKey)
+            .uri("https://www.nosyapi.com/apiv2/service/bettable-matches?type=1&league=" + league.getTextTr() + "&apiKey=" + apiKey)
             .retrieve()
             .toEntity(new ParameterizedTypeReference<>() {
             });
@@ -50,7 +51,7 @@ public class OddsApiClient {
                 if(responseMatchDetail.hasBody() && responseMatchDetail.getBody() != null && responseMatchDetail.getBody().getData() != null && !responseMatchDetail.getBody().getData().isEmpty()) {
                     readyEventService.saveReadyEvent(responseMatchDetail.getBody().getData().get(0), league);
                 }else {
-                    logger.warn("No match found for league: {} and matchId: {}", league, sm.getMatchId());
+                    logger.warn("No match found for league: {} and matchId: {}", league.getTextEn(), sm.getMatchId());
                 }
             }
         }else {

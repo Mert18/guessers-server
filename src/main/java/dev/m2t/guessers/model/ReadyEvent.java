@@ -1,5 +1,6 @@
 package dev.m2t.guessers.model;
 
+import dev.m2t.guessers.model.enums.ReadyEventLeagueEnum;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -22,13 +23,14 @@ public class ReadyEvent {
 
     private LocalDateTime createdOn = LocalDateTime.now();
 
-    private String league;
+    @Column(name = "league")
+    private ReadyEventLeagueEnum league;
 
     public ReadyEvent() {
 
     }
 
-    public ReadyEvent(String id, String name, ZonedDateTime commenceTime, List<ReadyEventOption> readyEventOptions, LocalDateTime createdOn, String league) {
+    public ReadyEvent(String id, String name, ZonedDateTime commenceTime, List<ReadyEventOption> readyEventOptions, LocalDateTime createdOn, ReadyEventLeagueEnum league) {
         this.id = id;
         this.name = name;
         this.commenceTime = commenceTime;
@@ -82,11 +84,11 @@ public class ReadyEvent {
         readyEventOption.setReadyEvent(this);
     }
 
-    public String getLeague() {
+    public ReadyEventLeagueEnum getLeague() {
         return league;
     }
 
-    public void setLeague(String league) {
+    public void setLeague(ReadyEventLeagueEnum league) {
         this.league = league;
     }
 }

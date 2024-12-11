@@ -7,6 +7,7 @@ import dev.m2t.guessers.dto.client.nosyapi.LeagueEvent;
 import dev.m2t.guessers.model.ReadyEvent;
 import dev.m2t.guessers.model.ReadyEventOption;
 import dev.m2t.guessers.model.ReadyEventOptionCase;
+import dev.m2t.guessers.model.enums.ReadyEventLeagueEnum;
 import dev.m2t.guessers.util.ReadyEventGuessOptionTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class LeagueEventReadyEventMapper {
         this.readyEventGuessOptionTranslator = readyEventGuessOptionTranslator;
     }
 
-    public ReadyEvent toReadyEvent(LeagueEvent leagueEvent) {
+    public ReadyEvent toReadyEvent(LeagueEvent leagueEvent, ReadyEventLeagueEnum league) {
         ReadyEvent readyEvent = new ReadyEvent();
         readyEvent.setId(String.valueOf(leagueEvent.getMatchId()));
         ZoneId istanbulZone = ZoneId.of("Europe/Istanbul");
@@ -38,7 +39,7 @@ public class LeagueEventReadyEventMapper {
 
         readyEvent.setCommenceTime(utcDateTime);
         readyEvent.setName(leagueEvent.getTeams());
-        readyEvent.setLeague(leagueEvent.getLeague());
+        readyEvent.setLeague(league);
 
         for(Bet bet : leagueEvent.getBets()) {
             GuessOptionPrecedence gop = readyEventGuessOptionTranslator.getGuessOptionPrecedence(bet.getGameId());
