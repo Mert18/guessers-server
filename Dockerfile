@@ -11,5 +11,8 @@ FROM eclipse-temurin:17
 WORKDIR guessers
 COPY target/*.jar guessers.jar
 
+ENV SPRING_PROFILES_ACTIVE=prod
+ENV TZ=Europe/Istanbul
+
 ENTRYPOINT ["java","-jar","guessers.jar"]
 EXPOSE 8080
