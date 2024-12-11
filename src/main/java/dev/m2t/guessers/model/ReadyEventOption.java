@@ -20,16 +20,18 @@ public class ReadyEventOption {
     @JoinColumn(name = "ready_event_id", nullable = false)
     @JsonIgnore
     private ReadyEvent readyEvent;
+    private int precedence;
 
     public ReadyEventOption() {
 
     }
 
-    public ReadyEventOption(String id, String name, List<ReadyEventOptionCase> readyEventOptionCases, ReadyEvent readyEvent) {
+    public ReadyEventOption(String id, String name, List<ReadyEventOptionCase> readyEventOptionCases, ReadyEvent readyEvent, int precedence) {
         this.id = id;
         this.name = name;
         this.readyEventOptionCases = readyEventOptionCases;
         this.readyEvent = readyEvent;
+        this.precedence = precedence;
     }
 
     public String getId() {
@@ -67,5 +69,13 @@ public class ReadyEventOption {
     public void addReadyEventOptionCase(ReadyEventOptionCase readyEventOptionCase) {
         readyEventOptionCases.add(readyEventOptionCase);
         readyEventOptionCase.setReadyEventOption(this);
+    }
+
+    public int getPrecedence() {
+        return precedence;
+    }
+
+    public void setPrecedence(int precedence) {
+        this.precedence = precedence;
     }
 }

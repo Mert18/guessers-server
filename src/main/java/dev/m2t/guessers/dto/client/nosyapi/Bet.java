@@ -15,7 +15,7 @@ public class Bet {
     @JsonProperty("gameName")
     private String gameName;
 
-    private List<BetOdd> betOdds;
+    private List<BetOdd> odds;
 
     public Bet() {
 
@@ -25,7 +25,7 @@ public class Bet {
         this.gameId = gameId;
         this.matchId = matchId;
         this.gameName = gameName;
-        this.betOdds = betOdds;
+        this.odds = betOdds;
     }
 
     public String getGameId() {
@@ -52,11 +52,11 @@ public class Bet {
         this.gameName = gameName;
     }
 
-    public List<BetOdd> getBetOdds() {
-        return betOdds;
+    public List<BetOdd> getOdds() {
+        return odds;
     }
 
-    public void setBetOdds(List<BetOdd> betOdds) {
-        this.betOdds = betOdds;
+    public void setOdds(List<BetOdd> odds) {
+        this.odds = odds;
     }
 }

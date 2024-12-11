@@ -1,6 +1,10 @@
 package dev.m2t.guessers.controller;
 
+import dev.m2t.guessers.dto.BaseResponse;
 import dev.m2t.guessers.service.AdminService;
+import jakarta.ws.rs.QueryParam;
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +21,8 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping("/")
-    public void test() {
+    @GetMapping("/ready-events")
+    public ResponseEntity<BaseResponse> fetchReadyEventsFootball(@QueryParam("league") String league) throws Exception {
+        return ResponseEntity.ok(adminService.fetchReadyEventsFootball(league));
     }
 }

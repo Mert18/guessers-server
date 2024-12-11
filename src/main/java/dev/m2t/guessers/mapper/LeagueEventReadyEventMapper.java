@@ -1,77 +1,76 @@
 package dev.m2t.guessers.mapper;
 
+import dev.m2t.guessers.dto.client.nosyapi.Bet;
+import dev.m2t.guessers.dto.client.nosyapi.BetOdd;
+import dev.m2t.guessers.dto.client.nosyapi.GuessOptionPrecedence;
 import dev.m2t.guessers.dto.client.nosyapi.LeagueEvent;
 import dev.m2t.guessers.model.ReadyEvent;
 import dev.m2t.guessers.model.ReadyEventOption;
 import dev.m2t.guessers.model.ReadyEventOptionCase;
-import dev.m2t.guessers.model.enums.ReadyEventLeagueEnum;
+import dev.m2t.guessers.util.ReadyEventGuessOptionTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class LeagueEventReadyEventMapper {
+    private final ReadyEventGuessOptionTranslator readyEventGuessOptionTranslator;
     private final Logger logger = LoggerFactory.getLogger(LeagueEventReadyEventMapper.class);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public LeagueEventReadyEventMapper() {
+    public LeagueEventReadyEventMapper(ReadyEventGuessOptionTranslator readyEventGuessOptionTranslator) {
+        this.readyEventGuessOptionTranslator = readyEventGuessOptionTranslator;
     }
 
-//    public ReadyEvent toReadyEvent(LeagueEvent leagueEvent) {
-//        ReadyEvent readyEvent = new ReadyEvent();
-//        readyEvent.setId(leagueEvent.getId());
-//        ZonedDateTime zonedDateTime = leagueEvent.getCommenceTime().atZone(ZoneId.of("UTC"));
-//        readyEvent.setCommenceTime(zonedDateTime);
-//        readyEvent.setName(leagueEvent.getHomeTeam() + " - " + leagueEvent.getAwayTeam());
-//        readyEvent.setLeague(ReadyEventLeagueEnum.fromString(leagueEvent.getSportKey()));
-//
-//        if(!leagueEvent.getBookmakers().isEmpty()) {
-//            int maxMarketsIndex = 0;
-//            for(int i=0; i<leagueEvent.getBookmakers().size(); i++) {
-//                if(leagueEvent.getBookmakers().get(i).getMarkets().size() > leagueEvent.getBookmakers().get(maxMarketsIndex).getMarkets().size()) {
-//                    maxMarketsIndex = i;
-//                }
-//            }
-//
-//            for(BookMakerMarket market: leagueEvent.getBookmakers().get(maxMarketsIndex).getMarkets()) {
-//                ReadyEventOption readyEventOption = new ReadyEventOption();
-//                readyEventOption.setId(leagueEvent.getId() + "-" + market.getKey());
-//                switch (market.getKey()){
-//                    case "h2h":
-//                        readyEventOption.setName("Match Result");
-//                        break;
-//                    case "totals":
-//                        readyEventOption.setName("Over/Under");
-//                        break;
-//                    case "spreads":
-//                        readyEventOption.setName("Spread");
-//                        break;
-//                    case "h2h_lay":
-//                        continue;
-//                    default:
-//                        readyEventOption.setName(market.getKey());
-//                        break;
-//                }
-//
-//                market.getOutcomes().forEach(outcome -> {
-//                    ReadyEventOptionCase readyEventOptionCase = new ReadyEventOptionCase();
-//                    readyEventOptionCase.setName(outcome.getName());
-//                    readyEventOptionCase.setOdds(outcome.getPrice());
-//                    readyEventOption.addReadyEventOptionCase(readyEventOptionCase);
-//                });
-//
-//                readyEvent.addReadyEventOption(readyEventOption);
-//            }
-//
-//            logger.info("Ready event created: {}", readyEvent.getName());
-//            return readyEvent;
-//        }else {
-//            logger.error("No bookmakers found for event: {}", leagueEvent.getId());
-//            return null;
-//        }
-//    }
-//
+    public ReadyEvent toReadyEvent(LeagueEvent leagueEvent) {
+        ReadyEvent readyEvent = new ReadyEvent();
+        readyEvent.setId(String.valueOf(leagueEvent.getMatchId()));
+        ZoneId istanbulZone = ZoneId.of("Europe/Istanbul");
+        LocalDateTime localDateTime = LocalDateTime.parse(leagueEvent.getDateTime(), formatter);
+        ZonedDateTime istanbulDateTime = localDateTime.atZone(istanbulZone);
+        ZonedDateTime utcDateTime = istanbulDateTime.withZoneSameInstant(ZoneOffset.UTC);
+
+        readyEvent.setCommenceTime(utcDateTime);
+        readyEvent.setName(leagueEvent.getTeams());
+        readyEvent.setLeague(leagueEvent.getLeague());
+
+        for(Bet bet : leagueEvent.getBets()) {
+            GuessOptionPrecedence gop = readyEventGuessOptionTranslator.getGuessOptionPrecedence(bet.getGameId());
+            if(gop != null) {
+                ReadyEventOption readyEventOption = getReadyEventOption(bet, gop);
+                if(readyEventOption != null) {
+                    readyEvent.addReadyEventOption(readyEventOption);
+                }
+            }
+        }
+
+        logger.info("Ready event created: {}", readyEvent.getName());
+        return readyEvent;
+    }
+
+    private static ReadyEventOption getReadyEventOption(Bet bet, GuessOptionPrecedence gop) {
+        ReadyEventOption readyEventOption = new ReadyEventOption();
+        readyEventOption.setId(bet.getMatchId() + "_" + bet.getGameId());
+        readyEventOption.setName(gop.getName());
+        readyEventOption.setPrecedence(gop.getPrecedence());
+
+        if(bet.getOdds() != null && !bet.getOdds().isEmpty()) {
+            for(BetOdd bo: bet.getOdds()) {
+                ReadyEventOptionCase readyEventOptionCase = new ReadyEventOptionCase();
+                readyEventOptionCase.setName(bo.getValue());
+                readyEventOptionCase.setOdds(bo.getOdd());
+                readyEventOption.addReadyEventOptionCase(readyEventOptionCase);
+            }
+            return readyEventOption;
+        }
+        return null;
+    }
+
 
 }

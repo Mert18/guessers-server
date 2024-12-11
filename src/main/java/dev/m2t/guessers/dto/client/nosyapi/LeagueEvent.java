@@ -14,6 +14,9 @@ public class LeagueEvent {
     @JsonProperty("League")
     private String league;
 
+    @JsonProperty("Teams")
+    private String teams;
+
     @JsonProperty("Team1")
     private String team1;
 
@@ -33,10 +36,11 @@ public class LeagueEvent {
 
     }
 
-    public LeagueEvent(Long matchId, String dateTime, String league, String team1, String team2, String team1Logo, String team2Logo, List<Bet> bets) {
+    public LeagueEvent(Long matchId, String dateTime, String league, String teams, String team1, String team2, String team1Logo, String team2Logo, List<Bet> bets) {
         this.matchId = matchId;
         this.dateTime = dateTime;
         this.league = league;
+        this.teams = teams;
         this.team1 = team1;
         this.team2 = team2;
         this.team1Logo = team1Logo;
@@ -106,5 +110,13 @@ public class LeagueEvent {
 
     public void setBets(List<Bet> bets) {
         this.bets = bets;
+    }
+
+    public String getTeams() {
+        return teams;
+    }
+
+    public void setTeams(String teams) {
+        this.teams = teams;
     }
 }
