@@ -22,7 +22,7 @@ public class AdminController {
     }
 
     @GetMapping("/ready-events")
-    public ResponseEntity<BaseResponse> fetchReadyEventsFootball(@QueryParam("league") String league) throws Exception {
+    public ResponseEntity<BaseResponse> fetchReadyEventsFootball(@QueryParam("league") Integer league) throws Exception {
         return ResponseEntity.ok(adminService.fetchReadyEventsFootball(league));
     }
 }

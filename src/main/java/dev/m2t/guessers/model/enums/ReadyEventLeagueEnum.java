@@ -4,7 +4,8 @@ public enum ReadyEventLeagueEnum {
     UNKNOWN(-1, "Unknown", "Bilinmiyor"),
     UEFA_CHAMPIONS_LEAGUE(0, "UEFA Champions League", "UEFA Şampiyonlar Ligi"),
     UEFA_EUROPE_LEAGUE(1, "UEFA Europe League", "UEFA Avrupa Ligi"),
-    TURKISH_SUPER_LEAGUE(2, "Turkish Super League", "Süper Lig");
+    TURKISH_SUPER_LEAGUE(2, "Turkish Super League", "Süper Lig"),
+    ENGLISH_PREMIER_LEAGUE(3, "English Premier League", "Premier Lig");
 
     private final int code;
     private final String textEn;
@@ -27,7 +28,7 @@ public enum ReadyEventLeagueEnum {
 
     public static ReadyEventLeagueEnum fromTr(String textTr) {
         for(ReadyEventLeagueEnum rele: ReadyEventLeagueEnum.values()) {
-            if(rele.textTr == textTr) {
+            if(rele.textTr.equals(textTr)) {
                 return rele;
             }
         }

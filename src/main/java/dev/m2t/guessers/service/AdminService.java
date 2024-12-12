@@ -16,8 +16,8 @@ public class AdminService {
         this.oddsApiClient = oddsApiClient;
     }
 
-    public BaseResponse fetchReadyEventsFootball(String league) throws Exception {
-        ReadyEventLeagueEnum rele = ReadyEventLeagueEnum.fromTr(league);
+    public BaseResponse fetchReadyEventsFootball(Integer league) throws Exception {
+        ReadyEventLeagueEnum rele = ReadyEventLeagueEnum.fromCode(league);
 
         if(!rele.equals(ReadyEventLeagueEnum.UNKNOWN)) {
             oddsApiClient.fetchOddsLeague(rele);

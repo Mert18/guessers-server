@@ -39,8 +39,8 @@ public class ReadyEventService {
         logger.info("League event saved: {}", leagueEvent.getTeams());
     }
 
-    public List<ReadyEvent> getUpcomingReadyEvents(String league, String username) {
-        ReadyEventLeagueEnum rele = ReadyEventLeagueEnum.fromTr(league);
+    public List<ReadyEvent> getUpcomingReadyEvents(Integer league, String username) {
+        ReadyEventLeagueEnum rele = ReadyEventLeagueEnum.fromCode(league);
         if(!rele.equals(ReadyEventLeagueEnum.UNKNOWN)) {
             userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
 

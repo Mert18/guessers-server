@@ -7,6 +7,7 @@ import dev.m2t.guessers.dto.client.nosyapi.LeagueEvent;
 import dev.m2t.guessers.model.ReadyEvent;
 import dev.m2t.guessers.model.ReadyEventOption;
 import dev.m2t.guessers.model.ReadyEventOptionCase;
+import dev.m2t.guessers.model.enums.MatchOptionNameTranslatorEnum;
 import dev.m2t.guessers.model.enums.ReadyEventLeagueEnum;
 import dev.m2t.guessers.util.ReadyEventGuessOptionTranslator;
 import org.slf4j.Logger;
@@ -42,9 +43,10 @@ public class LeagueEventReadyEventMapper {
         readyEvent.setLeague(league);
 
         for(Bet bet : leagueEvent.getBets()) {
-            GuessOptionPrecedence gop = readyEventGuessOptionTranslator.getGuessOptionPrecedence(bet.getGameId());
-            if(gop != null) {
-                ReadyEventOption readyEventOption = getReadyEventOption(bet, gop);
+            MatchOptionNameTranslatorEnum mote = MatchOptionNameTranslatorEnum.fromTextTr(bet.getGameName());
+
+            if(!mote.equals(MatchOptionNameTranslatorEnum.UNKNOWN)) {
+                ReadyEventOption readyEventOption = getReadyEventOption(bet, mote);
                 if(readyEventOption != null) {
                     readyEvent.addReadyEventOption(readyEventOption);
                 }
@@ -55,11 +57,11 @@ public class LeagueEventReadyEventMapper {
         return readyEvent;
     }
 
-    private static ReadyEventOption getReadyEventOption(Bet bet, GuessOptionPrecedence gop) {
+    private static ReadyEventOption getReadyEventOption(Bet bet, MatchOptionNameTranslatorEnum mote) {
         ReadyEventOption readyEventOption = new ReadyEventOption();
         readyEventOption.setId(bet.getMatchId() + "_" + bet.getGameId());
-        readyEventOption.setName(gop.getName());
-        readyEventOption.setPrecedence(gop.getPrecedence());
+        readyEventOption.setName(mote.getTextEn());
+        readyEventOption.setPrecedence(mote.getCode());
 
         if(bet.getOdds() != null && !bet.getOdds().isEmpty()) {
             for(BetOdd bo: bet.getOdds()) {

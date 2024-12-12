@@ -14,7 +14,6 @@ public class ReadyEventGuessOptionTranslator {
         put("799423", new GuessOptionPrecedence("Total Corner Range", 9));
         put("799429", new GuessOptionPrecedence("Will There Be a Red Card", 3));
         put("798716", new GuessOptionPrecedence("Will There Be a Penalty", 3));
-        put("789517", new GuessOptionPrecedence("Match Result", 1));
         put("789518", new GuessOptionPrecedence("Half-Time / Full-Time Result", 9));
         put("789522", new GuessOptionPrecedence("Over/Under 4.5", 5));
         put("789523", new GuessOptionPrecedence("Over/Under 3.5", 5));
@@ -22,7 +21,6 @@ public class ReadyEventGuessOptionTranslator {
         put("789532", new GuessOptionPrecedence("Over/Under 1.5", 5));
         put("789529", new GuessOptionPrecedence("Both Teams to Score", 3));
         put("789567", new GuessOptionPrecedence("First Half Result", 4));
-        put("789569", new GuessOptionPrecedence("Total Goals", 4));
         put("796010", new GuessOptionPrecedence("Player to Score", 9));
     }};
 
