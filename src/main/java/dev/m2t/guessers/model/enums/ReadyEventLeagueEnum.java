@@ -1,25 +1,59 @@
 package dev.m2t.guessers.model.enums;
 
 public enum ReadyEventLeagueEnum {
-    TURKISH_SUPER_LEAGUE("soccer_turkey_super_league"),
-    ENGLISH_PREMIER_LEAGUE("soccer_epl");
+    UNKNOWN(-1, "Unknown", "Bilinmiyor"),
+    UEFA_CHAMPIONS_LEAGUE(0, "UEFA Champions League", "UEFA Şampiyonlar Ligi"),
+    UEFA_EUROPE_LEAGUE(1, "UEFA Europe League", "UEFA Avrupa Ligi"),
+    TURKISH_SUPER_LEAGUE(2, "Turkish Super League", "Süper Lig"),
+    ENGLISH_PREMIER_LEAGUE(3, "English Premier League", "Premier Lig");
 
-    private final String key;
+    private final int code;
+    private final String textEn;
+    private final String textTr;
 
-    ReadyEventLeagueEnum(String key) {
-        this.key = key;
+    ReadyEventLeagueEnum(int code, String textEn, String textTr) {
+        this.code = code;
+        this.textEn = textEn;
+        this.textTr = textTr;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public static ReadyEventLeagueEnum fromString(String league) {
-        for(ReadyEventLeagueEnum readyEventLeagueEnum : ReadyEventLeagueEnum.values()) {
-            if(readyEventLeagueEnum.getKey().equals(league)) {
-                return readyEventLeagueEnum;
+    public static ReadyEventLeagueEnum fromCode(int code) {
+        for(ReadyEventLeagueEnum rele: ReadyEventLeagueEnum.values()) {
+            if(rele.code == code) {
+                return rele;
             }
         }
-        return null;
+        return ReadyEventLeagueEnum.UNKNOWN;
     }
+
+    public static ReadyEventLeagueEnum fromTr(String textTr) {
+        for(ReadyEventLeagueEnum rele: ReadyEventLeagueEnum.values()) {
+            if(rele.textTr.equals(textTr)) {
+                return rele;
+            }
+        }
+        return ReadyEventLeagueEnum.UNKNOWN;
+    }
+
+    public static ReadyEventLeagueEnum fromEn(String textEn) {
+        for(ReadyEventLeagueEnum rele: ReadyEventLeagueEnum.values()) {
+            if(rele.textEn == textEn) {
+                return rele;
+            }
+        }
+        return ReadyEventLeagueEnum.UNKNOWN;
+    }
+
+    public int getCode() {
+        return this.code;
+    }
+
+    public String getTextEn() {
+        return this.textEn;
+    }
+
+    public String getTextTr() {
+        return this.textTr;
+    }
+
 }

@@ -9,6 +9,4 @@ import java.util.List;
 
 public interface ReadyEventRepository extends JpaRepository<ReadyEvent, String> {
     List<ReadyEvent> findByCommenceTimeBetweenAndLeague(ZonedDateTime start, ZonedDateTime end, ReadyEventLeagueEnum league);
-
-
 }
