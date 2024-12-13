@@ -40,4 +40,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BaseResponse<>(exception.getMessage(), false, true));
     }
 
+    @ExceptionHandler(UserAlreadyInvitedException.class)
+    public <T extends RuntimeException> ResponseEntity<Object> handleUserAlreadyInvitedException(T exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new BaseResponse<>(exception.getMessage(), false, true));
+    }
+
 }
