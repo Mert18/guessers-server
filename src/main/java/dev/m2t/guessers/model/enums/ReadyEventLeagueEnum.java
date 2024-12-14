@@ -4,8 +4,9 @@ public enum ReadyEventLeagueEnum {
     UNKNOWN(-1, "Unknown", "Bilinmiyor"),
     UEFA_CHAMPIONS_LEAGUE(0, "UEFA Champions League", "UEFA Şampiyonlar Ligi"),
     UEFA_EUROPE_LEAGUE(1, "UEFA Europe League", "UEFA Avrupa Ligi"),
-    TURKISH_SUPER_LEAGUE(2, "Turkish Super League", "Süper Lig"),
-    ENGLISH_PREMIER_LEAGUE(3, "English Premier League", "Premier Lig");
+    SUPER_LEAGUE(2, "Turkish Super League", "Türkiye Süper Lig"),
+    PREMIER_LEAGUE(3, "English Premier League", "İngiltere Premier Lig"),
+    LA_LIGA(4, "La Liga", "İspanya La Liga");
 
     private final int code;
     private final String textEn;

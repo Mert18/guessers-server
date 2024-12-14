@@ -24,14 +24,17 @@ public class EventGuessOption {
     private Event event;
     private LocalDateTime createdOn = LocalDateTime.now();
 
+    private int precedence;
+
     public EventGuessOption() {
 
     }
 
-    public EventGuessOption(String name, List<EventGuessOptionCase> options, Event event) {
+    public EventGuessOption(String name, List<EventGuessOptionCase> options, Event event, int precedence) {
         this.name = name;
         this.eventGuessOptionCases = options;
         this.event = event;
+        this.precedence = precedence;
     }
 
     public Long getId() {
@@ -77,5 +80,13 @@ public class EventGuessOption {
     public void addEventGuessOptionCase(EventGuessOptionCase eventGuessOptionCase) {
         eventGuessOptionCases.add(eventGuessOptionCase);
         eventGuessOptionCase.setEventGuessOption(this);
+    }
+
+    public int getPrecedence() {
+        return precedence;
+    }
+
+    public void setPrecedence(int precedence) {
+        this.precedence = precedence;
     }
 }
