@@ -38,6 +38,7 @@ public class SecurityConfig {
                     .requestMatchers("/test/**").permitAll()
                     .requestMatchers("/api/admin/**").permitAll()
                     .requestMatchers("/api/authentication/**").permitAll()
+                    .requestMatchers("/api/shared-guess-papers/getByToken/**").permitAll()
                     .anyRequest().authenticated()
             )
             .oauth2ResourceServer((oauth2) -> oauth2
