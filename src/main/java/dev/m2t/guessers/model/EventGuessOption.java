@@ -23,14 +23,13 @@ public class EventGuessOption {
     @JsonIgnore
     private Event event;
     private LocalDateTime createdOn = LocalDateTime.now();
-
-    private int precedence;
+    private Integer precedence;
 
     public EventGuessOption() {
 
     }
 
-    public EventGuessOption(String name, List<EventGuessOptionCase> options, Event event, int precedence) {
+    public EventGuessOption(String name, List<EventGuessOptionCase> options, Event event, Integer precedence) {
         this.name = name;
         this.eventGuessOptionCases = options;
         this.event = event;
@@ -82,11 +81,11 @@ public class EventGuessOption {
         eventGuessOptionCase.setEventGuessOption(this);
     }
 
-    public int getPrecedence() {
+    public Integer getPrecedence() {
         return precedence;
     }
 
-    public void setPrecedence(int precedence) {
+    public void setPrecedence(Integer precedence) {
         this.precedence = precedence;
     }
 }
