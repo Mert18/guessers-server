@@ -36,7 +36,6 @@ public class SecurityConfig {
         http.csrf((csrf) -> csrf.disable()).cors((cors) -> cors.configurationSource(corsConfigurationSource))
             .authorizeHttpRequests((authorize) -> authorize
                     .requestMatchers("/test/**").permitAll()
-                    .requestMatchers("/api/admin/**").permitAll()
                     .requestMatchers("/api/authentication/**").permitAll()
                     .requestMatchers("/api/shared-guess-papers/getByToken/**").permitAll()
                     .anyRequest().authenticated()
