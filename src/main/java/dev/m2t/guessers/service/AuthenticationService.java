@@ -44,10 +44,10 @@ public class AuthenticationService {
     }
 
     public BaseResponse<User> createUser(CreateUserRequest createUserRequest) {
-        logger.info("Creating user with username: {}", createUserRequest.getUsername());
-        String username = createUserRequest.getUsername();
+        logger.info("Creating user with username: {}", createUserRequest.getUsername().toLowerCase());
+        String username = createUserRequest.getUsername().toLowerCase();
         UsersResource users = keycloak.realm(realm).users();
-        if(!users.searchByUsername(username, true).isEmpty() || !userRepository.findByUsername(username).isEmpty()) {
+        if(!users.searchByUsername(username, true).isEmpty() || userRepository.findByUsername(username).isPresent()) {
             throw new ResourceAlreadyExistsException("User", "username", username);
         }
 
@@ -67,11 +67,11 @@ public class AuthenticationService {
 
     private UserRepresentation fillKeycloakUserDetails(CreateUserRequest createUserRequest) {
         UserRepresentation newUser = new UserRepresentation();
-        newUser.setUsername(createUserRequest.getUsername());
-        newUser.setEmail(createUserRequest.getUsername() + "@unlucky.biz");
-        newUser.setFirstName(createUserRequest.getUsername());
-        newUser.setLastName(createUserRequest.getUsername());
-        newUser.setId(createUserRequest.getUsername());
+        newUser.setUsername(createUserRequest.getUsername().toLowerCase());
+        newUser.setEmail(createUserRequest.getUsername().toLowerCase() + "@unlucky.biz");
+        newUser.setFirstName(createUserRequest.getUsername().toLowerCase());
+        newUser.setLastName(createUserRequest.getUsername().toLowerCase());
+        newUser.setId(createUserRequest.getUsername().toLowerCase());
         newUser.setRealmRoles(List.of("user"));
         newUser.setEnabled(true);
         newUser.setCredentials(List.of(
