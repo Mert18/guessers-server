@@ -13,7 +13,7 @@ public class UserActions {
     @GeneratedValue
     private Long id;
 
-    private LocalDateTime date;
+    private LocalDateTime date = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     private UserActionsEnum action;

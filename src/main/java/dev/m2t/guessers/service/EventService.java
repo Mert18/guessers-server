@@ -10,6 +10,7 @@ import dev.m2t.guessers.model.*;
 import dev.m2t.guessers.model.enums.EventGuessOptionCaseStatusEnum;
 import dev.m2t.guessers.model.enums.EventStatusEnum;
 import dev.m2t.guessers.repository.*;
+import dev.m2t.guessers.model.enums.UserActionsEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -27,15 +28,17 @@ public class EventService {
     private final EventRepository eventRepository;
     private final ReadyEventRepository readyEventRepository;
     private final EventReadyEventMapper eventReadyEventMapper;
+    private final UserActionService userActionService;
     private static final Logger logger = LoggerFactory.getLogger(EventService.class);
 
-    public EventService(RoomRepository roomRepository, EventPagingRepository eventPagingRepository, UserRepository userRepository, EventRepository eventRepository, ReadyEventRepository readyEventRepository, EventReadyEventMapper eventReadyEventMapper) {
+    public EventService(RoomRepository roomRepository, EventPagingRepository eventPagingRepository, UserRepository userRepository, EventRepository eventRepository, ReadyEventRepository readyEventRepository, EventReadyEventMapper eventReadyEventMapper, UserActionService userActionService) {
         this.roomRepository = roomRepository;
         this.eventPagingRepository = eventPagingRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
         this.readyEventRepository = readyEventRepository;
         this.eventReadyEventMapper = eventReadyEventMapper;
+        this.userActionService = userActionService;
     }
 
     public BaseResponse<Event> getEvent(Long eventId, String username) {
@@ -74,6 +77,7 @@ public class EventService {
 
 
         Event savedEvent = eventRepository.save(event);
+        userActionService.saveUserAction(UserActionsEnum.CREATE_EVENT, "Event created with name: " + event.getName(), user, room);
         logger.info("Event created successfully for room: {}", roomId);
         return new BaseResponse<>("Event created successfully.", true, true, savedEvent);
     }
@@ -132,6 +136,7 @@ public class EventService {
 
         event.setStatus(EventStatusEnum.FINISHED);
         Event savedEvent = eventRepository.save(event);
+        userActionService.saveUserAction(UserActionsEnum.END_EVENT, "Event ended with name: " + event.getName(), user, room);
         logger.info("Event finalized successfully for event: {}", eventId);
         return new BaseResponse<>("Event finalized successfully.", true, true, savedEvent);
     }
@@ -149,6 +154,7 @@ public class EventService {
 
         event.setStatus(EventStatusEnum.STARTED);
         Event savedEvent = eventRepository.save(event);
+        userActionService.saveUserAction(UserActionsEnum.START_EVENT, "Event started with name: " + event.getName(), user, room);
         logger.info("Event started successfully for event: {}", eventId);
         return new BaseResponse<>("Event started successfully.", true, true, savedEvent);
     }
