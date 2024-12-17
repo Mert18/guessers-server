@@ -1,20 +1,20 @@
 package dev.m2t.guessers.model.enums;
 
-public enum UserActionsEnum {
+public enum OwnerActionsEnum {
     CREATE_EVENT,
     START_EVENT,
     END_EVENT,
     INVITE,
     LEND_TOKEN;
 
-    UserActionsEnum() {
+    OwnerActionsEnum() {
     }
 
-    public static UserActionsEnum fromString(String status) {
+    public static OwnerActionsEnum fromString(String status) {
         return valueOf(status);
     }
 
-    public static UserActionsEnum fromValue(String status) {
+    public static OwnerActionsEnum fromValue(String status) {
         return valueOf(status);
     }
 

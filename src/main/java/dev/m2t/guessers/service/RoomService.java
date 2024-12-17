@@ -7,9 +7,9 @@ import dev.m2t.guessers.dto.response.RoomRanksResponse;
 import dev.m2t.guessers.exception.ResourceNotFoundException;
 import dev.m2t.guessers.exception.UserAlreadyInvitedException;
 import dev.m2t.guessers.model.*;
+import dev.m2t.guessers.model.enums.OwnerActionsEnum;
 import dev.m2t.guessers.model.enums.RoomInviteStatusEnum;
 import dev.m2t.guessers.repository.*;
-import dev.m2t.guessers.model.enums.UserActionsEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -29,10 +29,10 @@ public class RoomService {
     private final RoomInviteRepository roomInviteRepository;
     private final RoomUserPagingRepository roomUserPagingRepository;
     private final LendLogRepository lendLogRepository;
-    private final UserActionService userActionService;
+    private final OwnerActionService ownerActionService;
     private static final Logger logger = LoggerFactory.getLogger(RoomService.class);
 
-    public RoomService(RoomRepository roomRepository, RoomPagingRepository roomPagingRepository, UserRepository userRepository, RoomUserRepository roomUserRepository, RoomInviteRepository roomInviteRepository, RoomUserPagingRepository roomUserPagingRepository, LendLogRepository lendLogRepository, UserActionService userActionService) {
+    public RoomService(RoomRepository roomRepository, RoomPagingRepository roomPagingRepository, UserRepository userRepository, RoomUserRepository roomUserRepository, RoomInviteRepository roomInviteRepository, RoomUserPagingRepository roomUserPagingRepository, LendLogRepository lendLogRepository, OwnerActionService ownerActionService) {
         this.roomRepository = roomRepository;
         this.roomPagingRepository = roomPagingRepository;
         this.userRepository = userRepository;
@@ -40,7 +40,7 @@ public class RoomService {
         this.roomInviteRepository = roomInviteRepository;
         this.roomUserPagingRepository = roomUserPagingRepository;
         this.lendLogRepository = lendLogRepository;
-        this.userActionService = userActionService;
+        this.ownerActionService = ownerActionService;
     }
 
     public BaseResponse createRoom(CreateRoomRequest createRoomRequest, String owner) {
@@ -119,7 +119,7 @@ public class RoomService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         if(room.getOwner().equals(user)){
             roomRepository.delete(room);
-            userActionService.removeAllUserActionsInRoom(room);
+            ownerActionService.removeAllOwnerActionsInRoom(room);
             logger.info("Room {} deleted successfully.", room.getName());
             return new BaseResponse("Room deleted successfully.", true, false);
         } else {
@@ -143,7 +143,7 @@ public class RoomService {
             invite.setUser(invitedUser);
             invite.setStatus(RoomInviteStatusEnum.PENDING);
             roomInviteRepository.save(invite);
-            userActionService.saveUserAction(UserActionsEnum.INVITE, "User " + invitedUsername + " invited to room " + room.getName(), ownerUser, room);
+            ownerActionService.saveOwnerAction(OwnerActionsEnum.INVITE, "User " + invitedUsername + " invited to room " + room.getName(), ownerUser, room);
             logger.info("User {} invited to room {} successfully.", invitedUsername, room.getName());
             return new BaseResponse("User invited successfully.", true, true);
         } else {
@@ -292,7 +292,7 @@ public class RoomService {
 
         roomUserRepository.saveAll(roomUsers);
         lendLogRepository.saveAll(lendLogs);
-        userActionService.saveUserAction(UserActionsEnum.LEND_TOKEN, "Tokens given to room users.", user, room);
+        ownerActionService.saveOwnerAction(OwnerActionsEnum.LEND_TOKEN, "Tokens given to room users.", user, room);
         logger.info("Tokens given successfully for room {}.", room.getName());
         return new BaseResponse("Tokens given successfully.", true, false);
     }

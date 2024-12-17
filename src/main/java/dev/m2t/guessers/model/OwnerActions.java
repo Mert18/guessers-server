@@ -1,14 +1,14 @@
 package dev.m2t.guessers.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import dev.m2t.guessers.model.enums.UserActionsEnum;
+import dev.m2t.guessers.model.enums.OwnerActionsEnum;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 
 @Entity
-public class UserActions {
+public class OwnerActions {
     @Id
     @GeneratedValue
     private Long id;
@@ -16,7 +16,7 @@ public class UserActions {
     private LocalDateTime date = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    private UserActionsEnum action;
+    private OwnerActionsEnum action;
     private String actionDescription;
 
     @ManyToOne
@@ -27,10 +27,10 @@ public class UserActions {
     @JsonIgnore
     private Room room;
 
-    public UserActions() {
+    public OwnerActions() {
     }
 
-    public UserActions(LocalDateTime date, UserActionsEnum action, String actionDescription, User actor, Room room) {
+    public OwnerActions(LocalDateTime date, OwnerActionsEnum action, String actionDescription, User actor, Room room) {
         this.date = date;
         this.action = action;
         this.actionDescription = actionDescription;
@@ -54,11 +54,11 @@ public class UserActions {
         this.date = date;
     }
 
-    public UserActionsEnum getAction() {
+    public OwnerActionsEnum getAction() {
         return action;
     }
 
-    public void setAction(UserActionsEnum action) {
+    public void setAction(OwnerActionsEnum action) {
         this.action = action;
     }
 
