@@ -23,15 +23,17 @@ public class EventGuessOption {
     @JsonIgnore
     private Event event;
     private LocalDateTime createdOn = LocalDateTime.now();
+    private Integer precedence;
 
     public EventGuessOption() {
 
     }
 
-    public EventGuessOption(String name, List<EventGuessOptionCase> options, Event event) {
+    public EventGuessOption(String name, List<EventGuessOptionCase> options, Event event, Integer precedence) {
         this.name = name;
         this.eventGuessOptionCases = options;
         this.event = event;
+        this.precedence = precedence;
     }
 
     public Long getId() {
@@ -77,5 +79,13 @@ public class EventGuessOption {
     public void addEventGuessOptionCase(EventGuessOptionCase eventGuessOptionCase) {
         eventGuessOptionCases.add(eventGuessOptionCase);
         eventGuessOptionCase.setEventGuessOption(this);
+    }
+
+    public Integer getPrecedence() {
+        return precedence;
+    }
+
+    public void setPrecedence(Integer precedence) {
+        this.precedence = precedence;
     }
 }

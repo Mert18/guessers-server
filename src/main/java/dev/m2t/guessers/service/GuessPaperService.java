@@ -28,6 +28,7 @@ public class GuessPaperService {
     private final RoomRepository roomRepository;
     private final EventRepository eventRepository;
     private final RoomUserRepository roomUserRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(GuessPaperService.class);
 
     public GuessPaperService(GuessPaperRepository guessPaperRepository, GuessPaperPagingRepository guessPaperPagingRepository, UserRepository userRepository, RoomRepository roomRepository, EventRepository eventRepository, RoomUserRepository roomUserRepository) {

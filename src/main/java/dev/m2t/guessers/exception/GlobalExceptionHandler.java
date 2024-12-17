@@ -3,16 +3,12 @@ package dev.m2t.guessers.exception;
 import dev.m2t.guessers.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -38,6 +34,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     public <T extends RuntimeException> ResponseEntity<Object> handleUnauthorizedException(T exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new BaseResponse<>(exception.getMessage(), false, true));
+    }
+
+    @ExceptionHandler(UserAlreadyInvitedException.class)
+    public <T extends RuntimeException> ResponseEntity<Object> handleUserAlreadyInvitedException(T exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new BaseResponse<>(exception.getMessage(), false, true));
     }
 
 }

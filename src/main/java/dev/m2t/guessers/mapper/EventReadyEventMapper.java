@@ -15,6 +15,7 @@ public class EventReadyEventMapper {
         for(ReadyEventOption reo: readyEvent.getReadyEventOptions()) {
             EventGuessOption eventGuessOption = new EventGuessOption();
             eventGuessOption.setName(reo.getName());
+            eventGuessOption.setPrecedence(reo.getPrecedence());
 
             for(ReadyEventOptionCase reoc: reo.getReadyEventOptionCases()) {
                 EventGuessOptionCase eventGuessOptionCase = new EventGuessOptionCase();

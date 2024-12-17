@@ -23,6 +23,7 @@ public class ReadyEvent {
 
     private LocalDateTime createdOn = LocalDateTime.now();
 
+    @Column(name = "league")
     private ReadyEventLeagueEnum league;
 
     public ReadyEvent() {
@@ -78,7 +79,7 @@ public class ReadyEvent {
         this.commenceTime = commenceTime;
     }
 
-    public void addReadyEventOption(ReadyEventOption readyEventOption) {
+    public void  addReadyEventOption(ReadyEventOption readyEventOption) {
         readyEventOptions.add(readyEventOption);
         readyEventOption.setReadyEvent(this);
     }

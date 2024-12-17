@@ -5,6 +5,7 @@ import dev.m2t.guessers.dto.request.CreateRoomRequest;
 import dev.m2t.guessers.dto.response.ListPublicRoomsResponse;
 import dev.m2t.guessers.dto.response.RoomRanksResponse;
 import dev.m2t.guessers.exception.ResourceNotFoundException;
+import dev.m2t.guessers.exception.UserAlreadyInvitedException;
 import dev.m2t.guessers.model.*;
 import dev.m2t.guessers.model.enums.RoomInviteStatusEnum;
 import dev.m2t.guessers.repository.*;
@@ -74,7 +75,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
         if(isUserInvitedToRoom(user, room)) {
-            RoomInvite invite = roomInviteRepository.findByRoomAndUser(room, user).get();
+            RoomInvite invite = roomInviteRepository.findByRoomAndUser(room, user).orElseThrow(() -> new ResourceNotFoundException("User Invite", "Username", user.getUsername()));
             invite.setStatus(RoomInviteStatusEnum.ACCEPTED);
             roomInviteRepository.save(invite);
 
@@ -127,6 +128,10 @@ public class RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
         User invitedUser = userRepository.findByUsername(invitedUsername).orElseThrow(() -> new ResourceNotFoundException("User", "username", invitedUsername));
         User ownerUser = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+
+        if(roomInviteRepository.findByRoomAndUserAndStatus(room, invitedUser, RoomInviteStatusEnum.PENDING).isPresent()) {
+            throw new UserAlreadyInvitedException("User " + invitedUser.getUsername() + " already have a pending invite for this room.");
+        }
 
         if(room.getOwner().equals(ownerUser)){
             RoomInvite invite = new RoomInvite();
