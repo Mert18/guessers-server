@@ -78,7 +78,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
         if(isUserInvitedToRoom(user, room)) {
-            RoomInvite invite = roomInviteRepository.findByRoomAndUser(room, user).orElseThrow(() -> new ResourceNotFoundException("User Invite", "Username", user.getUsername()));
+            RoomInvite invite = roomInviteRepository.findByRoomAndUserAndStatus(room, user,RoomInviteStatusEnum.PENDING).orElseThrow(() -> new ResourceNotFoundException("User Invite", "Username", user.getUsername()));
             invite.setStatus(RoomInviteStatusEnum.ACCEPTED);
             roomInviteRepository.save(invite);
 
@@ -133,6 +133,10 @@ public class RoomService {
         User invitedUser = userRepository.findByUsername(invitedUsername).orElseThrow(() -> new ResourceNotFoundException("User", "username", invitedUsername));
         User ownerUser = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
+        if(roomUserRepository.findByRoomAndUser(room,invitedUser).isPresent()){
+            throw new UserAlreadyInvitedException("User " + invitedUser.getUsername() + " already a member of this room.");
+        }
+
         if(roomInviteRepository.findByRoomAndUserAndStatus(room, invitedUser, RoomInviteStatusEnum.PENDING).isPresent()) {
             throw new UserAlreadyInvitedException("User " + invitedUser.getUsername() + " already have a pending invite for this room.");
         }
@@ -157,7 +161,7 @@ public class RoomService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
         // Or we should just set as REJECTED?
-        RoomInvite invite = roomInviteRepository.findByRoomAndUser(room, user).get();
+        RoomInvite invite = roomInviteRepository.findByRoomAndUserAndStatus(room, user,RoomInviteStatusEnum.PENDING).get();
         roomInviteRepository.delete(invite);
         logger.info("User {} rejected room {} invite successfully.", username, room.getName());
         return new BaseResponse("You have rejected the room invite.", true, false);
@@ -216,7 +220,7 @@ public class RoomService {
     }
 
     public boolean isUserInvitedToRoom(User user, Room room) {
-        Optional<RoomInvite> invite = roomInviteRepository.findByRoomAndUser(room, user);
+        Optional<RoomInvite> invite = roomInviteRepository.findByRoomAndUserAndStatus(room, user,RoomInviteStatusEnum.PENDING);
 
         return invite.isPresent() && invite.get().getStatus() == RoomInviteStatusEnum.PENDING;
     }
