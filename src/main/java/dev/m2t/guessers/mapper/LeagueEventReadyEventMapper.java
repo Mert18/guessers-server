@@ -2,7 +2,6 @@ package dev.m2t.guessers.mapper;
 
 import dev.m2t.guessers.dto.client.nosyapi.Bet;
 import dev.m2t.guessers.dto.client.nosyapi.BetOdd;
-import dev.m2t.guessers.dto.client.nosyapi.GuessOptionPrecedence;
 import dev.m2t.guessers.dto.client.nosyapi.LeagueEvent;
 import dev.m2t.guessers.model.ReadyEvent;
 import dev.m2t.guessers.model.ReadyEventOption;
@@ -43,6 +42,17 @@ public class LeagueEventReadyEventMapper {
         readyEvent.setLeague(league);
 
         for(Bet bet : leagueEvent.getBets()) {
+            if(bet.getType().equals("Oyuncu") ||
+                    bet.getType().equals("Goller,Oyuncu") ||
+                    bet.getType().equals("Korner/Kart") ||
+                    bet.getType().equals("Diğer") ||
+                    bet.getType().equals("Kim Kazanır,Korner/Kart") ||
+                    bet.getType().equals("Alt/Üst,Korner/Kart") ||
+                    bet.getType().equals("Özel") ||
+                    bet.getType().equals("Skor")
+            ) {
+                continue;
+            }
             MatchOptionNameTranslatorEnum mote = MatchOptionNameTranslatorEnum.fromTextTr(bet.getGameName());
 
             if(!mote.equals(MatchOptionNameTranslatorEnum.UNKNOWN)) {

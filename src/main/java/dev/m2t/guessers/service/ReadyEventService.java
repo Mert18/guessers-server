@@ -45,7 +45,7 @@ public class ReadyEventService {
             userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
 
             ZonedDateTime now = ZonedDateTime.now();
-            return readyEventRepository.findByCommenceTimeBetweenAndLeague(now, now.plusDays(1), rele);
+            return readyEventRepository.findByCommenceTimeBetweenAndLeague(now, now.plusDays(3), rele);
         }else {
             logger.warn("Fetch ready events failed because league {} is not defined in enum.", league);
         }

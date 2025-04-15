@@ -15,16 +15,20 @@ public class Bet {
     @JsonProperty("gameName")
     private String gameName;
 
+    @JsonProperty("type")
+    private String type;
+
     private List<BetOdd> odds;
 
     public Bet() {
 
     }
 
-    public Bet(String gameId, String matchId, String gameName, List<BetOdd> betOdds) {
+    public Bet(String gameId, String matchId, String gameName, String type, List<BetOdd> betOdds) {
         this.gameId = gameId;
         this.matchId = matchId;
         this.gameName = gameName;
+        this.type = type;
         this.odds = betOdds;
     }
 
@@ -58,5 +62,13 @@ public class Bet {
 
     public void setOdds(List<BetOdd> odds) {
         this.odds = odds;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
