@@ -28,12 +28,6 @@ public class EventController {
         return ResponseEntity.ok(eventService.createEvent(createEventRequest, username, Long.valueOf(roomId)));
     }
 
-    @GetMapping("/create/{roomId}")
-    public ResponseEntity<BaseResponse> createEventFromReadyEvent(@PathVariable String roomId, @RequestParam List<String> readyEventIds, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(eventService.createEventFromReadyEvent(Long.valueOf(roomId), readyEventIds, username));
-    }
-
     @GetMapping("/list/{roomId}/active")
     public ResponseEntity<BaseResponse> listEvents(@PathVariable String roomId, @RequestParam int page, @RequestParam int size, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");
