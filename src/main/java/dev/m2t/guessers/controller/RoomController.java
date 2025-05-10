@@ -104,12 +104,6 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getRoomRanks(Long.parseLong(roomId), username));
     }
 
-    @GetMapping("/{roomId}/give-token")
-    public ResponseEntity<BaseResponse> giveToken(@PathVariable String roomId, @RequestParam List<String> roomUserIds, @RequestParam Double amount, @AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("preferred_username");
-        return ResponseEntity.ok(roomService.giveToken(Long.parseLong(roomId), roomUserIds, amount, username));
-    }
-
     @GetMapping("/{roomId}/users")
     public ResponseEntity<BaseResponse> getRoomUsers(@PathVariable String roomId, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getClaimAsString("preferred_username");

@@ -5,7 +5,6 @@ import dev.m2t.guessers.dto.request.CreateEventRequest;
 import dev.m2t.guessers.dto.request.FinalizeEventRequest;
 import dev.m2t.guessers.exception.ResourceNotFoundException;
 import dev.m2t.guessers.exception.UnauthorizedException;
-import dev.m2t.guessers.mapper.EventReadyEventMapper;
 import dev.m2t.guessers.model.*;
 import dev.m2t.guessers.model.enums.EventGuessOptionCaseStatusEnum;
 import dev.m2t.guessers.model.enums.EventStatusEnum;
@@ -26,18 +25,14 @@ public class EventService {
     private final EventPagingRepository eventPagingRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
-    private final ReadyEventRepository readyEventRepository;
-    private final EventReadyEventMapper eventReadyEventMapper;
     private final OwnerActionService ownerActionService;
     private static final Logger logger = LoggerFactory.getLogger(EventService.class);
 
-    public EventService(RoomRepository roomRepository, EventPagingRepository eventPagingRepository, UserRepository userRepository, EventRepository eventRepository, ReadyEventRepository readyEventRepository, EventReadyEventMapper eventReadyEventMapper, OwnerActionService ownerActionService) {
+    public EventService(RoomRepository roomRepository, EventPagingRepository eventPagingRepository, UserRepository userRepository, EventRepository eventRepository, OwnerActionService ownerActionService) {
         this.roomRepository = roomRepository;
         this.eventPagingRepository = eventPagingRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
-        this.readyEventRepository = readyEventRepository;
-        this.eventReadyEventMapper = eventReadyEventMapper;
         this.ownerActionService = ownerActionService;
     }
 
@@ -157,30 +152,5 @@ public class EventService {
         ownerActionService.saveOwnerAction(OwnerActionsEnum.START_EVENT, "Event started with name: " + event.getName(), user, room);
         logger.info("Event started successfully for event: {}", eventId);
         return new BaseResponse<>("Event started successfully.", true, true, savedEvent);
-    }
-
-    public BaseResponse createEventFromReadyEvent(Long roomId, List<String> readyEventIds, String username) {
-        Room room = roomRepository.findById(roomId).orElseThrow(() -> new ResourceNotFoundException("Room", "roomId", roomId));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedException("User with username " + username + " does not exist."));
-
-        if (!room.getOwner().equals(user)) {
-            logger.debug("User {} is not the owner of the room.", username);
-            throw new UnauthorizedException("You are not the owner of this room. Only the owner can create events.");
-        }
-
-        List<Event> eventsToCreate = new ArrayList<>();
-        for(String readyEventId : readyEventIds) {
-            ReadyEvent readyEvent = readyEventRepository.findById(readyEventId).orElseThrow(() -> new ResourceNotFoundException("Ready Event", "id", readyEventId));
-
-            Event event = eventReadyEventMapper.toEvent(readyEvent);
-            event.setRoom(room);
-
-            eventsToCreate.add(event);
-        }
-
-
-        eventRepository.saveAll(eventsToCreate);
-
-        return new BaseResponse<>("Event created successfully from ready event.", true, true);
     }
 }

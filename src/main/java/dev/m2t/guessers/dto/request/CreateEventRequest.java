@@ -10,7 +10,6 @@ public class CreateEventRequest {
     @NotNull(message = "Name cannot be null")
     @Size(min = 3, message = "Name must be at least 3 characters long")
     private String name;
-
     private String description;
 
     @NotNull(message = "Options cannot be null")
