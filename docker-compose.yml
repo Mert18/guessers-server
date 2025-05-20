@@ -26,8 +26,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   guessers-app:
-    image: hachiko2k/guessers-server-docker:0.0.1.4
-    container_name: guessers_server_docker
+    image: hachiko2k/guessers-server
+    container_name: guessers_server
     ports:
       - "8080:8080"
     depends_on:
