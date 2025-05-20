@@ -51,13 +51,8 @@ public class AuthenticationService {
             throw new ResourceAlreadyExistsException("User", "username", username);
         }
 
-        // Save user to keycloak
         users.create(fillKeycloakUserDetails(createUserRequest));
-
-        // Calculate Luck
         Double luck = Math.random() * 100;
-
-        // Save user to db.
         User dbUser = new User(username, luck);
         userRepository.save(dbUser);
 
