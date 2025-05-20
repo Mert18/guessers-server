@@ -68,7 +68,7 @@ public class AuthenticationService {
     private UserRepresentation fillKeycloakUserDetails(CreateUserRequest createUserRequest) {
         UserRepresentation newUser = new UserRepresentation();
         newUser.setUsername(createUserRequest.getUsername().toLowerCase());
-        newUser.setEmail(createUserRequest.getUsername().toLowerCase() + "@unlucky.biz");
+        newUser.setEmail(createUserRequest.getUsername().toLowerCase() + "@guessers.biz");
         newUser.setFirstName(createUserRequest.getUsername().toLowerCase());
         newUser.setLastName(createUserRequest.getUsername().toLowerCase());
         newUser.setId(createUserRequest.getUsername().toLowerCase());
