@@ -19,6 +19,7 @@ public class User {
 
     private String username;
     private Double luck;
+    private Integer publicGamePlayCount;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -32,6 +33,10 @@ public class User {
 
     public User() {
 
+    }
+
+    public User(String username) {
+        this.username = username;
     }
 
     public User(String username, Double luck) {
@@ -95,5 +100,13 @@ public class User {
         User user = (User) o;
 
         return username != null && username.equals(user.username);
+    }
+
+    public Integer getPublicGamePlayCount() {
+        return publicGamePlayCount;
+    }
+
+    public void setPublicGamePlayCount(Integer publicGamePlayCount) {
+        this.publicGamePlayCount = publicGamePlayCount;
     }
 }
