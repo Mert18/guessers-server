@@ -1,7 +1,7 @@
 package dev.m2t.guessers.controller;
 
 import dev.m2t.guessers.dto.request.JoinPickOneAndHopeRoomRequest;
-import dev.m2t.guessers.service.PublicGameService;
+import dev.m2t.guessers.service.PickOneAndHopeService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -11,12 +11,12 @@ import java.security.Principal;
 
 @Controller
 public class PublicGameWebsocketController {
-    private final PublicGameService publicGameService;
+    private final PickOneAndHopeService pickOneAndHopeService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public PublicGameWebsocketController(PublicGameService publicGameService,
+    public PublicGameWebsocketController(PickOneAndHopeService pickOneAndHopeService,
                                          SimpMessagingTemplate messagingTemplate) {
-        this.publicGameService = publicGameService;
+        this.pickOneAndHopeService = pickOneAndHopeService;
         this.messagingTemplate = messagingTemplate;
     }
 
@@ -26,10 +26,12 @@ public class PublicGameWebsocketController {
 
         joinRoomRequest.setUsername(username);
         joinRoomRequest.setSessionId(headers.getSessionId());
-        publicGameService.tryMatch(joinRoomRequest).ifPresent(room -> {
+        pickOneAndHopeService.tryMatch(joinRoomRequest).ifPresent(room -> {
             for (JoinPickOneAndHopeRoomRequest p : room.getPlayers()) {
                 messagingTemplate.convertAndSendToUser(p.getUsername(), "/queue/room", room);
             }
+
+            pickOneAndHopeService.play(room);
         });
     }
 
