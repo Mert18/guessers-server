@@ -35,5 +35,10 @@ public class PublicGameWebsocketController {
         });
     }
 
+    @MessageMapping("/cancel")
+    public void cancelSearch(Principal principal) {
+        String username = principal.getName();
+        pickOneAndHopeService.cancelSearch(username);
+    }
 
 }

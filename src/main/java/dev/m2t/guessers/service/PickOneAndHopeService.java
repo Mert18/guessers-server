@@ -23,6 +23,7 @@ public class PickOneAndHopeService {
     }
 
     public synchronized Optional<GameRoom> tryMatch(JoinPickOneAndHopeRoomRequest joinRoomRequest) {
+        logger.info("User {} searching room for pick one and hope. Selected object: {}", joinRoomRequest.getUsername(), joinRoomRequest.getObject());
         pickOneAndHopeQueue.computeIfAbsent(joinRoomRequest.getObject(), k -> new ArrayList<>())
                 .add(joinRoomRequest);
 
@@ -51,9 +52,10 @@ public class PickOneAndHopeService {
         return Optional.empty();
     }
 
-    public synchronized void cancelSearch(String userId) {
+    public void cancelSearch(String username) {
+        logger.info("User {} cancelled the room search.", username);
         for (List<JoinPickOneAndHopeRoomRequest> queue : pickOneAndHopeQueue.values()) {
-            queue.removeIf(request -> request.getUsername().equals(userId));
+            queue.removeIf(request -> request.getUsername().equals(username));
         }
     }
 
