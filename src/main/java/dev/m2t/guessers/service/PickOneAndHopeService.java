@@ -68,6 +68,7 @@ public class PickOneAndHopeService {
         });
 
         List<String> gameObjects = List.of("cherry", "lemon", "onion", "pepper");
+
         new Thread(() -> {
             try {
                 messagingTemplate.convertAndSend("/topic/room/" + room.getId(), new GameStartMessage());
@@ -77,11 +78,18 @@ public class PickOneAndHopeService {
 
                 for (int round = 1; round <= 5; round++) {
                     List<String> roundPicks = new ArrayList<>();
-
+                    List<String> matchResults = new ArrayList<>();
                     for (int i = 0; i < 9; i++) {
                         String picked = gameObjects.get(random.nextInt(gameObjects.size()));
                         roundPicks.add(picked);
                         gameObjectStats.put(picked, gameObjectStats.getOrDefault(picked, 0) + 1);
+                        if (room.getPlayers().get(0).getObject().equals(picked)) {
+                            matchResults.add("left");
+                        } else if(room.getPlayers().get(1).getObject().equals(picked)) {
+                            matchResults.add("right");
+                        } else {
+                            matchResults.add("null");
+                        }
                     }
 
 
@@ -90,7 +98,7 @@ public class PickOneAndHopeService {
                     }
 
                     messagingTemplate.convertAndSend("/topic/room/" + room.getId(),
-                            new GameRoundMessage(round, roundPicks, playersScore));
+                            new GameRoundMessage(round, roundPicks, playersScore, matchResults));
 
                     Thread.sleep(5000); // pause between rounds
                 }
