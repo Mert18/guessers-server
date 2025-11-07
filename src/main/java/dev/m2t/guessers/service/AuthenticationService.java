@@ -1,10 +1,14 @@
 package dev.m2t.guessers.service;
 
 import dev.m2t.guessers.dto.BaseResponse;
+import dev.m2t.guessers.dto.request.BanUsernameRequest;
 import dev.m2t.guessers.dto.request.CreateUserRequest;
+import dev.m2t.guessers.dto.response.CheckUsernameResponse;
 import dev.m2t.guessers.exception.ResourceAlreadyExistsException;
+import dev.m2t.guessers.model.BannedUser;
 import dev.m2t.guessers.model.Stats;
 import dev.m2t.guessers.model.User;
+import dev.m2t.guessers.repository.BannedUserRepository;
 import dev.m2t.guessers.repository.EventRepository;
 import dev.m2t.guessers.repository.RoomRepository;
 import dev.m2t.guessers.repository.StatsRepository;
@@ -32,15 +36,17 @@ public class AuthenticationService {
     private final RoomRepository roomRepository;
     private final EventRepository eventRepository;
     private final StatsRepository statsRepository;
+    private final BannedUserRepository bannedUserRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
-    public AuthenticationService(Keycloak keycloak, UserRepository userRepository, RoomRepository roomRepository, EventRepository eventRepository, StatsRepository statsRepository) {
+    public AuthenticationService(Keycloak keycloak, UserRepository userRepository, RoomRepository roomRepository, EventRepository eventRepository, StatsRepository statsRepository, BannedUserRepository bannedUserRepository) {
         this.keycloak = keycloak;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.eventRepository = eventRepository;
         this.statsRepository = statsRepository;
+        this.bannedUserRepository = bannedUserRepository;
     }
 
     public BaseResponse<User> createUser(CreateUserRequest createUserRequest) {
@@ -102,5 +108,33 @@ public class AuthenticationService {
         } else {
             return new BaseResponse<>("No stats found", false, false, null);
         }
+    }
+
+    public BaseResponse<BannedUser> banUsername(BanUsernameRequest banUsernameRequest) {
+        logger.info("Banning user with username: {}", banUsernameRequest.getUsername().toLowerCase());
+        String username = banUsernameRequest.getUsername().toLowerCase();
+
+        if (bannedUserRepository.existsByUsername(username)) {
+            throw new ResourceAlreadyExistsException("BannedUser", "username", username);
+        }
+
+        BannedUser bannedUser = new BannedUser(username);
+        bannedUserRepository.save(bannedUser);
+
+        logger.info("User {} banned successfully at {}", username, bannedUser.getBannedAt());
+        return new BaseResponse<>("User banned successfully", true, true, bannedUser);
+    }
+
+    public BaseResponse<CheckUsernameResponse> checkUsername(String username) {
+        logger.info("Checking username: {}", username.toLowerCase());
+        String lowerUsername = username.toLowerCase();
+
+        boolean exists = userRepository.findByUsername(lowerUsername).isPresent();
+        boolean isBanned = bannedUserRepository.existsByUsername(lowerUsername);
+
+        CheckUsernameResponse response = new CheckUsernameResponse(lowerUsername, exists, isBanned);
+
+        logger.info("Username {} - exists: {}, banned: {}", lowerUsername, exists, isBanned);
+        return new BaseResponse<>("Username check completed", true, false, response);
     }
 }
