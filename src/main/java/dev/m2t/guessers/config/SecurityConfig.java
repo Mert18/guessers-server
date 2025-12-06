@@ -37,6 +37,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable).cors((cors) -> cors.configurationSource(corsConfigurationSource))
             .authorizeHttpRequests((authorize) -> authorize
                     .requestMatchers("/ws/**").permitAll()
+                    .requestMatchers("/ws-public/**").permitAll()
                     .requestMatchers("/test/**").permitAll()
                     .requestMatchers("/api/authentication/**").permitAll()
                     .requestMatchers("/api/shared-guess-papers/getByToken/**").permitAll()

@@ -24,9 +24,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        // Authenticated endpoint for game functionality
         registry.addEndpoint("/ws")
                 .addInterceptors(authHandshakeInterceptor)
                 .setHandshakeHandler(new CustomHandshakeHandler())
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+
+        // Public endpoint for announcements (no authentication required)
+        registry.addEndpoint("/ws-public")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
     }

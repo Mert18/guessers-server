@@ -38,15 +38,18 @@ public class AuthenticationService {
     private final StatsRepository statsRepository;
     private final BannedUserRepository bannedUserRepository;
 
+    private final AnnouncementService announcementService;
+
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
-    public AuthenticationService(Keycloak keycloak, UserRepository userRepository, RoomRepository roomRepository, EventRepository eventRepository, StatsRepository statsRepository, BannedUserRepository bannedUserRepository) {
+    public AuthenticationService(Keycloak keycloak, UserRepository userRepository, RoomRepository roomRepository, EventRepository eventRepository, StatsRepository statsRepository, BannedUserRepository bannedUserRepository, AnnouncementService announcementService) {
         this.keycloak = keycloak;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.eventRepository = eventRepository;
         this.statsRepository = statsRepository;
         this.bannedUserRepository = bannedUserRepository;
+        this.announcementService = announcementService;
     }
 
     public BaseResponse<User> createUser(CreateUserRequest createUserRequest) {
@@ -120,6 +123,8 @@ public class AuthenticationService {
 
         BannedUser bannedUser = new BannedUser(username);
         bannedUserRepository.save(bannedUser);
+
+        announcementService.sendInfo("Register", "`" +username + "` banned while registering.");
 
         logger.info("User {} banned successfully at {}", username, bannedUser.getBannedAt());
         return new BaseResponse<>("User banned successfully", true, true, bannedUser);
