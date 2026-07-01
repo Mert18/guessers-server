@@ -121,7 +121,7 @@ public class EventService {
 
         event.getEventGuessOptions().forEach(eventGuessOption -> {
             eventGuessOption.getEventGuessOptionCases().forEach(eventGuessOptionCase -> {
-                if (finalizeEventRequest.getWinnerEventGuessOptionCases().contains(eventGuessOptionCase.getId())) {
+                if (finalizeEventRequest.winnerEventGuessOptionCases().contains(eventGuessOptionCase.getId())) {
                     eventGuessOptionCase.setStatus(EventGuessOptionCaseStatusEnum.WON);
                 }else {
                     eventGuessOptionCase.setStatus(EventGuessOptionCaseStatusEnum.LOST);

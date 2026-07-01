@@ -51,17 +51,17 @@ public class UserService {
     }
 
     public BaseResponse changePassword(ChangePasswordRequest changePasswordRequest) {
-        logger.info("Changing password for user: {}", changePasswordRequest.getUsername());
-        List<UserRepresentation> users =  keycloak.realm(realm).users().searchByUsername(changePasswordRequest.getUsername(), true);
+        logger.info("Changing password for user: {}", changePasswordRequest.username());
+        List<UserRepresentation> users =  keycloak.realm(realm).users().searchByUsername(changePasswordRequest.username(), true);
         if(users.isEmpty()) {
-            throw new ResourceNotFoundException("User", "username", changePasswordRequest.getUsername());
+            throw new ResourceNotFoundException("User", "username", changePasswordRequest.username());
         }
 
         UserRepresentation user = users.get(0);
 
         keycloak.realm(realm).users().get(user.getId()).resetPassword(new CredentialRepresentation() {{
             setType(CredentialRepresentation.PASSWORD);
-            setValue(changePasswordRequest.getPassword());
+            setValue(changePasswordRequest.password());
         }});
 
         return new BaseResponse("Password changed successfully", true, false);

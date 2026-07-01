@@ -8,36 +8,23 @@ public enum EventStatusEnum {
     CANCELLED;
 
     public static EventStatusEnum fromString(String status) {
-        switch (status) {
-            case "NOT_STARTED":
-                return NOT_STARTED;
-            case "IN_PROGRESS":
-                return IN_PROGRESS;
-            case "STARTED":
-                return STARTED;
-            case "FINISHED":
-                return FINISHED;
-            case "CANCELLED":
-                return CANCELLED;
-            default:
-                return null;
-        }
+        return switch (status) {
+            case "NOT_STARTED" -> NOT_STARTED;
+            case "IN_PROGRESS" -> IN_PROGRESS;
+            case "STARTED" -> STARTED;
+            case "FINISHED" -> FINISHED;
+            case "CANCELLED" -> CANCELLED;
+            default -> null;
+        };
     }
 
     public static String toString(EventStatusEnum status) {
-        switch (status) {
-            case NOT_STARTED:
-                return "NOT_STARTED";
-            case IN_PROGRESS:
-                return "IN_PROGRESS";
-            case STARTED:
-                return "STARTED";
-            case FINISHED:
-                return "FINISHED";
-            case CANCELLED:
-                return "CANCELLED";
-            default:
-                return null;
-        }
+        return switch (status) {
+            case NOT_STARTED -> "NOT_STARTED";
+            case IN_PROGRESS -> "IN_PROGRESS";
+            case STARTED -> "STARTED";
+            case FINISHED -> "FINISHED";
+            case CANCELLED -> "CANCELLED";
+        };
     }
 }

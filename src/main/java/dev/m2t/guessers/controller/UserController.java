@@ -37,7 +37,7 @@ public class UserController {
     @PostMapping("/change-password")
     public ResponseEntity<BaseResponse> changePassword(@AuthenticationPrincipal Jwt jwt, @RequestBody ChangePasswordRequest changePasswordRequest) {
         String username = jwt.getClaimAsString("preferred_username");
-        if(!username.equals(changePasswordRequest.getUsername())) {
+        if(!username.equals(changePasswordRequest.username())) {
             throw new UnauthorizedException("You are not authorized to change password for this user.");
         }
         return ResponseEntity.ok(userService.changePassword(changePasswordRequest));

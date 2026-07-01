@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -52,8 +51,8 @@ public class RoomService {
 
         // Create Room
         Room room = new Room();
-        room.setName(createRoomRequest.getName());
-        room.setPublic(createRoomRequest.getPublico());
+        room.setName(createRoomRequest.name());
+        room.setPublic(createRoomRequest.publico());
         room.setRoomUsers(new ArrayList<>());
         room.setOwner(user.get());
 
@@ -246,7 +245,7 @@ public class RoomService {
         List<RoomUser> roomUsersSortedByCorrectPredictions = roomUsers.stream()
                 .sorted(Comparator.comparing(RoomUser::getScore).reversed())
                 .limit(3)
-                .collect(Collectors.toList());
+                .toList();
 
         roomRanksResponse.setRankedByCorrectPredictions(roomUsersSortedByCorrectPredictions);
         roomRanksResponse.setUserCount(roomUsers.size());

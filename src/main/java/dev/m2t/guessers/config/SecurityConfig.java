@@ -61,12 +61,10 @@ public class SecurityConfig {
             authorities.forEach((authority) -> {
                 GrantedAuthority mappedAuthority;
 
-                if (authority instanceof OidcUserAuthority) {
-                    OidcUserAuthority userAuthority = (OidcUserAuthority) authority;
+                if (authority instanceof OidcUserAuthority userAuthority) {
                     mappedAuthority = new OidcUserAuthority(
                             "ROLE_USER", userAuthority.getIdToken(), userAuthority.getUserInfo());
-                } else if (authority instanceof OAuth2UserAuthority) {
-                    OAuth2UserAuthority userAuthority = (OAuth2UserAuthority) authority;
+                } else if (authority instanceof OAuth2UserAuthority userAuthority) {
                     mappedAuthority = new OAuth2UserAuthority(
                             "ROLE_USER", userAuthority.getAttributes());
                 } else {

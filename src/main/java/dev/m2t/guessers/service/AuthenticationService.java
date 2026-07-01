@@ -53,8 +53,8 @@ public class AuthenticationService {
     }
 
     public BaseResponse<User> createUser(CreateUserRequest createUserRequest) {
-        logger.info("Creating user with username: {}", createUserRequest.getUsername().toLowerCase());
-        String username = createUserRequest.getUsername().toLowerCase();
+        logger.info("Creating user with username: {}", createUserRequest.username().toLowerCase());
+        String username = createUserRequest.username().toLowerCase();
         UsersResource users = keycloak.realm(realm).users();
         if(!users.searchByUsername(username, true).isEmpty() || userRepository.findByUsername(username).isPresent()) {
             throw new ResourceAlreadyExistsException("User", "username", username);
@@ -71,17 +71,17 @@ public class AuthenticationService {
 
     private UserRepresentation fillKeycloakUserDetails(CreateUserRequest createUserRequest) {
         UserRepresentation newUser = new UserRepresentation();
-        newUser.setUsername(createUserRequest.getUsername().toLowerCase());
-        newUser.setEmail(createUserRequest.getUsername().toLowerCase() + "@guessers.biz");
-        newUser.setFirstName(createUserRequest.getUsername().toLowerCase());
-        newUser.setLastName(createUserRequest.getUsername().toLowerCase());
-        newUser.setId(createUserRequest.getUsername().toLowerCase());
+        newUser.setUsername(createUserRequest.username().toLowerCase());
+        newUser.setEmail(createUserRequest.username().toLowerCase() + "@guessers.biz");
+        newUser.setFirstName(createUserRequest.username().toLowerCase());
+        newUser.setLastName(createUserRequest.username().toLowerCase());
+        newUser.setId(createUserRequest.username().toLowerCase());
         newUser.setRealmRoles(List.of("user"));
         newUser.setEnabled(true);
         newUser.setCredentials(List.of(
                 new CredentialRepresentation() {{
                     setType(CredentialRepresentation.PASSWORD);
-                    setValue(createUserRequest.getPassword());
+                    setValue(createUserRequest.password());
                 }}
         ));
         return newUser;
@@ -114,8 +114,8 @@ public class AuthenticationService {
     }
 
     public BaseResponse<BannedUser> banUsername(BanUsernameRequest banUsernameRequest) {
-        logger.info("Banning user with username: {}", banUsernameRequest.getUsername().toLowerCase());
-        String username = banUsernameRequest.getUsername().toLowerCase();
+        logger.info("Banning user with username: {}", banUsernameRequest.username().toLowerCase());
+        String username = banUsernameRequest.username().toLowerCase();
 
         if (bannedUserRepository.existsByUsername(username)) {
             throw new ResourceAlreadyExistsException("BannedUser", "username", username);
